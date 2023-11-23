@@ -1,15 +1,21 @@
 package com.spring.coffee.member.controller;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -38,11 +44,13 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.coffee.mapper.MemberMapper;
 import com.spring.coffee.member.vo.GoogleInfo;
 import com.spring.coffee.member.vo.KakaoInfo;
 import com.spring.coffee.member.vo.MemberVO;
+import com.spring.coffee.member.vo.NaverInfo;
 import com.spring.coffee.member.vo.OAuthToken;
 
 import jakarta.servlet.ServletContext;
@@ -183,6 +191,7 @@ public class MemberController implements ServletContextAware {
 			map.put("fileName", kakaoInfo.getProperties().getProfile_image());
 			System.out.println("profileImage: " + kakaoInfo.getProperties().getProfile_image());
 			
+			mav.addObject("kakaoReg", true);
 			mav.addObject("map", map);
 			mav.addObject("center", viewPath + "regForm.jsp");
 			mav.setViewName("main");
@@ -216,7 +225,7 @@ public class MemberController implements ServletContextAware {
 		
 		System.out.println("google access_token: " + oauthToken.getAccess_token());
 		//-------------------------------------------------------------------------------------------------------------------------------------------------------
-		//받은 엑세스 토큰을 카카오 서버로 전달하여 카카오 DB에 저장된 회원정보 받기
+		//받은 엑세스 토큰을 구글 서버로 전달하여 구글 DB에 저장된 회원정보 받기
 		RestTemplate rt2 = new RestTemplate();
 		
 		//HTTP POST 메소드의 헤더영역에 Content-type 1개의 값 저장
@@ -259,6 +268,96 @@ public class MemberController implements ServletContextAware {
 			System.out.println("email: " + googleInfo.getEmail());
 			System.out.println("profileImage: " + googleInfo.getPicture());
 			
+			mav.addObject("googleReg", true);
+			mav.addObject("map", map);
+			mav.addObject("center", viewPath + "regForm.jsp");
+			mav.setViewName("main");
+		}
+		
+		return mav;
+	}
+	
+	@RequestMapping("naverLogin")
+	public @ResponseBody ModelAndView naverLogin(String code,String state, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.setCharacterEncoding("UTF-8");
+		response.setContentType("application/json;charset=UTF-8");
+		
+		ModelAndView mav = new ModelAndView();
+		HttpSession session = request.getSession();
+		
+		String clientId = "LqbceHaqklXQzbcgejR8";//애플리케이션 클라이언트 아이디값";
+	    String clientSecret = "P7HnauOPPY";//애플리케이션 클라이언트 시크릿값";
+	    
+	    //POST방식으로 key=value 데이터를 네이버 서버쪽으로 Token요청
+		RestTemplate rt = new RestTemplate();
+		
+		//HTTP POST 메소드 바디영역에 5개의 요청할 값 저장
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
+		params.add("code", code);
+		params.add("state", state);
+		params.add("client_id", clientId);
+		params.add("client_secret", clientSecret);
+		params.add("redirect_uri", "http://localhost:8090/coffee/member/naverLogin");
+		params.add("grant_type", "authorization_code");
+		//네이버 서버에 HTTP POST 메소드로 token요청
+		ResponseEntity<String> responseEntity = rt.postForEntity("https://nid.naver.com/oauth2.0/token", params, String.class);
+		System.out.println(responseEntity.getBody());
+		
+		//JSONObject의 값들을 파싱하여 vo클래스의 변수에 매핑하여 저장시킬 라이브러리로 ObjectMapper 사용
+		ObjectMapper objectMapper = new ObjectMapper();
+		OAuthToken oauthToken = objectMapper.readValue(responseEntity.getBody(), OAuthToken.class);
+		
+		session.setAttribute("client_id", clientId);
+		session.setAttribute("client_secret", clientSecret);
+		session.setAttribute("access_token", oauthToken.getAccess_token());
+		
+		System.out.println("naver access_token: " + oauthToken.getAccess_token());
+		//-------------------------------------------------------------------------------------------------------------------------------------------------------
+		//받은 엑세스 토큰을 네이버 서버로 전달하여 네이버 DB에 저장된 회원정보 받기
+		RestTemplate rt2 = new RestTemplate();
+		
+		//HTTP POST 메소드의 헤더영역에 Content-type 1개의 값 저장
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAcceptCharset(Arrays.asList(Charset.forName("UTF-8")));
+		headers.add("Authorization", "Bearer " + oauthToken.getAccess_token());
+		
+		//네이버 서버에 token을 요청할 데이터를 담을 HttpEntity객체 생성
+		HttpEntity<MultiValueMap<String, String>> naverProfileRequest = new HttpEntity<>(headers);
+		
+		//네이버 서버에 HTTP POST 메소드로 token값을 문자열로 받아 저장
+		ResponseEntity<String> responseEntity2 = rt.exchange("https://openapi.naver.com/v1/nid/me", HttpMethod.POST, naverProfileRequest, String.class);
+		//응답데이터 확인
+		System.out.println("responseEntity2: " + responseEntity2.getBody());
+		
+		//JSONObject 값들을 파싱하여 VO클래스의 변수에 저장
+		ObjectMapper objectMapper2 = new ObjectMapper();
+		objectMapper2.configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, false);
+		NaverInfo naverInfo = objectMapper2.readValue(responseEntity2.getBody(), NaverInfo.class);
+		
+		//회원정보 조회를 위해 id얻기
+		String id = naverInfo.getResponse().getId();
+		System.out.println("name: " + naverInfo.getResponse().getName());
+		MemberVO member = memberMapper.getMemberById(id);
+		
+		if(member != null) {
+			System.out.println("Naver 아이디 존재");
+			Map<String, Object> map = new HashMap<String, Object>();
+			memberMapper.login(member);
+			
+			session.setAttribute("isLogOn", true);
+			session.setAttribute("member", member);
+			session.setAttribute("isNaver", true);
+			
+			mav.setViewName("redirect:/coffee/main");
+		} else {
+			System.out.println("Naver 아이디 미존재");
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("id", id);
+			map.put("name", naverInfo.getResponse().getName());
+			map.put("email", naverInfo.getResponse().getEmail());
+			map.put("fileName", naverInfo.getResponse().getProfile_image());
+			
+			mav.addObject("naverReg", true);
 			mav.addObject("map", map);
 			mav.addObject("center", viewPath + "regForm.jsp");
 			mav.setViewName("main");
@@ -400,7 +499,9 @@ public class MemberController implements ServletContextAware {
 		
 		//insert후 MemberVO객체에 값들을 저장하여 바로 로그인 요청
 		member.setId(map.get("id").toString());
-		member.setPassword(map.get("password").toString());
+		if (map.get("password") != null) {
+			member.setPassword(map.get("password").toString());
+		}
 		member.setName(map.get("name").toString());
 		member.setSsn(map.get("ssn").toString());
 		member.setNickname(map.get("nickname").toString());
@@ -422,7 +523,6 @@ public class MemberController implements ServletContextAware {
 		
 		return mav;
 	}
-	
 	
 	@RequestMapping(value = "addGoogleMember", method = {RequestMethod.GET, RequestMethod.POST})
 	public ModelAndView addGoogleMember(@RequestParam("file") MultipartFile file, MultipartHttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -488,7 +588,9 @@ public class MemberController implements ServletContextAware {
 		
 		//insert후 MemberVO객체에 값들을 저장하여 바로 로그인 요청
 		member.setId(map.get("id").toString());
-		member.setPassword(map.get("password").toString());
+		if (map.get("password") != null) {
+			member.setPassword(map.get("password").toString());
+		}
 		member.setName(map.get("name").toString());
 		member.setSsn(map.get("ssn").toString());
 		member.setNickname(map.get("nickname").toString());
@@ -510,7 +612,95 @@ public class MemberController implements ServletContextAware {
 		
 		return mav;
 	}
-	
+
+	@RequestMapping(value = "addNaverMember", method = {RequestMethod.GET, RequestMethod.POST})
+	public ModelAndView addNaverMember(@RequestParam("file") MultipartFile file, MultipartHttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView mav = new ModelAndView();
+		System.out.println("addNaverMember탑승");
+		MemberVO member = new MemberVO();
+		HttpSession session = request.getSession();
+		
+		//업로드할 파일명 또는 입력한 데이터가 한글일 경우 인코딩
+		request.setCharacterEncoding("UTF-8");
+		
+		//파일경로를 저장할 변수 설정
+		String filePath = uploadPath + "/member/";
+		File rootPath = new File(filePath);
+		//위 파일 루트 경로가 존재하지 않을 경우 생성
+		if(!rootPath.exists()) {
+			rootPath.mkdir();
+		}
+		
+		//입력한 값들의 정보를 저장할 Map 생성
+		Map map = new HashMap();
+		
+		//request에서 값을 꺼내와 배열에 저장 후 배열 자체를 반환할 Enumeration객체 생성
+		Enumeration enu = request.getParameterNames();
+		while (enu.hasMoreElements()) {
+			String key = (String)enu.nextElement();
+			String value = request.getParameter(key);
+			
+			map.put(key, value);
+		}
+		
+		//id 값 저장
+		String id = map.get("id").toString();
+		//이미지 URL에서 이미지를 다운받아 저장하기 위해 URL정보 저장
+		String imgURL = map.get("imgURL").toString();
+		
+		//이미지 URL 생성
+		URL url = new URL(imgURL);
+		//저장할 폴더 경로 생성
+		String saveFolderPath = filePath + id;
+		//입력한 url에서 이미지를 내려받을 입력스트림 통로 객체 생성
+		InputStream in = url.openStream();
+		//저장할 폴더 경로 생성
+		Path saveFolder = Path.of(saveFolderPath);
+		//폴더가 없다면 생성
+		if(!Files.exists(saveFolder)) {
+			Files.createDirectories(saveFolder);
+		}
+		//이미지 파일 이름 추출
+		String fileName = imgURL.substring(imgURL.lastIndexOf('/') + 1);
+		System.out.println("추출한 파일명: " + fileName);
+		map.put("fileName", fileName);
+		
+		//저장할 이미지 파일 경로 생성
+		Path savePath = saveFolder.resolve(fileName);
+		//이미지를 파일로 저장
+		Files.copy(in, savePath, StandardCopyOption.REPLACE_EXISTING);
+		
+		System.out.println("이미지 다운로드 및 저장 완료: " + savePath);
+		
+		//mapper호출하여 db에 값 insert
+		memberMapper.addMember(map);
+		
+		//insert후 MemberVO객체에 값들을 저장하여 바로 로그인 요청
+		member.setId(map.get("id").toString());
+		if (map.get("password") != null) {
+			member.setPassword(map.get("password").toString());
+		}
+		member.setName(map.get("name").toString());
+		member.setSsn(map.get("ssn").toString());
+		member.setNickname(map.get("nickname").toString());
+		member.setEmail(map.get("email").toString());
+		member.setMobile(map.get("mobile").toString());
+		member.setZipcode(map.get("zipcode").toString());
+		member.setRoadAddr(map.get("roadAddr").toString());
+		member.setDetailAddr(map.get("detailAddr").toString());
+		member.setJibunAddr(map.get("jibunAddr").toString());
+		member.setFileName(fileName);
+		
+		//로그인 처리
+		memberMapper.login(member);
+		session.setAttribute("isLogOn", true);
+		session.setAttribute("member", member);
+		session.setAttribute("isNaver", true);
+		
+		mav.setViewName("redirect:/coffee/main");
+		
+		return mav;
+	}
 	
 	@RequestMapping("logout")
 	public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -541,6 +731,36 @@ public class MemberController implements ServletContextAware {
 		session.invalidate();
 		
 		return new ModelAndView("redirect:/coffee/main");
+	}
+	
+	@RequestMapping("naverLogout")
+	public ModelAndView naverLogout(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView mav = new ModelAndView();
+		HttpSession session = request.getSession();
+		String clientID = (String)session.getAttribute("client_id");
+		String clientSecret = (String)session.getAttribute("client_secret");
+		String accessToken = (String)session.getAttribute("access_token");
+		System.out.println("logout: " + clientID + " / " + clientSecret + " / " + accessToken);
+		
+		//네이버 로그아웃 요청
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+		
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("grant_type", "delete");
+		params.add("client_id", clientID);
+		params.add("client_secret", clientSecret);
+		params.add("access_token", accessToken);
+		
+		HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
+		ResponseEntity<String> responseEntity = new RestTemplate().postForEntity("https://nid.naver.com/oauth2.0/token", requestEntity, String.class);
+		
+		System.out.println("Naver Logout Response: " + requestEntity.getBody());
+		
+		session.invalidate();
+		mav.setViewName("redirect:/coffee/main");
+		
+		return mav;
 	}
 	
 	@RequestMapping("download")
@@ -584,5 +804,7 @@ public class MemberController implements ServletContextAware {
 		in.close();
 		out.close();
 	}
+	
+	
 	
 }

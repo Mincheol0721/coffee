@@ -1,3 +1,5 @@
+<%@page import="java.security.SecureRandom"%>
+<%@page import="java.math.BigInteger"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -54,7 +56,7 @@
 					<img src="/images/kakao.png" class="loginIcon">
 				</button>
 			</a>
-			<a href="#">
+			<a href="https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=LqbceHaqklXQzbcgejR8&redirect_uri=http://localhost:8090/coffee/member/naverLogin&state=<%=new BigInteger(130, new SecureRandom()).toString()%>">
 				<button aria-label="Log in with naver" class="icon">
 					<img src="/images/naver.png" class="loginIcon">
 				</button>

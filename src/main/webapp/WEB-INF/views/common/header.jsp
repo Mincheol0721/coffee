@@ -78,6 +78,9 @@
 				  <c:if test="${isGoogle eq true}">
 				  	<a class="dropdown-item" href="https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=http://localhost:8090/coffee/member/googleLogout">로그아웃</a>
 				  </c:if>
+				  <c:if test="${isNaver eq true}">
+				  	<a class="dropdown-item" href="/coffee/member/naverLogout">로그아웃</a>
+				  </c:if>
 				  </li>
 				</ul>
     			</c:when>

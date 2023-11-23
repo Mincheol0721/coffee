@@ -1,3 +1,4 @@
+<%@page import="java.util.UUID"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -17,8 +18,14 @@
 		<c:if test="${map eq null}">
 			<form class="form" action="/coffee/member/addMember" method="post" enctype="multipart/form-data">
 		</c:if>
-		<c:if test="${map ne null}">
+		<c:if test="${kakaoReg eq true}">
 			<form class="form" action="/coffee/member/addKakaoMember" method="post" enctype="multipart/form-data">
+		</c:if>
+		<c:if test="${googleReg eq true}">
+			<form class="form" action="/coffee/member/addGoogleMember" method="post" enctype="multipart/form-data">
+		</c:if>
+		<c:if test="${naverReg eq true}">
+			<form class="form" action="/coffee/member/addNaverMember" method="post" enctype="multipart/form-data">
 		</c:if>
 			<div class="profile">
 				<input type="file" name="file" id="file" onchange="setThumbnail(event);">
@@ -32,53 +39,92 @@
 				</c:if>
 				</label>
 			</div>
-			<div class="input-group">
-				<label for="id">아이디</label> 
-				<input type="text"	name="id" id="id" <c:if test="${map ne null}">value="${map.id}" disabled</c:if> placeholder="">
+			<c:if test="${map ne null}">
 				<input type="hidden" name="id" id="id" value="${map.id}">
-			</div>
-			<div class="input-group">
-				<label for="password">비밀번호</label> 
-				<input type="password" name="password" id="password" placeholder="">
-			</div>
-			<div class="input-group">
-				<label for="passwordConfirm">비밀번호 확인</label> 
-				<input type="password" name="passwordConfirm" id="passwordConfirm" placeholder="">
-			</div>
-			<div class="input-group">
+				<div class="input-group">
 				<label for="nickname">이름</label> 
-				<input type="text" name="name" id="name" <c:if test="${map ne null}">value="${map.name}"</c:if> placeholder="">
+				<input type="text" name="name" id="name" value="${map.name}" placeholder="" required>
 			</div>
 			<div class="input-group">
 				<label for="nickname">주민등록번호</label> 
-				<input type="text" name="ssn" id="ssn" placeholder="하이픈(-)을 포함하여 입력해주세요. 예)930101-1234567">
+				<input type="text" name="ssn" id="ssn" placeholder="하이픈(-)을 포함하여 입력해주세요. 예)930101-1234567" required>
 			</div>
 			<div class="input-group">
 				<label for="nickname">닉네임</label> 
-				<input type="text" name="nickname" id="nickname" placeholder="">
+				<input type="text" name="nickname" id="nickname" placeholder="" required>
 			</div>
 			<div class="input-group">
 				<label for="nickname">이메일</label> 
-				<input type="email" name="email" id="email" <c:if test="${map ne null}">value="${map.email}"</c:if> placeholder="">
+				<input type="email" name="email" id="email" value="${map.email}" placeholder="" required>
 			</div>
 			<div class="input-group">
 				<label for="mobile">전화번호</label> 
-				<input type="tel" name="mobile" id="mobile" placeholder="">
+				<input type="tel" name="mobile" id="mobile" placeholder="" required>
 			</div>
 			<div class="input-group">
 				<label for="zipcode">주소</label>
-				<input type="text" id="sample6_postcode" id="zipcode" name="zipcode" placeholder="우편번호" style="width: 30%; border-radius: 0.375rem;">
+				<input type="text" id="sample6_postcode" id="zipcode" name="zipcode" placeholder="우편번호" style="width: 30%; border-radius: 0.375rem;" required>
 				<input type="button" onclick="sample6_execDaumPostcode()" id="findZipcode" value="우편번호 찾기" style="width: 30%; margin-left:2rem; border-radius: 0.375rem;">
 			</div>
 			<div class="input-group">
-				<input type="text" id="sample6_address" name="roadAddr" placeholder="주소">
+				<input type="text" id="sample6_address" name="roadAddr" placeholder="주소" required>
 			</div>
 			<div class="input-group">
-				<input type="text" id="sample6_detailAddress" name="detailAddr" placeholder="상세주소를 입력해주세요">
+				<input type="text" id="sample6_detailAddress" name="detailAddr" placeholder="상세주소를 입력해주세요" required>
 			</div>
 			<div class="input-group">
-				<input type="text" id="sample6_extraAddress" name="jibunAddr" placeholder="참고항목">
+				<input type="text" id="sample6_extraAddress" name="jibunAddr" placeholder="참고항목(OO동)" required>
 			</div>
+			</c:if>
+			<c:if test="${map eq null}">
+				<div class="input-group">
+					<label for="id">아이디</label> 
+					<input type="text"	name="id" id="id" placeholder="" required>
+				</div>
+				<div class="input-group">
+					<label for="password">비밀번호</label> 
+					<input type="password" name="password" id="password" placeholder="" required>
+				</div>
+				<div class="input-group">
+					<label for="passwordConfirm">비밀번호 확인</label> 
+					<input type="password" name="passwordConfirm" id="passwordConfirm" placeholder="" required>
+				</div>
+				<div class="input-group">
+				<label for="nickname">이름</label> 
+				<input type="text" name="name" id="name" placeholder="" required>
+			</div>
+			<div class="input-group">
+				<label for="nickname">주민등록번호</label> 
+				<input type="text" name="ssn" id="ssn" placeholder="하이픈(-)을 포함하여 입력해주세요. 예)930101-1234567" required>
+			</div>
+			<div class="input-group">
+				<label for="nickname">닉네임</label> 
+				<input type="text" name="nickname" id="nickname" placeholder="" required>
+			</div>
+			<div class="input-group">
+				<label for="nickname">이메일</label> 
+				<input type="email" name="email" id="email" placeholder="" required>
+			</div>
+			<div class="input-group">
+				<label for="mobile">전화번호</label> 
+				<input type="tel" name="mobile" id="mobile" placeholder="" required>
+			</div>
+			<div class="input-group">
+				<label for="zipcode">주소</label>
+				<input type="text" id="sample6_postcode" id="zipcode" name="zipcode" placeholder="우편번호" style="width: 30%; border-radius: 0.375rem;" required>
+				<input type="button" onclick="sample6_execDaumPostcode()" id="findZipcode" value="우편번호 찾기" style="width: 30%; margin-left:2rem; border-radius: 0.375rem;">
+			</div>
+			<div class="input-group">
+				<input type="text" id="sample6_address" name="roadAddr" placeholder="주소" required>
+			</div>
+			<div class="input-group">
+				<input type="text" id="sample6_detailAddress" name="detailAddr" placeholder="상세주소를 입력해주세요" required>
+			</div>
+			<div class="input-group">
+				<input type="text" id="sample6_extraAddress" name="jibunAddr" placeholder="참고항목(OO동)" required>
+			</div>
+			</c:if>
+			
 			
 			<br>
 			<button class="sign">회원가입</button>
