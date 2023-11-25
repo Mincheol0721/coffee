@@ -11,6 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class MemberVO {
 	private String id;
+	private String socialId;
 	private String password;
 	private String name;
 	private String ssn;

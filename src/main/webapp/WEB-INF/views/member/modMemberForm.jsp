@@ -2,138 +2,74 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <c:set var="map" value="${map}" />
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-<link rel="stylesheet" href="/css/regMember.css">
+<link rel="stylesheet" href="/css/modMember.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </head>
 <body>
 	<div class="form-container">
-		<p class="title">로그인</p>
-		<c:if test="${map eq null}">
-			<form class="form" action="/coffee/member/addMember" method="post" enctype="multipart/form-data">
-		</c:if>
-		<c:if test="${kakaoReg eq true}">
-			<form class="form" action="/coffee/member/addKakaoMember" method="post" enctype="multipart/form-data">
-		</c:if>
-		<c:if test="${googleReg eq true}">
-			<form class="form" action="/coffee/member/addGoogleMember" method="post" enctype="multipart/form-data">
-		</c:if>
-		<c:if test="${naverReg eq true}">
-			<form class="form" action="/coffee/member/addNaverMember" method="post" enctype="multipart/form-data">
-		</c:if>
+		<p class="title">회원정보 수정</p>
+			<form class="form" action="/coffee/member/modMember" method="post" enctype="multipart/form-data">
+			<input type="hidden" name="id" value="${member.id}">
 			<div class="profile">
 				<input type="file" name="file" id="file" onchange="setThumbnail(event);">
 				<label for="file"> 
-				<c:if test="${map eq null}">
-					<img src="/images/profile.png" id="thumbnail">
-				</c:if>
-				<c:if test="${map ne null}">
-					<img src="${map.fileName}" id="thumbnail">
-					<input type="hidden" name="imgURL" value="${map.fileName}" >
-				</c:if>
+					<img src="/coffee/member/download?id=${member.id}" id="thumbnail">
+					<input type="hidden" name="fileName" value="${member.fileName}" >
 				</label>
 			</div>
-			<c:if test="${map ne null}">
-				<input type="hidden" name="id" id="id" value="${map.id}">
 			<div class="input-group">
 				<label for="name">이름</label> 
-				<input type="text" name="name" id="name" value="${map.name}" placeholder="" required>
+				<input type="text" name="name" id="name" value="${member.name}" placeholder="" required>
 			</div>
 			<div class="input-group">
 				<label for="nickname">주민등록번호</label> 
-				<input type="text" name="ssn" id="ssn" placeholder="하이픈(-)을 포함하여 입력해주세요. 예)930101-1234567" required>
+				<input type="text" name="ssn" id="ssn" value="${fn:substring(member.ssn, 0, 8)}******" disabled>
 			</div>
 			<div class="input-group">
 				<label for="nickname">닉네임</label> 
-				<input type="text" name="nickname" id="nickname" placeholder="" required>
+				<input type="text" name="nickname" id="nickname" value="${member.nickname}" placeholder="" required>
 			</div>
 			<div class="input-group">
 				<label for="nickname">이메일</label> 
-				<input type="email" name="email" id="email" value="${map.email}" placeholder="" required>
+				<input type="email" name="email" id="email" value="${member.email}" placeholder="" required>
 			</div>
 			<div class="input-group">
 				<label for="mobile">전화번호</label> 
-				<input type="tel" name="mobile" id="mobile" placeholder="" required>
+				<input type="tel" name="mobile" id="mobile" value="${member.mobile}" placeholder="" required>
 			</div>
 			<div class="input-group">
 				<label for="zipcode">주소</label>
-				<input type="text" id="sample6_postcode" id="zipcode" name="zipcode" placeholder="우편번호" style="width: 30%; border-radius: 0.375rem;" required>
-				<input type="button" onclick="sample6_execDaumPostcode()" id="findZipcode" value="우편번호 찾기" style="width: 30%; margin-left:2rem; border-radius: 0.375rem;">
-			</div>
-			<div class="input-group">
-				<input type="text" id="sample6_address" name="roadAddr" placeholder="주소" required>
-			</div>
-			<div class="input-group">
-				<input type="text" id="sample6_detailAddress" name="detailAddr" placeholder="상세주소를 입력해주세요" required>
-			</div>
-			<div class="input-group">
-				<input type="text" id="sample6_extraAddress" name="jibunAddr" placeholder="참고항목(OO동)" required>
-			</div>
-			</c:if>
-			<c:if test="${map eq null}">
-				<div class="input-group">
-					<label for="id">아이디</label> 
-					<input type="text"	name="id" id="id" placeholder="" required>
-				</div>
-				<div class="input-group">
-					<label for="password">비밀번호</label> 
-					<input type="password" name="password" id="password" placeholder="" required>
-				</div>
-				<div class="input-group">
-					<label for="passwordConfirm">비밀번호 확인</label> 
-					<input type="password" name="passwordConfirm" id="passwordConfirm" placeholder="" required>
-				</div>
-				<div class="input-group">
-				<label for="nickname">이름</label> 
-				<input type="text" name="name" id="name" placeholder="" required>
-			</div>
-			<div class="input-group">
-				<label for="nickname">주민등록번호</label> 
-				<input type="text" name="ssn" id="ssn" placeholder="하이픈(-)을 포함하여 입력해주세요. 예)930101-1234567" required>
-			</div>
-			<div class="input-group">
-				<label for="nickname">닉네임</label> 
-				<input type="text" name="nickname" id="nickname" placeholder="" required>
-			</div>
-			<div class="input-group">
-				<label for="nickname">이메일</label> 
-				<input type="email" name="email" id="email" placeholder="" required>
-			</div>
-			<div class="input-group">
-				<label for="mobile">전화번호</label> 
-				<input type="tel" name="mobile" id="mobile" placeholder="" required>
-			</div>
-			<div class="input-group">
-				<label for="zipcode">주소</label>
-				<input type="text" id="sample6_postcode" id="zipcode" name="zipcode" placeholder="우편번호" style="width: 30%; border-radius: 0.375rem;" required>
+				<input type="text" id="sample6_postcode" id="zipcode" name="zipcode" placeholder="우편번호" style="width: 30%; border-radius: 0.375rem;" value="${member.zipcode}" required>
 				<input type="button" onclick="sample6_execDaumPostcode()" id="findZipcode" value="우편번호 찾기" style="width: 30%; margin-left:2rem; border-radius: 0.375rem; background-color: #FEE500; color: black;">
 			</div>
 			<div class="input-group">
-				<input type="text" id="sample6_address" name="roadAddr" placeholder="주소" required>
+				<input type="text" id="sample6_address" name="roadAddr" placeholder="주소" value="${member.roadAddr}" required>
 			</div>
 			<div class="input-group">
-				<input type="text" id="sample6_detailAddress" name="detailAddr" placeholder="상세주소를 입력해주세요" required>
+				<input type="text" id="sample6_detailAddress" name="detailAddr" placeholder="상세주소를 입력해주세요" value="${member.detailAddr}" required>
 			</div>
 			<div class="input-group">
-				<input type="text" id="sample6_extraAddress" name="jibunAddr" placeholder="참고항목(OO동)" required>
+				<input type="text" id="sample6_extraAddress" name="jibunAddr" placeholder="참고항목(OO동)" value="${member.jibunAddr}" required>
 			</div>
-			</c:if>
-			
 			
 			<br>
-			<button class="sign">회원가입</button>
+			<button class="button" type="button" onclick="location.href='/coffee/member/modPasswordForm'">
+			    <p>비밀번호 변경</p>
+			    <svg stroke-width="4" stroke="currentColor" viewBox="0 0 24 24" fill="none" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg">
+			        <path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linejoin="round" stroke-linecap="round"></path>
+			    </svg>
+			</button>
+			<button class="sign" type="submit">수정</button>
 		</form>
 		<br>
-		<p class="signup">
-			계정이 있으신가요?
-			<a rel="noopener noreferrer" href="/coffee/member/loginForm" class="">로그인하기</a>
-		</p>
 	</div>
 	
 	

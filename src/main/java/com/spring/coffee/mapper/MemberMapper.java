@@ -5,6 +5,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import com.spring.coffee.member.vo.MemberVO;
 
@@ -20,4 +21,14 @@ public interface MemberMapper {
 	
 	@Select("SELECT * FROM member WHERE id=#{id, jdbcType=VARCHAR}")
 	MemberVO getMemberById(String id);
+	
+	@Update("UPDATE member SET name=#{name}, nickname=#{nickname}, email=#{email}, mobile=#{mobile}, zipcode=#{zipcode}, roadAddr=#{roadAddr}, detailAddr=#{detailAddr}, jibunAddr=#{jibunAddr}, fileName=#{fileName} WHERE id=#{id}")
+	void modMember(Map map);
+	
+	@Update("UPDATE member SET password=#{password} WHERE id=#{id}")
+	void modPassword(String id, String password);
+	
+	@Insert("INSERT INTO member(socialId, password, name, ssn, nickname, email, mobile, zipcode, roadAddr, detailAddr, jibunAddr, fileName) "
+			+ "    VALUES (#{id}, #{password, jdbcType=VARCHAR}, #{name}, #{ssn}, #{nickname}, #{email}, #{mobile}, #{zipcode}, #{roadAddr}, #{detailAddr}, #{jibunAddr}, #{fileName})")
+	void addSocialMember(Map map);
 }

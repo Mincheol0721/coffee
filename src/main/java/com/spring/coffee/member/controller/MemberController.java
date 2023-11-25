@@ -60,18 +60,12 @@ import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("coffee/member")
-public class MemberController implements ServletContextAware {
+public class MemberController {
 	
 	private final static String viewPath = "/WEB-INF/views/member/";
 	
 	@Value("${upload.directory}")
 	private String uploadPath;
-	
-	private ServletContext servletContext;
-	@Override
-	public void setServletContext(ServletContext servletContext) {
-		this.servletContext = servletContext;
-	}
 	
 	@Autowired(required = false)
 	MemberVO member;
@@ -584,7 +578,7 @@ public class MemberController implements ServletContextAware {
 		System.out.println("이미지 다운로드 및 저장 완료: " + savePath);
 		
 		//mapper호출하여 db에 값 insert
-		memberMapper.addMember(map);
+		memberMapper.addSocialMember(map);
 		
 		//insert후 MemberVO객체에 값들을 저장하여 바로 로그인 요청
 		member.setId(map.get("id").toString());
@@ -763,12 +757,143 @@ public class MemberController implements ServletContextAware {
 		return mav;
 	}
 	
+	@RequestMapping("memberDetail")
+	public ModelAndView detailMember(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView mav = new ModelAndView();
+		HttpSession session = request.getSession();
+		MemberVO vo = (MemberVO)session.getAttribute("member");
+		String id = vo.getId();
+		
+		member = memberMapper.getMemberById(id);
+		
+		mav.addObject("vo", member);
+		mav.addObject("center", viewPath + "memberDetail.jsp");
+		mav.setViewName("main");
+		
+		return mav;
+	}
+	
+	@RequestMapping("modForm")
+	public ModelAndView modForm(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView mav = new ModelAndView();
+
+		mav.addObject("center", viewPath + "modMemberForm.jsp");
+		mav.setViewName("main");
+		
+		return mav;
+	}
+	
+	@RequestMapping("modPasswordForm")
+	public ModelAndView modPasswordForm(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView mav = new ModelAndView();
+		
+		mav.addObject("center", viewPath + "modPasswordForm.jsp");
+		mav.setViewName("main");
+		
+		return mav;
+	}
+	
+	@RequestMapping("modPassword")
+	public ModelAndView modPassword(@RequestParam("curPassword") String curPassword, @RequestParam("password") String password, @RequestParam("id") String id) throws Exception {
+		ModelAndView mav = new ModelAndView();
+		member = memberMapper.getMemberById(id);
+		
+		if(member.getPassword().equals(curPassword)) {
+			System.out.println("현재 비밀번호 일치하여 수정실행!");
+			memberMapper.modPassword(id, password);
+			
+			mav.setViewName("redirect:/coffee/member/memberDetail");
+			
+			return mav;
+		} else {
+			//비밀번호 변경 클릭 시 자꾸 message 출력되는 현상 fix필요
+			System.out.println("현재 비밀번호 틀림!");
+			
+			mav.addObject("message", "failed");
+			mav.addObject("center", viewPath + "modPasswordForm.jsp");
+			mav.setViewName("main");
+			
+			return mav;
+		}
+		
+	}
+
+	@RequestMapping(value="modMember", method = {RequestMethod.GET, RequestMethod.POST})
+	public ModelAndView modMember(@RequestParam("file") MultipartFile file, MultipartHttpServletRequest request, RedirectAttributes rAttr) throws Exception {
+		System.out.println("modMember탑승");
+		ModelAndView mav = new ModelAndView();
+		MemberVO member = new MemberVO();
+		HttpSession session = request.getSession();
+		//파일 명 인코딩
+		request.setCharacterEncoding("UTF-8");
+		
+		//파일 경로 저장할 변수 설정
+		String filePath = uploadPath + "/member/";
+		
+		//입력한 값들의 정보를 저장할 Map 생성
+		Map map = new HashMap();
+		
+		//request에서 값들을 꺼내와 저장한 후 배열자체를 반환할 Enumeration객체 생성
+		Enumeration enu = request.getParameterNames();
+		
+		while (enu.hasMoreElements()) {
+			String key = (String)enu.nextElement();
+			String value = request.getParameter(key);
+			
+			map.put(key, value);
+		}
+
+		String fileName = (String)map.get("fileName");
+		String id = (String)map.get("id");
+		
+		//파일명 받아오기
+		System.out.println("update fileName: " + fileName);
+		
+		//기존 이미지 폴더 경로 얻기
+		String imgPath = filePath + id;
+		System.out.println("modMember imgPath: " + imgPath);
+
+		if(!file.isEmpty()) {
+			System.out.println("if문 탑승! 수정한 이미지 파일 존재!");
+			fileName = file.getOriginalFilename();
+			//기존 이미지 삭제
+			File existingFile = new File(imgPath);
+			//기존 이미지 폴더 및 파일 삭제
+			if(existingFile.isDirectory()) {
+				File[] files = existingFile.listFiles();
+				if(files != null) {
+					for(File image : files) {
+						image.delete();
+					}
+				}
+				existingFile.delete();
+			}
+			
+			//새 이미지 업로드
+			//폴더 생성을 위해 경로 설정
+			File memDir = new File(imgPath);
+			//폴더 생성
+			memDir.mkdir();
+			
+			filePath = imgPath + fileName;
+			File dest = new File(filePath);
+			System.out.println("filePath: " + filePath);
+			// 파일을 해당 폴더로 복사
+			Files.copy(file.getInputStream(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		}
+		
+		memberMapper.modMember(map);
+		
+		mav.setViewName("redirect:/coffee/member/memberDetail");
+		return mav;
+	}
+	
 	@RequestMapping("download")
 	public void download(@RequestParam("id") String id, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		System.out.println("id: " + id);
 		HttpSession session = request.getSession();
 		MemberVO member = memberMapper.getMemberById(id);
 		String fileName = member.getFileName();
-		System.out.println("id: " + id);
 		
 		//사진을 내려받기 위한 출력스트림 통로 객체 생성
 		OutputStream out = response.getOutputStream();
