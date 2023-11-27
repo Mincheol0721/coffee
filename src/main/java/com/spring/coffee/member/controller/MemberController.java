@@ -159,12 +159,12 @@ public class MemberController {
 		KakaoInfo kakaoInfo = objectMapper2.readValue(responseEntity2.getBody(), KakaoInfo.class);
 		
 		//id값 얻기
-		String id = kakaoInfo.getId();
+		String socialId = kakaoInfo.getId();
 		//세션얻기
 		HttpSession session = request.getSession();
 		
 		//아이디로 회원 조회
-		MemberVO member = memberMapper.getMemberById(id);
+		MemberVO member = memberMapper.getMemberBySocialId(socialId);
 		
 		if(member != null) {
 			System.out.println("kakao 아이디 존재");
@@ -179,7 +179,7 @@ public class MemberController {
 		} else {
 			System.out.println("kakao 아이디 미존재");
 			Map<String, String> map = new HashMap<String, String>();
-			map.put("id", id);
+			map.put("socialId", socialId);
 			map.put("name", kakaoInfo.getKakao_account().getName());
 			map.put("email", kakaoInfo.getKakao_account().getEmail());
 			map.put("fileName", kakaoInfo.getProperties().getProfile_image());
@@ -239,8 +239,8 @@ public class MemberController {
 		GoogleInfo googleInfo = objectMapper2.readValue(responseEntity2.getBody(), GoogleInfo.class);
 		
 		//id값 얻기
-		String id = googleInfo.getId();
-		MemberVO member = memberMapper.getMemberById(id);
+		String socialId = googleInfo.getId();
+		MemberVO member = memberMapper.getMemberBySocialId(socialId);
 		
 		if(member != null) {
 			System.out.println("Google 아이디 존재");
@@ -255,7 +255,7 @@ public class MemberController {
 		} else {
 			System.out.println("Google 아이디 미존재");
 			Map<String, String> map = new HashMap<String, String>();
-			map.put("id", id);
+			map.put("socialId", socialId);
 			map.put("name", googleInfo.getName());
 			map.put("email", googleInfo.getEmail());
 			map.put("fileName", googleInfo.getPicture());
@@ -329,9 +329,9 @@ public class MemberController {
 		NaverInfo naverInfo = objectMapper2.readValue(responseEntity2.getBody(), NaverInfo.class);
 		
 		//회원정보 조회를 위해 id얻기
-		String id = naverInfo.getResponse().getId();
+		String socialId = naverInfo.getResponse().getId();
 		System.out.println("name: " + naverInfo.getResponse().getName());
-		MemberVO member = memberMapper.getMemberById(id);
+		MemberVO member = memberMapper.getMemberBySocialId(socialId);
 		
 		if(member != null) {
 			System.out.println("Naver 아이디 존재");
@@ -346,7 +346,7 @@ public class MemberController {
 		} else {
 			System.out.println("Naver 아이디 미존재");
 			Map<String, String> map = new HashMap<String, String>();
-			map.put("id", id);
+			map.put("socialId", socialId);
 			map.put("name", naverInfo.getResponse().getName());
 			map.put("email", naverInfo.getResponse().getEmail());
 			map.put("fileName", naverInfo.getResponse().getProfile_image());
@@ -489,7 +489,7 @@ public class MemberController {
 		System.out.println("이미지 다운로드 및 저장 완료: " + savePath);
 		
 		//mapper호출하여 db에 값 insert
-		memberMapper.addMember(map);
+		memberMapper.addSocialMember(map);
 		
 		//insert후 MemberVO객체에 값들을 저장하여 바로 로그인 요청
 		member.setId(map.get("id").toString());
@@ -636,7 +636,6 @@ public class MemberController {
 			
 			map.put(key, value);
 		}
-		
 		//id 값 저장
 		String id = map.get("id").toString();
 		//이미지 URL에서 이미지를 다운받아 저장하기 위해 URL정보 저장
@@ -667,7 +666,7 @@ public class MemberController {
 		System.out.println("이미지 다운로드 및 저장 완료: " + savePath);
 		
 		//mapper호출하여 db에 값 insert
-		memberMapper.addMember(map);
+		memberMapper.addSocialMember(map);
 		
 		//insert후 MemberVO객체에 값들을 저장하여 바로 로그인 요청
 		member.setId(map.get("id").toString());
@@ -928,6 +927,36 @@ public class MemberController {
 		
 		in.close();
 		out.close();
+	}
+	
+	@RequestMapping("nickValidate")
+	public String nickValidate(@RequestParam("nickname") String nickname, HttpServletRequest request, HttpServletResponse response) {
+		System.out.println("닉네임 유효성 검사: " + nickname);
+		
+		String validatedNickname = memberMapper.nickValidate(nickname);
+		System.out.println("닉네임: " + validatedNickname);
+		
+		if(validatedNickname == null) {
+			return "사용가능";
+		} else {
+			return "사용불가";
+		}
+		
+	}
+	
+	@RequestMapping("idValidate")
+	public String idValidate(@RequestParam("id") String id, HttpServletRequest request, HttpServletResponse response) {
+		System.out.println("아이디 유효성 검사: " + id);
+		
+		String validatedId = memberMapper.idValidate(id);
+		System.out.println("닉네임: " + validatedId);
+		
+		if(validatedId == null) {
+			return "사용가능";
+		} else {
+			return "사용불가";
+		}
+		
 	}
 	
 	

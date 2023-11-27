@@ -11,6 +11,13 @@
 <link rel="stylesheet" href="/css/regMember.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script type="text/javascript">
+	$(function() {
+		
+		
+	});
+</script>
 </head>
 <body>
 	<div class="form-container">
@@ -27,6 +34,7 @@
 		<c:if test="${naverReg eq true}">
 			<form class="form" action="/coffee/member/addNaverMember" method="post" enctype="multipart/form-data">
 		</c:if>
+		<input type="hidden" id="socailId" name="socialId" value="${map.socialId}">
 			<div class="profile">
 				<input type="file" name="file" id="file" onchange="setThumbnail(event);">
 				<label for="file"> 
@@ -35,11 +43,23 @@
 				</c:if>
 				<c:if test="${map ne null}">
 					<img src="${map.fileName}" id="thumbnail">
-					<input type="hidden" name="imgURL" value="${map.fileName}" >
+					<input type="hidden" name="fileName" value="${map.fileName}" >
 				</c:if>
 				</label>
 			</div>
 			<c:if test="${map ne null}">
+			<div class="input-group">
+				<label for="id">아이디<span class="idValidate valMsg"></span> </label> 
+				<input type="text"	name="id" id="id" placeholder="" required>
+			</div>
+			<div class="input-group">
+				<label for="password">비밀번호<span class="passwordValidate valMsg"></span> </label> 
+				<input type="password" name="password" id="password" placeholder="" required>
+			</div>
+			<div class="input-group">
+				<label for="passwordConfirm">비밀번호 확인 <span class="passwordConfirmValidate valMsg"></span></label> 
+				<input type="password" name="passwordConfirm" id="passwordConfirm" placeholder="" required>
+			</div>
 				<input type="hidden" name="id" id="id" value="${map.id}">
 			<div class="input-group">
 				<label for="name">이름</label> 
@@ -50,9 +70,10 @@
 				<input type="text" name="ssn" id="ssn" placeholder="하이픈(-)을 포함하여 입력해주세요. 예)930101-1234567" required>
 			</div>
 			<div class="input-group">
-				<label for="nickname">닉네임</label> 
+				<label for="nickname">닉네임 <span class="nickValidate valMsg"></span> </label> 
 				<input type="text" name="nickname" id="nickname" placeholder="" required>
 			</div>
+			
 			<div class="input-group">
 				<label for="nickname">이메일</label> 
 				<input type="email" name="email" id="email" value="${map.email}" placeholder="" required>
@@ -78,53 +99,52 @@
 			</c:if>
 			<c:if test="${map eq null}">
 				<div class="input-group">
-					<label for="id">아이디</label> 
+					<label for="id">아이디<span class="idValidate valMsg"></span> </label> 
 					<input type="text"	name="id" id="id" placeholder="" required>
 				</div>
 				<div class="input-group">
-					<label for="password">비밀번호</label> 
+					<label for="password">비밀번호<span class="passwordValidate valMsg"></span> </label> 
 					<input type="password" name="password" id="password" placeholder="" required>
 				</div>
 				<div class="input-group">
-					<label for="passwordConfirm">비밀번호 확인</label> 
+					<label for="passwordConfirm">비밀번호 확인 <span class="passwordConfirmValidate valMsg"></span></label> 
 					<input type="password" name="passwordConfirm" id="passwordConfirm" placeholder="" required>
 				</div>
 				<div class="input-group">
 				<label for="nickname">이름</label> 
 				<input type="text" name="name" id="name" placeholder="" required>
-			</div>
-			<div class="input-group">
-				<label for="nickname">주민등록번호</label> 
-				<input type="text" name="ssn" id="ssn" placeholder="하이픈(-)을 포함하여 입력해주세요. 예)930101-1234567" required>
-			</div>
-			<div class="input-group">
-				<label for="nickname">닉네임</label> 
-				<input type="text" name="nickname" id="nickname" placeholder="" required>
-			</div>
-			<div class="input-group">
-				<label for="nickname">이메일</label> 
-				<input type="email" name="email" id="email" placeholder="" required>
-			</div>
-			<div class="input-group">
-				<label for="mobile">전화번호</label> 
-				<input type="tel" name="mobile" id="mobile" placeholder="" required>
-			</div>
-			<div class="input-group">
-				<label for="zipcode">주소</label>
-				<input type="text" id="sample6_postcode" id="zipcode" name="zipcode" placeholder="우편번호" style="width: 30%; border-radius: 0.375rem;" required>
-				<input type="button" onclick="sample6_execDaumPostcode()" id="findZipcode" value="우편번호 찾기" style="width: 30%; margin-left:2rem; border-radius: 0.375rem; background-color: #FEE500; color: black;">
-			</div>
-			<div class="input-group">
-				<input type="text" id="sample6_address" name="roadAddr" placeholder="주소" required>
-			</div>
-			<div class="input-group">
-				<input type="text" id="sample6_detailAddress" name="detailAddr" placeholder="상세주소를 입력해주세요" required>
-			</div>
-			<div class="input-group">
-				<input type="text" id="sample6_extraAddress" name="jibunAddr" placeholder="참고항목(OO동)" required>
-			</div>
+				</div>
+				<div class="input-group">
+					<label for="nickname">주민등록번호</label> 
+					<input type="text" name="ssn" id="ssn" placeholder="하이픈(-)을 포함하여 입력해주세요. 예)930101-1234567" required>
+				</div>
+				<div class="input-group">
+					<label for="nickname">닉네임 <span class="nickValidate valMsg"></span> </label> 
+					<input type="text" name="nickname" id="nickname" placeholder="" required>
+				</div>
+				<div class="input-group">
+					<label for="nickname">이메일</label> 
+					<input type="email" name="email" id="email" placeholder="" required>
+				</div>
+				<div class="input-group">
+					<label for="mobile">전화번호</label> 
+					<input type="tel" name="mobile" id="mobile" placeholder="" required>
+				</div>
+				<div class="input-group">
+					<label for="zipcode">주소</label>
+					<input type="text" id="sample6_postcode" id="zipcode" name="zipcode" placeholder="우편번호" style="width: 30%; border-radius: 0.375rem;" required>
+					<input type="button" onclick="sample6_execDaumPostcode()" id="findZipcode" value="우편번호 찾기" style="width: 30%; margin-left:2rem; border-radius: 0.375rem; background-color: #FEE500; color: black;">
+				</div>
+				<div class="input-group">
+					<input type="text" id="sample6_address" name="roadAddr" placeholder="주소" required>
+				</div>
+				<div class="input-group">
+					<input type="text" id="sample6_detailAddress" name="detailAddr" placeholder="상세주소를 입력해주세요" required>
+				</div>
+				<div class="input-group">
+					<input type="text" id="sample6_extraAddress" name="jibunAddr" placeholder="참고항목(OO동)" required>
+				</div>
 			</c:if>
-			
 			
 			<br>
 			<button class="sign">회원가입</button>
@@ -136,7 +156,7 @@
 		</p>
 	</div>
 	
-	
+	<script type="text/javascript" src="/js/regMember.js"></script>
 	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 	<script>
 	    function sample6_execDaumPostcode() {
