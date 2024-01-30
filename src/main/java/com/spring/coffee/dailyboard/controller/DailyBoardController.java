@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
-@RequestMapping("coffee/board")
+@RequestMapping("board")
 public class DailyBoardController {
 	
 	private final static String viewPath = "/WEB-INF/views/board/";
