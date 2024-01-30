@@ -639,7 +639,7 @@ public class MemberController {
 		//id 값 저장
 		String id = map.get("id").toString();
 		//이미지 URL에서 이미지를 다운받아 저장하기 위해 URL정보 저장
-		String imgURL = map.get("imgURL").toString();
+		String imgURL = map.get("fileName").toString();
 		
 		//이미지 URL 생성
 		URL url = new URL(imgURL);
@@ -855,6 +855,7 @@ public class MemberController {
 		if(!file.isEmpty()) {
 			System.out.println("if문 탑승! 수정한 이미지 파일 존재!");
 			fileName = file.getOriginalFilename();
+			map.put("fileName", fileName);
 			//기존 이미지 삭제
 			File existingFile = new File(imgPath);
 			//기존 이미지 폴더 및 파일 삭제
@@ -874,7 +875,7 @@ public class MemberController {
 			//폴더 생성
 			memDir.mkdir();
 			
-			filePath = imgPath + fileName;
+			filePath = imgPath + "/" + fileName;
 			File dest = new File(filePath);
 			System.out.println("filePath: " + filePath);
 			// 파일을 해당 폴더로 복사
