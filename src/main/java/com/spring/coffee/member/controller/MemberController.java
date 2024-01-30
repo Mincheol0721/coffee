@@ -59,7 +59,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping("coffee/member")
+@RequestMapping("member")
 public class MemberController {
 	
 	private final static String viewPath = "/WEB-INF/views/member/";
