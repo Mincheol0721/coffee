@@ -21,7 +21,7 @@
 			</c:if></h1>
 			<hr>
 				<c:if test="${isLogOn == true}">
-					<button class="cssbuttons-io-button writeBtn" onclick="location.href='#'">
+					<button class="cssbuttons-io-button writeBtn" onclick="location.href='/coffee/board/dailyBoardForm'">
 					  글작성
 					  <div class="icon">
 					    <svg
