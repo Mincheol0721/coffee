@@ -1,9 +1,6 @@
 package com.spring.coffee.dailyboard.controller;
 
-import java.io.File;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.coffee.dailyboard.service.DailyBoardService;
@@ -40,7 +35,7 @@ public class DailyBoardController {
 	private DailyBoardService service;
 	
 	@RequestMapping("dailyBoardList")
-	public @ResponseBody ModelAndView dailyBoardList(String pageNum, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public @ResponseBody ModelAndView dailyBoardList(@RequestParam(value = "pageNum", required = false) String pageNum, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView mav = new ModelAndView();
 		
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -66,31 +61,23 @@ public class DailyBoardController {
 	}
 	
 	@RequestMapping("addDailyBoard")
-	public ModelAndView addDailyBoard(
-			/* @RequestParam("file") List<MultipartFile> files, */MultipartHttpServletRequest request) throws Exception {
+	public ModelAndView addDailyBoard(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.setCharacterEncoding("UTF-8");
 		
 		ModelAndView mav = new ModelAndView();
 		
-		request.setCharacterEncoding("UTF-8");
-		String absPath = uploadPath + "/dailyBoard/";
+		service.insertDailyBoard(request, response);
+//		insertDailyBoardImg(request, response);
 		
-		Map map = new HashMap();
-		
-		Enumeration enu = request.getParameterNames();
-		
-		while (enu.hasMoreElements()) {
-			String key = (String)enu.nextElement();
-			
-			String value = request.getParameter(key);
-			
-			map.put(key, value);
-			log.info(key + ": " + value);
-		}
-		
-		
-		
-		
+		mav.setViewName("redirect:/coffee/board/dailyBoardList");
 		
 		return mav;
+	} 
+	
+	@RequestMapping("uploadImg")
+	public void uploadImg(HttpServletRequest request, HttpServletResponse response) throws Exception {
+//		log.info("controller filename: " + request.getHeader("file-name"));
+		service.uploadImg(request, response);
 	}
+	
 }

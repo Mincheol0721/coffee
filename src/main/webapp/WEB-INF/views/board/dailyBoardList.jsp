@@ -21,7 +21,7 @@
 				 - <c:out value="${category}" />
 			</c:if></h1>
 			<hr>
-				<c:if test="${isLogOn == true}">
+				<c:if test="${not empty member}">
 					<button class="cssbuttons-io-button writeBtn" onclick="location.href='/coffee/board/dailyBoardForm'">
 					  글작성
 					  <div class="icon">

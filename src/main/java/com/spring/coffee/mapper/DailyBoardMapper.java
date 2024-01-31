@@ -18,8 +18,14 @@ public interface DailyBoardMapper {
 	@Select("SELECT COUNT(*) FROM dailyBoard")
 	int getDailyBoardCount();
 	
-	@Insert("INSERT INTO dailyBoard(no, title, content, nickname, fileName) "
-			+ " VALUES (#{no}, #{title}, #{content}, #{nickname}, #{fileName})")
+	@Insert("INSERT INTO dailyBoard(no, title, content, nickname) "
+			+ " VALUES (db_no.nextval, #{title}, #{content}, #{nickname})")
 	void addDailyBoard(Map map);
+	
+	@Select("SELECT MAX(no) FROM dailyboard")
+	int getDailyBoardNo();
+
+	void insertDailyBoardImg(List<String> fileList);
+	
 	
 }

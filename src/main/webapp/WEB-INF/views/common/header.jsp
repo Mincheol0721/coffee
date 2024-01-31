@@ -55,21 +55,21 @@
     		
             	<div class="dropdown text-end users">
               		<a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-	              		<c:if test="${isLogOn ne true}">
+	              		<c:if test="${empty member}">
 	               		 	<img src="/images/login_image.png" alt="user" width="32" height="32" class="rounded-circle">
 	              		</c:if>
-	              		<c:if test="${isLogOn eq true}">
+	              		<c:if test="${not empty member}">
 	                		<img src="/coffee/member/download?id=${member.id }" alt="user" width="32" height="32" class="rounded-circle">
 	              		</c:if>
               		</a>
    					<c:choose>
-    					<c:when test="${isLogOn ne true}">
+    					<c:when test="${empty member}">
 		              		<ul class="dropdown-menu text-small">
 		                		<li><a class="dropdown-item" href="/coffee/member/loginForm">로그인</a></li>
 		                		<li><a class="dropdown-item" href="/coffee/member/regForm">회원가입</a></li>
 	              			</ul>
     					</c:when>
-    					<c:when test="${isLogOn eq true}">
+    					<c:when test="${not empty member}">
 							<!-- 로그인 시 화면-->
 							<ul class="dropdown-menu text-small">
 				  				<li><a class="dropdown-item" href="/coffee/member/memberDetail">마이페이지</a></li>
