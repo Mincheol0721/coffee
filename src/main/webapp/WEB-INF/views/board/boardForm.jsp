@@ -5,6 +5,21 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Insert title here</title>
+		<script type="text/javascript" src="/SE2/js/HuskyEZCreator.js" charset="utf-8"></script>
+		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+	</head>
+	<body style="text-align: center;">
+		<h1>게시글 작성</h1>
+		<form action="/coffee/board/addDailyBoard" method="post" enctype="multipart/form-data">
+			<label for="title">제목</label>
+			<input type="text" id="title" name="title" style="width: 70%;">
+			<hr>
+			<div id="smarteditor">
+				<textarea name="content" id="content" placeholder="Insert the contents." rows="20" cols="50" style="width: 1000px; overflow: scroll; align-content: center;"></textarea>
+			</div> 
+			<input type="submit" value="submit" />
+		</form>
+		
 		<script>
 			let oEditors = [];
 			
@@ -12,9 +27,14 @@
 				console.log("NaverSmartEditor");
 				nhn.husky.EZCreator.createInIFrame({
 					oAppRef: oEditors,
-					elPlaceHolder: "editorTxt",
+					elPlaceHolder: "content",
 					sSkinURI: "/SE2/SmartEditor2Skin.html",
-					fCreator: "createSEditor2"
+					fCreator: "createSEditor2",
+					htParams: {
+						bUseToolbar: true,
+						bUseVerticalResizer: false,
+						bUseModeChanger: false
+					}
 				})
 			};
 			
@@ -22,22 +42,7 @@
 				smartEditor();
 			})
 			
-			oEditors.getById["editorTxt"].exec("UPDATE_CONTENTS_FIELD", []);
+			oEditors.getById["content"].exec("UPDATE_CONTENTS_FIELD", []);
 		</script>
-		<script type="text/javascript" src="/SE2/js/HuskyEZCreator.js" charset="utf-8"></script>
-	</head>
-	<body style="text-align: center;">
-		<h1>게시글 작성</h1>
-		<form action="/coffee/board/addDailyBoard" method="post" enctype="multipart/form-data">
-			<label for="title">제목</label>
-			<input type="text" style="width: 70%;" id="title">
-			<hr>
-			<div id="smarteditor">
-				<textarea name="editorTxt" id="editorTxt" placeholder="Insert the contents." rows="20" cols="50" style="width: 70%;"></textarea>
-			</div> 
-			<input type="submit" value="submit" />
-		</form>
-		
-		
 	</body>
 </html>

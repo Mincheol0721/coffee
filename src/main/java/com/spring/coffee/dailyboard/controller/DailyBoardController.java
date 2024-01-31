@@ -21,8 +21,10 @@ import com.spring.coffee.dailyboard.vo.DailyBoardVO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
+@Slf4j
 @RequestMapping("coffee/board")
 public class DailyBoardController {
 	
@@ -82,6 +84,7 @@ public class DailyBoardController {
 			String value = request.getParameter(key);
 			
 			map.put(key, value);
+			log.info(key + ": " + value);
 		}
 		
 		
