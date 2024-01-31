@@ -12,8 +12,11 @@ import com.spring.coffee.dailyboard.vo.DailyBoardVO;
 @Mapper
 public interface DailyBoardMapper {
 	
-	@Select("SELECT * FROM dailyBoard")
-	List<DailyBoardVO> getDailyBoardList();
+	@Select("SELECT * FROM ( SELECT ROWNUM AS rn, b.* FROM dailyBoard b WHERE ROWNUM <= #{endRow} ORDER BY no DESC) WHERE rn > #{startRow}")
+	List<DailyBoardVO> getDailyBoardList(int startRow, int endRow);
+	
+	@Select("SELECT COUNT(*) FROM dailyBoard")
+	int getDailyBoardCount();
 	
 	@Insert("INSERT INTO dailyBoard(no, title, content, nickname, fileName) "
 			+ " VALUES (#{no}, #{title}, #{content}, #{nickname}, #{fileName})")

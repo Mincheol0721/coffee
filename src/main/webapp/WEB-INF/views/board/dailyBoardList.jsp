@@ -2,6 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html>
@@ -49,19 +50,19 @@
 							</tr>
 						</thead>
 						<tbody>
-						<c:if test="${empty tradeList.vo}">
+						<c:if test="${empty list.vo}">
 							<tr height="40px">
 								<td colspan="6" style="text-align:center;"><font size="3" color="black">작성된 내용이 없습니다.</font></td>
 							</tr>
 						</c:if>
-				<c:if test="${not empty tradeList.vo}">
-					<c:set var="no" value="${tradeList.no}" />
-						<c:forEach var="vo" items="${tradeList.vo}" varStatus="loop">
+				<c:if test="${not empty list.vo}">
+					<c:set var="no" value="${list.no}" />
+						<c:forEach var="vo" items="${list.vo}" varStatus="loop">
 						<c:set var="index" value="${loop.index + 1}" />
-							<tr class="boardArticles" onclick="location.href='${path}/trade/tradeDetail.do?no=${vo.no}'">
-								<td class="boardNo">${index + ((tradeList.currentPage-1) * 10)}</td>
+							<tr class="boardArticles" onclick="location.href='<%-- %>${path}/coffee/board/dailyBoardDetail?no=${vo.no}'--%>#">
+								<td class="boardNo">${index + ((list.currentPage-1) * 10)}</td>
 								<td class="boardImg">
-									<img src="${path}/trade/thumbnail.do?no=${vo.no}">
+									<img src="${path}/coffee/board/thumbnail.do?no=${vo.no}">
 								</td>
 								<td class="boardTitle">${vo.title}</td>
 								<td class="boardUser">${vo.nickname}</td>
@@ -72,28 +73,29 @@
 						</c:if>
 						</tbody>
 					</table>
+					
 				<nav aria-label="Page navigation example">
-					<%-- <c:if test="${not empty tradeList.vo}">
-					<fmt:parseNumber var="pageCount" value="${tradeList.count/tradeList.pageSize + (tradeList.count % tradeList.pageSize eq 0 ? 0 : 1)}" integerOnly="true" />
+					<c:if test="${not empty list.vo}">
+					<fmt:parseNumber var="pageCount" value="${list.count/list.pageSize + (list.count % list.pageSize eq 0 ? 0 : 1)}" integerOnly="true" />
 						<ul class="pagination" style="float: right; margin-right: 20px">
 						<!-- 글이 존재 한다면 -->
-						<c:if test="${not empty tradeList.vo}">
-							<fmt:parseNumber var="pageCount" value="${tradeList.count/tradeList.pageSize + (tradeList.count % tradeList.pageSize eq 0 ? 0 : 1)}" integerOnly="true" />
+						<c:if test="${not empty list.vo}">
+							<fmt:parseNumber var="pageCount" value="${list.count/list.pageSize + (list.count % list.pageSize eq 0 ? 0 : 1)}" integerOnly="true" />
 							<c:set var="startPage" value="${1}" />
 						</c:if>
 						
 						<!-- pageSize로 설정한 수보다 글이 더 많으면 -->
-						<c:if test="${(tradeList.currentPage % tradeList.pageBlock) ne 0}">
-							<fmt:parseNumber var="result" value="${tradeList.currentPage / tradeList.pageBlock}" integerOnly="true" />
-							<c:set var="startPage" value="${result * tradeList.pageBlock + 1}" />
+						<c:if test="${(list.currentPage % list.pageBlock) ne 0}">
+							<fmt:parseNumber var="result" value="${list.currentPage / list.pageBlock}" integerOnly="true" />
+							<c:set var="startPage" value="${result * list.pageBlock + 1}" />
 						</c:if>
 						
 						<!-- pageSize보다 글 개수가 더 적으면 -->
-						<c:if test="${tradeList.currentPage % tradeList.pageSize eq 0}">
-							<c:set var="startPage" value="${(result - 1) * tradeList.pageSize + 1}" />
+						<c:if test="${list.currentPage % list.pageSize eq 0}">
+							<c:set var="startPage" value="${(result - 1) * list.pageSize + 1}" />
 						</c:if>
 						
-						<c:set var="pageBlock" value="${tradeList.pageBlock}" />
+						<c:set var="pageBlock" value="${list.pageBlock}" />
 						<c:set var="endPage" value="${startPage + pageBlock - 1}" />
 						
 						<!-- 끝 페이지 -->
@@ -102,9 +104,9 @@
 						</c:if>
 						
 						<!-- 시작페이지가 pageSize보다 크면 -->
-						<c:if test="${startPage > tradeList.pageBlock}">
+						<c:if test="${startPage > list.pageBlock}">
 							<li class="page-item">
-								<a class="page-link" href="${path}/trade/tradeList.do?<c:if test="${not empty category}">category=${category}&</c:if>pageNum=${startPage - tradeList.pageBlock}" aria-label="Previous">
+								<a class="page-link" href="${path}/coffee/board/dailyBoardList?<c:if test="${not empty category}">category=${category}&</c:if>pageNum=${startPage - list.pageBlock}" aria-label="Previous">
 						      		<span aria-hidden="true">&laquo;</span>
 						    	</a>
 							</li>
@@ -113,11 +115,11 @@
 						<!-- 시작페이지부터 끝페이지까지 노출되도록 반복문 사용 -->
 						<c:forEach var="n" begin="${startPage}" end="${endPage}">
 							<c:choose>
-								<c:when test="${n == tradeList.currentPage}">
-									<li class="page-item active"><a class="page-link" href="${path}/trade/tradeList.do?<c:if test="${not empty category}">category=${category}&</c:if>pageNum=${tradeList.currentPage}">${tradeList.currentPage}</a></li>
+								<c:when test="${n == list.currentPage}">
+									<li class="page-item active"><a class="page-link" href="${path}/coffee/board/dailyBoardList?<c:if test="${not empty category}">category=${category}&</c:if>pageNum=${list.currentPage}">${list.currentPage}</a></li>
 								</c:when>
 								<c:otherwise>
-									<li class="page-item"><a class="page-link" href="${path}/trade/tradeList.do?<c:if test="${not empty category}">category=${category}&</c:if>pageNum=${n}">${n}</a></li>
+									<li class="page-item"><a class="page-link" href="${path}/coffee/board/dailyBoardList?<c:if test="${not empty category}">category=${category}&</c:if>pageNum=${n}">${n}</a></li>
 								</c:otherwise>
 							</c:choose>
 						</c:forEach>
@@ -125,18 +127,18 @@
 						<!-- 끝페이지 이후 다음 글 존재하면 -->
 						<c:if test="${endPage < pageCount}">
 							<li class="page-item">
-								<a class="page-link" href="${path}/trade/tradeList.do?<c:if test="${not empty category}">category=${category}&</c:if>pageNum=${startPage + pageBlock}">
+								<a class="page-link" href="${path}/coffee/board/dailyBoardList?<c:if test="${not empty category}">category=${category}&</c:if>pageNum=${startPage + pageBlock}">
 									<span aria-hidden="true">&raquo;</span>
 								</a>
 							</li>
 						</c:if>
 						
-						</ul>						
+						</ul>					
 					</c:if>
-					<c:if test="${empty tradeList.vo}">
+					<c:if test="${empty list.vo}">
 						
-					</c:if> --%>
+					</c:if>
 				</nav>
-
+				 
 	</body>
 </html>
