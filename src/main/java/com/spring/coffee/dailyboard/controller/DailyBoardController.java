@@ -1,10 +1,12 @@
 package com.spring.coffee.dailyboard.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -13,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.coffee.dailyboard.service.DailyBoardService;
 import com.spring.coffee.dailyboard.vo.DailyBoardVO;
+import com.spring.coffee.member.vo.MemberVO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -67,17 +70,67 @@ public class DailyBoardController {
 		ModelAndView mav = new ModelAndView();
 		
 		service.insertDailyBoard(request, response);
-//		insertDailyBoardImg(request, response);
 		
 		mav.setViewName("redirect:/coffee/board/dailyBoardList");
 		
 		return mav;
 	} 
 	
-	@RequestMapping("uploadImg")
-	public void uploadImg(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	@RequestMapping("seImgUploader")
+	public List<String> seImgUploader(HttpServletRequest request, HttpServletResponse response) throws Exception {
 //		log.info("controller filename: " + request.getHeader("file-name"));
-		service.uploadImg(request, response);
+		List<String> fileList = service.uploadImg(request, response);
+		
+		return fileList;
 	}
 	
+	@RequestMapping("dailyBoardDetail")
+	public ModelAndView getDailyBoardDetail(@RequestParam("no") int no, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView mav = new ModelAndView();
+		
+		service.readCountUpdate(no);
+		vo = service.getDailyBoardDetail(no);
+		String nickname = vo.getNickname();
+		MemberVO owner = service.getOwnerDetail(nickname);
+		
+		mav.addObject("owner", owner);
+		mav.addObject("vo", vo);
+		mav.addObject("center", viewPath + "dailyBoardDetail.jsp");
+		mav.setViewName("main");
+		
+		return mav;
+	}
+	
+	@RequestMapping("modDailyBoardForm")
+	public ModelAndView modDailyBoardForm(@RequestParam("no") int no, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView mav = new ModelAndView();
+		
+		vo = service.getDailyBoardDetail(no);
+		mav.addObject("vo", vo);
+		mav.addObject("center", viewPath + "modDailyBoardForm.jsp");
+		mav.setViewName("main");
+		
+		return mav;
+	}
+	
+	@RequestMapping("modDailyBoard")
+	public ModelAndView modDailyBoard(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.setCharacterEncoding("UTF-8");
+		
+		ModelAndView mav = new ModelAndView();
+		
+		int no = service.updateDailyBoard(request, response);
+		
+		mav.setViewName("redirect:/coffee/board/dailyBoardDetail?no="+no);
+		
+		return mav;
+	} 
+	
+	@RequestMapping("delDailyBoard")
+	public ModelAndView delDailyBoard(@RequestParam("no") int no, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		service.delDailyBoard(no);
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("redirect:/coffee/board/dailyBoardList");
+		return mav;
+	}
 }

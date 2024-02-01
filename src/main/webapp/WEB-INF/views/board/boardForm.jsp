@@ -18,11 +18,11 @@
 		<h1>게시글 작성</h1>
 		<form id="frm" action="/coffee/board/addDailyBoard" method="post" enctype="multipart/form-data">
 			<input type="hidden" name="nickname" value="<%=member.getNickname()%>">
-			<label for="title">제목</label>
-			<input type="text" id="title" name="title" style="width: 70%;">
+			<input type="text" id="title" name="title" style="width: 80%;" placeholder="제목을 입력해주세요.">
 			<hr>
 			<div id="smarteditor">
-				<textarea name="content" id="content" placeholder="Insert the contents." rows="20" cols="50" style="overflow: scroll; width: 100%;"></textarea>
+				<textarea name="content" id="content" placeholder="Insert the contents." rows="20" cols="50" style="overflow: scroll; width: 100%;">
+				</textarea>
 			</div> 
 			<input type="submit" value="submit" id="submit" />
 		</form>
@@ -31,7 +31,7 @@
 			let oEditors = [];
 			
 			smartEditor = function() {
-				console.log("NaverSmartEditor");
+// 				console.log("NaverSmartEditor");
 				nhn.husky.EZCreator.createInIFrame({
 					oAppRef: oEditors,
 					elPlaceHolder: "content",
@@ -55,8 +55,17 @@
 					
 					$("#frm").submit();
 				})
+				
+				<%--
+				// textArea에 이미지 첨부
+				function pasteHTML(filepath){
+					console.log('filePath: ' + filepath);
+				    var sHTML = '<img src="<%=request.getContextPath()%>/src/main/resources/static/dailyBoard/temp/'+filepath+'">';
+				    var sHTML = '<img src="<%=request.getContextPath()%>/'+filepath+'">';
+				    oEditors.getById["content"].exec("PASTE_HTML", [sHTML]);
+				}
+				 --%>
 			})
-			
 			
 		</script>
 	</body>

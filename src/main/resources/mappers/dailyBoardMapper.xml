@@ -5,14 +5,16 @@
   
 <mapper namespace="com.spring.coffee.mapper.DailyBoardMapper">
 
-    <insert id="insertDailyBoardImg" parameterType="list">
+    <insert id="addFile" parameterType="java.util.List">
         <![CDATA[
-        	INSERT INTO dailyBoard (fileName)
-        	VALUES (StringArray(
+        	UPDATE dailyBoard SET fileName=StringArray(
         ]]>
-        <foreach collection="fileList" item="fileName" separator=", " close="))">
+        <foreach collection="fileNames" item="fileName" separator=", " close=")">
         	#{fileName}
         </foreach>
+        <![CDATA[
+	        WHERE no=#{no}
+        ]]>
     </insert>
 
 </mapper>

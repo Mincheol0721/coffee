@@ -334,7 +334,7 @@
     	var tempFile,
     		sUploadURL;
     	
-    	sUploadURL= '/coffee/board/insertDailyBoardImg'; 	//upload URL
+    	sUploadURL= '/coffee/board/seImgUploader'; 	//upload URL
 //    	sUploadURL= 'file_uploader_html5.php'; 	//upload URL
     	
     	//파일을 하나씩 보내고, 결과를 받음.
@@ -395,7 +395,6 @@
 	    		}
 	 		}
  		}catch(e){}
- 		
  		aResultleng = aResult.length;
     	aResult[aResultleng] = htTemp;
     	
@@ -458,8 +457,9 @@
 	 * Ajax 통신 시 error가 발생할 때 처리하는 함수입니다.
 	 * @return
 	 */
-	function onAjaxError (){
-		alert("[가이드]사진 업로더할 서버URL셋팅이 필요합니다.-onAjaxError");
+	function onAjaxError (e){
+		alert("[가이드]사진 업로더할 서버URL셋팅이 필요합니다.-onAjaxError \r\n" 
+			+ e._response.responseText);
 	}
 
  	/**
@@ -481,7 +481,7 @@
  	 */
  	function callFileUploader (){
  		oFileUploader = new jindo.FileUploader(jindo.$("uploadInputBox"),{
- 			sUrl  : location.href.replace(/\/[^\/]*$/, '') + '/coffee/board/insertDailyBoardImg',	//샘플 URL입니다.
+ 			sUrl  : location.href.replace(/\/[^\/]*$/, '') + '/coffee/board/uploadImg',	//샘플 URL입니다.
  	        sCallback : '/SE2/sample/photo_uploader/callback.html',	//업로드 이후에 iframe이 redirect될 콜백페이지의 주소
  	    	sFiletype : "*.jpg;*.png;*.bmp;*.gif",						//허용할 파일의 형식. ex) "*", "*.*", "*.jpg", 구분자(;)	
  	    	sMsgNotAllowedExt : 'JPG, GIF, PNG, BMP 확장자만 가능합니다',	//허용할 파일의 형식이 아닌경우에 띄워주는 경고창의 문구
