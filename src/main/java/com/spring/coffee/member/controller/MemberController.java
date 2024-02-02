@@ -963,6 +963,11 @@ public class MemberController {
 		
 	}
 	
+	@RequestMapping("delMember")
+	public void delMember(@RequestParam("id") String id, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		memberMapper.delMember(id);
+		request.getSession().invalidate();
+	}
 	
 	
 }

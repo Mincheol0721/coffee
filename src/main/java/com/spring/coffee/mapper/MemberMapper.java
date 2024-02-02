@@ -2,6 +2,7 @@ package com.spring.coffee.mapper;
 
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -40,4 +41,7 @@ public interface MemberMapper {
 	
 	@Select("SELECT id FROM member WHERE id=#{id}")
 	String idValidate(String id);
+
+	@Delete("DELETE FROM member WHERE id=#{id}")
+	void delMember(String id);
 }

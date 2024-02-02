@@ -64,7 +64,7 @@
 		</div>
 		<p class="signup">
 			계정이 없으신가요?
-			<a rel="noopener noreferrer" href="#" class="">회원가입하기</a>
+			<a rel="noopener noreferrer" href="/coffee/member/regForm" class="">회원가입하기</a>
 		</p>
 	</div>
 </body>

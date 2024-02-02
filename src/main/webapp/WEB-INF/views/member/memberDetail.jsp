@@ -54,7 +54,24 @@
 			</div>
 			<br>
 			<button class="sign" onclick="location.href='/coffee/member/modForm'">회원정보 수정</button>
+			<button class="sign" onclick="delMember();">회원탈퇴</button>
 		<br>
 	</div>
+	<script type="text/javascript">
+		function delMember() {
+			confirm('계정정보를 삭제하시겠습니까?');
+			$.ajax({
+				url: '/coffee/member/delMember?id=${vo.id}',
+				type: 'POST',
+				dataType: 'text',
+				data: ${vo.id},
+				success: function(data) {
+					alert('deleted');
+					location.href='/coffee/main';
+				}
+			});
+// 			location.href='/coffee/member/delMember?id=${vo.id}';
+		}
+	</script>
 </body>
 </html>
