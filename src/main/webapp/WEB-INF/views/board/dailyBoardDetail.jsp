@@ -29,8 +29,11 @@
 		<div id="whole">
 			<div id="title">
 				<h1 style="font-size: 80px; font-weight: bold; margin-bottom: 20px;">${vo.title}</h1>
-				<span style="padding-left: 10px;"> <img src="/coffee/member/download?id=${owner.id}" width="25px" height="25px">&nbsp; ${vo.nickname} | <small>${vo.writeDate}</small> </span>
-				<span style="float: right; font-size: small;">${vo.readCount}</span>
+				<span style="padding-left: 10px;">
+					<img src="/coffee/member/download?id=${owner.id}" width="50px" height="50px" style="border-radius: 60%; object-fit: cover; border: 1px solid lightgray;">
+					&nbsp; ${vo.nickname} | <small>${vo.writeDate}</small> 
+				</span>
+				<span style="float: right; font-size: small;">조회수 : ${vo.readCount}</span>
 			</div>
 			<hr>
 			<div id="content">

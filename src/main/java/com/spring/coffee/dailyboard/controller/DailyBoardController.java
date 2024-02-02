@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.api.client.http.HttpRequest;
 import com.spring.coffee.dailyboard.service.DailyBoardService;
 import com.spring.coffee.dailyboard.vo.DailyBoardVO;
 import com.spring.coffee.member.vo.MemberVO;
@@ -131,4 +132,11 @@ public class DailyBoardController {
 		mav.setViewName("redirect:/coffee/board/dailyBoardList");
 		return mav;
 	}
+
+	@RequestMapping("/thumbnail")
+	public void thumbnail(@RequestParam("no") int no, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		service.thumbnail(no, request, response);
+	}
+
+
 }

@@ -20,6 +20,7 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.spring.coffee.dailyboard.vo.DailyBoardVO;
 import com.spring.coffee.mapper.DailyBoardMapper;
@@ -28,6 +29,7 @@ import com.spring.coffee.member.vo.MemberVO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import net.coobird.thumbnailator.Thumbnails;
 
 @Service
 @Slf4j
@@ -190,7 +192,7 @@ public class DailyBoardService {
 			map.put(key, value);
 			log.info(key + ": " + value);
 		}
-		
+
 		mapper.updateDailyBoard(map);
 		
 		updateImg(map);
@@ -222,9 +224,40 @@ public class DailyBoardService {
 		}
 		fileMap.put("fileNames", fileNames);
 		fileMap.put("no", Integer.parseInt(map.get("no").toString()));
+		log.info("img no: " + Integer.parseInt(map.get("no").toString()));
 		
 		mapper.addFile(fileMap);
 	}
+	
+	public void thumbnail(@RequestParam("no") int no, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
+		//사진을 내려받기 위한 출력 스트림 통로 객체 생성
+		OutputStream os = response.getOutputStream();
+		
+		//다운로드할 파일위치의 파일경로 생성 
+		String imgPath = uploadPath + "/dailyboard/" + no;
+		
+		//이미지 파일을 접근해서 파일을 조작, 정보보기 등을 할 수 있는 파일 객체 생성
+		File imgs = new File(imgPath);
+		//파일경로에 존재하는 이미지 파일들을 담을 파일배열 생성
+		File[] files = imgs.listFiles();
+		
+		String imgName = "";
+		
+		//만약 경로내에 파일이 존재한다면 첫번째 파일의 경로 반환
+		if(files != null && files.length > 0) {
+			imgName = files[0].getAbsolutePath();
+		} else {
+			imgName = uploadPath + "/images/logo.png";
+		}
+		File img = new File(imgName);
+		
+		Thumbnails.of(imgName).size(220, 220).toOutputStream(os);
+		
+		byte[] b = new byte[10 * 1024];
+		os.write(b);
+		
+	}
+	
 	
 }
