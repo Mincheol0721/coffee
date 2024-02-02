@@ -80,13 +80,17 @@
 				  						<a class="dropdown-item" href="/coffee/member/logout">로그아웃</a>
 				  					</c:if>
 				  					<c:if test="${isKakao eq true}">
-				  						<a class="dropdown-item" href="https://kauth.kakao.com/oauth/logout?client_id=6f333d17c0737d247630d8be3aeead82&logout_redirect_uri=http://localhost:8090/coffee/member/kakaoLogout">로그아웃</a>
+<!-- 				  						<a class="dropdown-item" href="https://kauth.kakao.com/oauth/logout?client_id=6f333d17c0737d247630d8be3aeead82&logout_redirect_uri=http://localhost:8090/coffee/member/kakaoLogout">로그아웃</a> -->
+										<a class="dropdown-item" href="/coffee/member/logout">로그아웃</a>
 				  					</c:if>
 				  					<c:if test="${isGoogle eq true}">
-				  						<a class="dropdown-item" href="https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=http://localhost:8090/coffee/member/googleLogout">로그아웃</a>
+<!-- 				  						<a class="dropdown-item" href="https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=http://localhost:8090/coffee/member/googleLogout">로그아웃</a> -->
+				  						<a class="dropdown-item" href="/coffee/member/logout">로그아웃</a>
+<!-- 				  						<a class="dropdown-item" href="https://mail.google.com/mail/u/0/?logout&hl=en">로그아웃</a> -->
 				  					</c:if>
 				  					<c:if test="${isNaver eq true}">
-				  						<a class="dropdown-item" href="/coffee/member/naverLogout">로그아웃</a>
+<!-- 				  						<a class="dropdown-item" href="/coffee/member/naverLogout">로그아웃</a> -->
+										<a class="dropdown-item" href="/coffee/member/logout">로그아웃</a>
 				  					</c:if>
 			  					</li>
 							</ul>
