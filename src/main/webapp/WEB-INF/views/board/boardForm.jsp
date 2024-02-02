@@ -56,15 +56,6 @@
 					$("#frm").submit();
 				})
 				
-				<%--
-				// textArea에 이미지 첨부
-				function pasteHTML(filepath){
-					console.log('filePath: ' + filepath);
-				    var sHTML = '<img src="<%=request.getContextPath()%>/src/main/resources/static/dailyBoard/temp/'+filepath+'">';
-				    var sHTML = '<img src="<%=request.getContextPath()%>/'+filepath+'">';
-				    oEditors.getById["content"].exec("PASTE_HTML", [sHTML]);
-				}
-				 --%>
 			})
 			
 		</script>

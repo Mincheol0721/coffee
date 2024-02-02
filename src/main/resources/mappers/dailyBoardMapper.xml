@@ -5,7 +5,7 @@
   
 <mapper namespace="com.spring.coffee.mapper.DailyBoardMapper">
 
-    <insert id="addFile" parameterType="java.util.List">
+    <update id="addFile" parameterType="java.util.Map">
         <![CDATA[
         	UPDATE dailyBoard SET fileName=StringArray(
         ]]>
@@ -15,6 +15,6 @@
         <![CDATA[
 	        WHERE no=#{no}
         ]]>
-    </insert>
+    </update>
 
 </mapper>

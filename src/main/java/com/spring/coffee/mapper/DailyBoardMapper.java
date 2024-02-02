@@ -43,7 +43,7 @@ public interface DailyBoardMapper {
 	@Delete("DELETE FROM dailyBoard WHERE no=#{no}") 
 	void delDailyBoard(int no);
 	
-	void addFile(List<String> fileNames, int no);
+	void addFile(Map<String, Object> fileMap);
 	
 	
 }

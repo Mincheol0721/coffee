@@ -13,6 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -75,6 +79,7 @@ public class DailyBoardService {
 
 		String absPath = uploadPath + "/dailyBoard/";
 		Map map = new HashMap();
+		int no = mapper.getDailyBoardNo();
 		
 		Enumeration enu = request.getParameterNames();
 		
@@ -88,9 +93,12 @@ public class DailyBoardService {
 		}
 		
 		mapper.addDailyBoard(map);
+		map.put("no", no);
+		updateImg(map);
+		
 	}
 
-	public List<String> uploadImg(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void uploadImg(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		request.setCharacterEncoding("UTF-8");
 		List<String> fileNames = new ArrayList<String>();
 				
@@ -100,9 +108,9 @@ public class DailyBoardService {
 		//파일정보         
 		String sFileInfo = "";
 		//파일명을 받는다 - 일반 원본파일명         
-		String hFilename = request.getHeader("file-name");
+		String sFileName = request.getHeader("file-name");
 		//파일 확장자         
-		String filename_ext = hFilename.substring(hFilename.lastIndexOf(".") + 1);
+		String filename_ext = sFileName.substring(sFileName.lastIndexOf(".") + 1);
 		//확장자를소문자로 변경         
 		filename_ext = filename_ext.toLowerCase();
 		//파일 기본경로
@@ -110,14 +118,15 @@ public class DailyBoardService {
 		//파일 기본경로 _ 상세경로         
 		String filePath = dftFilePath + no + "/";
 		File file = new File(filePath);
-
+		
 		if(!file.exists()) {
 			file.mkdirs();
 		}
+		
 		String fileName = "";
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
 		String today= formatter.format(new java.util.Date());
-		fileName = today+UUID.randomUUID().toString() + hFilename.substring(hFilename.lastIndexOf("."));
+		fileName = today+UUID.randomUUID().toString() + sFileName.substring(sFileName.lastIndexOf("."));
 		String rlFileNm = filePath + fileName;
 		
 		///////////////// 서버에 파일쓰기 /////////////////          
@@ -129,32 +138,29 @@ public class DailyBoardService {
 		while((numRead = is.read(b,0,b.length)) != -1) {
 			os.write(b,0,numRead);
 		}
+		
 		if(is != null) {
 			is.close();
 		}
+		
 		os.flush();
-		os.close();
+//		os.close();
 		
 		///////////////// 서버에 파일쓰기 /////////////////         
 		// 정보 출력         
 		sFileInfo += "&bNewLine=true";
 		// img 태그의 title 속성을 원본파일명으로 적용시켜주기 위함         
-		sFileInfo += "&sFileName="+ hFilename;
+		sFileInfo += "&sFileName="+ sFileName;
 		sFileInfo += "&sFileURL=/dailyboard/" + no + "/" + fileName;
 		
 		System.out.println("sfileInfo: " + sFileInfo);
-		log.info("realFileName: " + fileName);
-		fileNames.add(fileName);
 		
 		PrintWriter print = response.getWriter();
 		
 		print.print(sFileInfo);
 		print.flush();
 		print.close();
-		
-		mapper.addFile(fileNames, no);
-		
-		return fileNames;
+		os.close();
 	}
 
 	public DailyBoardVO getDailyBoardDetail(int no) {
@@ -187,11 +193,37 @@ public class DailyBoardService {
 		
 		mapper.updateDailyBoard(map);
 		
+		updateImg(map);
+		
 		return Integer.parseInt(map.get("no").toString());
 	}
 
 	public void delDailyBoard(int no) {
 		mapper.delDailyBoard(no);
+	}
+	
+	public void updateImg(Map<String, Object> map) {
+		List<String> fileNames = new ArrayList<String>();
+		Map<String, Object> fileMap = new HashMap();
+		
+		//HTML 파싱 및 조작을 위한 Jsoup 라이브러리 의존주입
+		Document doc = Jsoup.parse(map.get("content").toString());
+		log.info("doc: " + doc.html());
+		
+		//img 태그 선택
+		Elements imgs = doc.select("img");
+//		log.info("imgs: " + imgs.html());
+		for(Element img : imgs) {
+			log.info("img: " + img);
+			String src = img.attr("src");
+			src = src.substring(src.lastIndexOf('/')+1);
+			log.info("src: " + src);
+			fileNames.add(src);
+		}
+		fileMap.put("fileNames", fileNames);
+		fileMap.put("no", Integer.parseInt(map.get("no").toString()));
+		
+		mapper.addFile(fileMap);
 	}
 		
 	

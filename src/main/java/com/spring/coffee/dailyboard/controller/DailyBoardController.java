@@ -77,11 +77,9 @@ public class DailyBoardController {
 	} 
 	
 	@RequestMapping("seImgUploader")
-	public List<String> seImgUploader(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void seImgUploader(HttpServletRequest request, HttpServletResponse response) throws Exception {
 //		log.info("controller filename: " + request.getHeader("file-name"));
-		List<String> fileList = service.uploadImg(request, response);
-		
-		return fileList;
+		service.uploadImg(request, response);
 	}
 	
 	@RequestMapping("dailyBoardDetail")
