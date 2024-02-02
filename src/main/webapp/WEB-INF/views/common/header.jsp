@@ -76,6 +76,8 @@
 				  				<li><a class="dropdown-item" href="/coffee/member/modForm">회원정보수정</a></li>
 				  				<li><hr class="dropdown-divider"></li>
 				  				<li>
+				  					<a class="dropdown-item" href="/coffee/member/logout">로그아웃</a>
+				  					<%-- 
 				  					<c:if test="${isOwnMember eq true}">
 				  						<a class="dropdown-item" href="/coffee/member/logout">로그아웃</a>
 				  					</c:if>
@@ -92,6 +94,7 @@
 <!-- 				  						<a class="dropdown-item" href="/coffee/member/naverLogout">로그아웃</a> -->
 										<a class="dropdown-item" href="/coffee/member/logout">로그아웃</a>
 				  					</c:if>
+				  					--%>
 			  					</li>
 							</ul>
     					</c:when>
