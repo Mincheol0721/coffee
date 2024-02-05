@@ -343,7 +343,9 @@
     		try{
 	    		if(!!tempFile){
 	    			//Ajax통신하는 부분. 파일과 업로더할 url을 전달한다.
-	    			callAjaxForHTML5(tempFile,sUploadURL);
+	    			callAjaxForHTML5(tempFile,sUploadURL).done(
+						
+					);
 	    			k += 1;
 	    		}
 	    	}catch(e){}

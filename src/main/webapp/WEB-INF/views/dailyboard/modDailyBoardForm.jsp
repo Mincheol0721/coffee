@@ -17,7 +17,7 @@
 	</head>
 	<body style="text-align: center;">
 		<h1>게시글 수정</h1>
-		<form id="frm" action="/coffee/board/modDailyBoard" method="post" enctype="multipart/form-data">
+		<form id="frm" action="/coffee/dailyboard/modDailyBoard" method="post" enctype="multipart/form-data">
 			<input type="hidden" name="no" value="${vo.no}">
 			<input type="hidden" name="nickname" value="<%=member.getNickname()%>">
 			<input type="text" id="title" name="title" style="width: 80%;" value="${vo.title}">

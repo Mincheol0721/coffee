@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.spring.coffee.mapper.DailyBoardCommentMapper">
+	<!-- 
+	<resultMap type="commentResult" id="dailyBoardCommentVO">
+		<result property="level" column="level"/>
+		<result property="no" column="no"/>
+		<result property="content" column="content"/>
+		<result property="nickName" column="nickName"/>
+		<result property="writeDate" column="writeDate"/>
+		<result property="parentNo" column="parentNo"/>
+		<result property="childNo" column="childNo"/>
+		<result property="boardNo" column="boardNo"/>
+	</resultMap>
+	
+	<select id="getCommentList" parameterType="int" resultMap="commentResult">
+		
+	</select>
+	
+	<insert id="insertComment" parameterType="dailyBoardCommentVO">
+		<![CDATA[
+			INSERT INTO DAILYBOARD_COMMENT(no, content, nickname, boardNo, parentNo)
+			VALUES(dbc_no.nextval, #{content}, #{nickname}, #{boardNo},
+		]]>
+		<if test="parentNo != 0">
+			#{parentNo}
+		</if>
+		<if test="parentNo == 0">
+			0
+		</if>
+		<![CDATA[
+				)
+		]]>
+	</insert>
+	 -->
+</mapper>

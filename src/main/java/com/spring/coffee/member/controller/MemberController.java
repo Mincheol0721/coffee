@@ -892,9 +892,13 @@ public class MemberController {
 	}
 	
 	@RequestMapping("download")
-	public void download(@RequestParam("id") String id, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void download(@RequestParam("id") String id, @RequestParam("nickname") String nickname, 
+							HttpServletRequest request, HttpServletResponse response) throws Exception {
 		//System.out.println("id: " + id);
 		HttpSession session = request.getSession();
+		if(id == null && id.length() == 0) {
+			id = memberMapper.getIdByNickname(nickname);
+		}
 		MemberVO member = memberMapper.getMemberById(id);
 		String fileName = member.getFileName();
 		

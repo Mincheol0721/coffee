@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.google.api.client.http.HttpRequest;
+import com.spring.coffee.dailyboard.service.DailyBoardCommentService;
 import com.spring.coffee.dailyboard.service.DailyBoardService;
+import com.spring.coffee.dailyboard.vo.DailyBoardCommentVO;
 import com.spring.coffee.dailyboard.vo.DailyBoardVO;
 import com.spring.coffee.member.vo.MemberVO;
 
@@ -24,10 +26,10 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
-@RequestMapping("coffee/board")
+@RequestMapping("coffee/dailyboard")
 public class DailyBoardController {
 	
-	private final static String viewPath = "/WEB-INF/views/board/";
+	private final static String viewPath = "/WEB-INF/views/dailyboard/";
 	
 	@Value("${upload.directory}")
 	private String uploadPath;
@@ -37,6 +39,9 @@ public class DailyBoardController {
 	
 	@Autowired
 	private DailyBoardService service;
+	
+	@Autowired
+	private DailyBoardCommentService commentService;
 	
 	@RequestMapping("dailyBoardList")
 	public @ResponseBody ModelAndView dailyBoardList(@RequestParam(value = "pageNum", required = false) String pageNum, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -92,6 +97,10 @@ public class DailyBoardController {
 		String nickname = vo.getNickname();
 		MemberVO owner = service.getOwnerDetail(nickname);
 		
+		List<DailyBoardCommentVO> commentList = commentService.getCommentList(no);
+		log.info(commentList.toString());
+		
+		mav.addObject("commentList", commentList);
 		mav.addObject("owner", owner);
 		mav.addObject("vo", vo);
 		mav.addObject("center", viewPath + "dailyBoardDetail.jsp");
@@ -137,6 +146,6 @@ public class DailyBoardController {
 	public void thumbnail(@RequestParam("no") int no, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		service.thumbnail(no, request, response);
 	}
-
+	
 
 }

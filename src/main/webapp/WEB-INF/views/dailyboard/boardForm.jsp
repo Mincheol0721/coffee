@@ -16,7 +16,7 @@
 	</head>
 	<body style="text-align: center;">
 		<h1>게시글 작성</h1>
-		<form id="frm" action="/coffee/board/addDailyBoard" method="post" enctype="multipart/form-data">
+		<form id="frm" action="/coffee/dailyboard/addDailyBoard" method="post" enctype="multipart/form-data">
 			<input type="hidden" name="nickname" value="<%=member.getNickname()%>">
 			<input type="text" id="title" name="title" style="width: 80%;" placeholder="제목을 입력해주세요.">
 			<hr>
@@ -47,7 +47,7 @@
 			
 			$(document).ready(function() {
 				smartEditor();
-			})
+			});
 			
 			$(function() {
 				$("#submit").click(function() {
@@ -56,7 +56,7 @@
 					$("#frm").submit();
 				})
 				
-			})
+			});
 			
 		</script>
 	</body>

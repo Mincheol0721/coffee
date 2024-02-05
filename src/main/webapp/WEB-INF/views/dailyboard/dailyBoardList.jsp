@@ -23,7 +23,7 @@
 				</c:if></h1>
 				<hr>
 				<c:if test="${not empty member}">
-					<button class="cssbuttons-io-button writeBtn" onclick="location.href='/coffee/board/dailyBoardForm'">
+					<button class="cssbuttons-io-button writeBtn" onclick="location.href='/coffee/dailyboard/dailyBoardForm'">
 						글작성
 						<div class="icon">
 						   <svg
@@ -61,10 +61,10 @@
 				<c:set var="no" value="${list.no}" />
 					<c:forEach var="vo" items="${list.vo}" varStatus="loop">
 					<c:set var="index" value="${loop.index + 1}" />
-						<tr class="boardArticles" onclick="location.href='${path}/coffee/board/dailyBoardDetail?no=${vo.no}'">
+						<tr class="boardArticles" onclick="location.href='${path}/coffee/dailyboard/dailyBoardDetail?no=${vo.no}'">
 							<td class="boardNo">${index + ((list.currentPage-1) * 10)}</td>
 							<td class="boardImg">
-								<img src="${path}/coffee/board/thumbnail?no=${vo.no}">
+								<img src="${path}/coffee/dailyboard/thumbnail?no=${vo.no}">
 							</td>
 							<td class="boardTitle">${vo.title}</td>
 							<td class="boardUser">${vo.nickname}</td>
@@ -108,7 +108,7 @@
 						<!-- 시작페이지가 pageBlock보다 크면 -->
 						<c:if test="${startPage > pageBlock}">
 							<li class="page-item">
-								<a class="page-link" href="${path}/coffee/board/dailyBoardList?<c:if test="${not empty category}">category=${category}&</c:if>pageNum=${startPage - list.pageBlock}" aria-label="Previous">
+								<a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?<c:if test="${not empty category}">category=${category}&</c:if>pageNum=${startPage - list.pageBlock}" aria-label="Previous">
 						      		<span aria-hidden="true">&laquo;</span>
 						    	</a>
 							</li>
@@ -118,10 +118,10 @@
 						<c:forEach var="n" begin="${startPage}" end="${endPage}">
 							<c:choose>
 								<c:when test="${n == list.currentPage}">
-									<li class="page-item active"><a class="page-link" href="${path}/coffee/board/dailyBoardList?<c:if test="${not empty category}">category=${category}&</c:if>pageNum=${list.currentPage}">${list.currentPage}</a></li>
+									<li class="page-item active"><a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?<c:if test="${not empty category}">category=${category}&</c:if>pageNum=${list.currentPage}">${list.currentPage}</a></li>
 								</c:when>
 								<c:otherwise>
-									<li class="page-item"><a class="page-link" href="${path}/coffee/board/dailyBoardList?<c:if test="${not empty category}">category=${category}&</c:if>pageNum=${n}">${n}</a></li>
+									<li class="page-item"><a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?<c:if test="${not empty category}">category=${category}&</c:if>pageNum=${n}">${n}</a></li>
 								</c:otherwise>
 							</c:choose>
 						</c:forEach>
@@ -129,7 +129,7 @@
 						<!-- 끝페이지 이후 다음 글 존재하면 -->
 						<c:if test="${endPage < pageCount}">
 							<li class="page-item">
-								<a class="page-link" href="${path}/coffee/board/dailyBoardList?<c:if test="${not empty category}">category=${category}&</c:if>pageNum=${startPage + pageBlock}">
+								<a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?<c:if test="${not empty category}">category=${category}&</c:if>pageNum=${startPage + pageBlock}">
 									<span aria-hidden="true">&raquo;</span>
 								</a>
 							</li>

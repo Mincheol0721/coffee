@@ -32,7 +32,7 @@
 		            		<span class="nav-span dropdown text-end users">게시판</span>
 		          		</a>
 		          		<ul class="dropdown-menu">
-				            <li><a class="dropdown-item" href="/coffee/board/dailyBoardList">일상 게시판</a></li>
+				            <li><a class="dropdown-item" href="/coffee/dailyboard/dailyBoardList">일상 게시판</a></li>
 				            <li><a class="dropdown-item" href="#">커피 게시판</a></li>
 				            <li><a class="dropdown-item" href="#">질의응답 게시판</a></li>
 		          		</ul>

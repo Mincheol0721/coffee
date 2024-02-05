@@ -133,7 +133,7 @@ public class DailyBoardService {
 		
 		///////////////// 서버에 파일쓰기 /////////////////          
 		InputStream is = request.getInputStream();
-		OutputStream os=new FileOutputStream(rlFileNm);
+		OutputStream os = new FileOutputStream(rlFileNm);
 		int numRead;
 		byte b[] = new byte[Integer.parseInt(request.getHeader("file-size"))];
 
@@ -146,7 +146,7 @@ public class DailyBoardService {
 		}
 		
 		os.flush();
-//		os.close();
+		os.close();
 		
 		///////////////// 서버에 파일쓰기 /////////////////         
 		// 정보 출력         
@@ -162,7 +162,6 @@ public class DailyBoardService {
 		print.print(sFileInfo);
 		print.flush();
 		print.close();
-		os.close();
 	}
 
 	public DailyBoardVO getDailyBoardDetail(int no) {

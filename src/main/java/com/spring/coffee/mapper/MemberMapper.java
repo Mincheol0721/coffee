@@ -44,4 +44,7 @@ public interface MemberMapper {
 
 	@Delete("DELETE FROM member WHERE id=#{id}")
 	void delMember(String id);
+	
+	@Select("SELECT id FROM member WHERE nickname=#{nickname}")
+	String getIdByNickname(String nickname);
 }
