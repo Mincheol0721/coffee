@@ -15,11 +15,7 @@ import com.spring.coffee.member.vo.MemberVO;
 @Mapper
 public interface DailyBoardMapper {
 	
-	@Select("SELECT * FROM ( SELECT ROWNUM AS rn, b.* FROM dailyBoard b WHERE ROWNUM <= #{endRow} ORDER BY no DESC) WHERE rn > #{startRow}")
-	List<DailyBoardVO> getDailyBoardList(int startRow, int endRow);
-	
-	@Select("SELECT COUNT(*) FROM dailyBoard")
-	int getDailyBoardCount();
+	List<DailyBoardVO> getDailyBoardList(Map<String, Object> paramMap);
 	
 	@Insert("INSERT INTO dailyBoard(no, title, content, nickname) "
 			+ " VALUES (db_no.nextval, #{title}, #{content}, #{nickname})")
@@ -44,6 +40,8 @@ public interface DailyBoardMapper {
 	void delDailyBoard(int no);
 	
 	void addFile(Map<String, Object> fileMap);
+	
+	int getDailyBoardCount(Map<String, Object> paramMap);
 	
 	
 }

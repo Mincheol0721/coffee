@@ -334,7 +334,7 @@
     	var tempFile,
     		sUploadURL;
     	
-    	sUploadURL= '/coffee/board/seImgUploader'; 	//upload URL
+    	sUploadURL= '/coffee/dailyboard/seImgUploader'; 	//upload URL
 //    	sUploadURL= 'file_uploader_html5.php'; 	//upload URL
     	
     	//파일을 하나씩 보내고, 결과를 받음.

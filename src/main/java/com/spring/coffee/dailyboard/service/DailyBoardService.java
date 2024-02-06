@@ -46,26 +46,45 @@ public class DailyBoardService {
 	@Autowired
 	private DailyBoardVO vo;
 	
-	public Map<String, Object> listDailyBoard(String pageNum) throws Exception {
+	public Map<String, Object> listDailyBoard(Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		int pageSize = 10;
 		int pageBlock = 5;
 		int count = 0;
 		int no = 0;
 		
+		String pageNum = (String)paramMap.get("pageNum");
+		String keyword = (String)paramMap.get("keyword");
+		String category = (String)paramMap.get("category");
+		log.info("pageNum " + pageNum);
+		log.info("keyword " + keyword);
+		log.info("category " + category);
+		
+		Map<String, Object> countMap = new HashMap<String, Object>();
+		countMap.put("category", category);
+		countMap.put("keyword", keyword);
+		
 		if(pageNum == null) pageNum = "1";
 		
 		int currentPage = Integer.parseInt(pageNum);
-		count = mapper.getDailyBoardCount();
+		count = mapper.getDailyBoardCount(countMap);
+		log.info("count: " + count);
 		int startRow = (currentPage - 1) * pageSize + 1;
 		int endRow = currentPage * pageSize;
+		
+		paramMap.put("startRow", (startRow-1));
+		paramMap.put("endRow", endRow);
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<DailyBoardVO> vo = new ArrayList<>();
 		
 		if(count > 0) {
-			vo = mapper.getDailyBoardList((startRow-1), endRow);
+			vo = mapper.getDailyBoardList(paramMap);
 			no = count - (currentPage - 1) * pageSize;
 		}
+		
+		log.info("pageSize: " + pageSize);
+		log.info("pageBlock: " + pageBlock);
+		log.info("pageCount: " + (count / pageSize + (count % pageSize == 0 ? 0 : 1)));
 		
 		map.put("pageSize", pageSize);
 		map.put("pageBlock", pageBlock);
@@ -164,19 +183,19 @@ public class DailyBoardService {
 		print.close();
 	}
 
-	public DailyBoardVO getDailyBoardDetail(int no) {
+	public DailyBoardVO getDailyBoardDetail(int no) throws Exception {
 		return mapper.getDailyBoardDetail(no);
 	}
 
-	public void readCountUpdate(int no) {
+	public void readCountUpdate(int no) throws Exception {
 		mapper.readCountUpdate(no);
 	}
 
-	public MemberVO getOwnerDetail(String nickname) {
+	public MemberVO getOwnerDetail(String nickname) throws Exception {
 		return mapper.getOwnerDetail(nickname);
 	}
 
-	public int updateDailyBoard(HttpServletRequest request, HttpServletResponse response) {
+	public int updateDailyBoard(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		String absPath = uploadPath + "/dailyBoard/";
 		Map map = new HashMap();
@@ -199,11 +218,11 @@ public class DailyBoardService {
 		return Integer.parseInt(map.get("no").toString());
 	}
 
-	public void delDailyBoard(int no) {
+	public void delDailyBoard(int no) throws Exception {
 		mapper.delDailyBoard(no);
 	}
 	
-	public void updateImg(Map<String, Object> map) {
+	public void updateImg(Map<String, Object> map) throws Exception {
 		List<String> fileNames = new ArrayList<String>();
 		Map<String, Object> fileMap = new HashMap();
 		
@@ -257,6 +276,5 @@ public class DailyBoardService {
 		os.write(b);
 		
 	}
-	
-	
+
 }

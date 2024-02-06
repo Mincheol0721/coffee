@@ -59,7 +59,7 @@
 	               		 	<img src="/images/login_image.png" alt="user" width="32" height="32" class="rounded-circle">
 	              		</c:if>
 	              		<c:if test="${not empty member}">
-	                		<img src="/coffee/member/download?id=${member.id }" alt="user" width="32" height="32" class="rounded-circle">
+	                		<img src="/coffee/member/download?nickname=${member.nickname}" alt="user" width="32" height="32" class="rounded-circle">
 	              		</c:if>
               		</a>
    					<c:choose>

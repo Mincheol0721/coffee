@@ -12,12 +12,13 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>일상 게시판 상세보기</title>
+		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 		<style type="text/css">
 			#whole {
 				width: 80%;
 				margin: 0 auto;
 			}
-			#commenBox {
+			#commentBox {
 				margin-bottom: 20px;
 			}
 			#contentBox img {
@@ -111,11 +112,32 @@
 			}
 			.profile {
 				width: 50px;
+				height: 50px;
 				border-radius: 60%;
-				border: 1px solid gray;
+				border: 1px solid lightgray;
 				margin: 0.5em;
+				object-fit: cover;
 			}
-			#commentList {
+			#content img {
+				max-width: 80%;
+				display: block;
+				margin: 0 auto;
+			}
+			.commentListProfile {
+				display: block;
+			}
+			.commentListProfile img {
+				margin-right: 1em;
+			}
+			a {
+				text-decoration: none;
+			}
+			.commentListProfile i {
+				margin-right: 0.4em;
+			}
+			.commentItems {
+				width: 100%;
+				height: 4rem;
 			}
 		</style>
 	</head>
@@ -124,7 +146,7 @@
 			<div id="title">
 				<h1 style="font-size: 80px; font-weight: bold; margin-bottom: 20px;">${vo.title}</h1>
 				<span style="padding-left: 10px;">
-					<img src="/coffee/member/download?id=${owner.id}" width="50px" height="50px" style="border-radius: 60%; object-fit: cover; border: 1px solid lightgray;">
+					<img src="/coffee/member/download?nickname=${owner.nickname}" width="50px" height="50px" style="border-radius: 60%; object-fit: cover; border: 1px solid lightgray;">
 					&nbsp; ${vo.nickname} | <small>${vo.writeDate}</small> 
 				</span>
 				<span style="float: right; font-size: small;">조회수 : ${vo.readCount}</span>
@@ -149,56 +171,69 @@
 					</c:if>
 					<c:if test="${not empty commentList}">
 						<c:forEach var="list" items="${commentList}" varStatus="loop">
-							<div>
-								<img alt="profile" src="/coffee/member/download?nickname=${list.nickname}" style="width: 30px; height: 30px; border-radius: 60%; float: left; object-fit: scale-down; border: 1px solid lightgray;">
-								<b>${list.nickname }</b> | <small>작성일자: ${list.writeDate }</small>
-								<c:if test="${not empty member}">
-									<small>
-										<a href="javascript:recommentForm(${loop.index}, ${list.no})">&nbsp;<i class="fa-regular fa-comment"></i>&nbsp;</a>
-									</small>
-								</c:if>
-								<c:if test="${list.nickname eq member.nickname}">
-									<small><a href="javascript:modForm(${loop.index})"><i class="fa-regular fa-pen-to-square"></i></a></small> &nbsp;
-									<small><a href="${path}/trade/delComment.do?no=${list.no}&boardNo=${vo.no}"><i class="fa-regular fa-trash-can"></i></a></small>
-								</c:if>
 								<c:choose>
 									<c:when test="${list.level > 1}">
-										<c:forEach begin="1" end="${list.level}" step="1">
+										<span style="display: flex;"  class="commentItems">
+										<c:forEach begin="1" end="${list.level-1}" step="1">
 											<span style="padding-left: 20px"></span>
 										</c:forEach>
-										└ 
+										└ &nbsp;
 									</c:when>
+									<c:otherwise>
+										<span style="display: inline-flex;" class="commentItems">
+									</c:otherwise>
 								</c:choose>
-								<span class="content" style="display: inline-block;">&nbsp;${list.content}</span>
-								<span class="comment" style="display: none; width: 100%;">
-									<input type="text" name="content" value="${list.content}" style="width: calc(100% - 150px); float: left; height: 2.3em; border: 1px solid lightgray; padding-left: 15px; color:black;">
-									<button class="signupBtn" type="button" onclick="javascript: modComment(${list.no}, ${vo.no}, ${loop.index})">
-									  	댓글수정
-									 	<span class="arrow">
-									    	<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 320 512" fill="rgb(183, 128, 255)"><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"></path></svg>
-									 	</span>
-									</button>
-								</span>
-							</div>
+								<div style="width: 100%;">
+									<div class="commentListProfile">
+										<img alt="profile" src="/coffee/member/download?nickname=${list.nickname}" style="width: 50px; height: 50px; border-radius: 60%; float: left; object-fit: cover; border: 1px solid lightgray;">
+										<b>${list.nickname }</b>&nbsp;&nbsp;&nbsp;<small style="font-size: 11px;">${list.writeDate }</small>
+										<c:if test="${not empty member}">
+											<small>
+												<a href="javascript:recommentForm(${loop.index}, ${list.no})">&nbsp;<i class="fa-regular fa-comment"></i></a>
+											</small>
+										</c:if>
+										<c:if test="${list.nickname eq member.nickname}">
+											<small><a href="javascript:modCommentForm(${loop.index})"><i class="fa-regular fa-pen-to-square"></i></a></small> 
+											<small><a href="/coffee/dailyboardComment/delComment?no=${list.no}&boardNo=${vo.no}"><i class="fa-regular fa-trash-can"></i></a></small>
+										</c:if>
+									</div>
+									<span class="content" style="display: inline-block;">${list.content}</span>
+									<span class="comment" style="display: none;justify-content: space-between;flex-wrap: nowrap;">
+										<input class="input-box" type="text" name="content" value="${list.content}">
+									 	<div style="display: flex; justify-content: flex-end;">
+											<button class="button signupBtn" onclick="javascript: modComment(${list.no}, ${vo.no}, ${loop.index})" 
+													style="font-size: 12px; margin: auto; ">
+											  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+											    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"></path>
+											  </svg>
+											  <div class="text" style="margin: 0 1.2em;">
+											    댓글 수정
+											  </div>
+											</button>
+										</div>
+										<span class="underline"></span>
+									</span>
+								</div>
+							</span>
 						</c:forEach>
 					</c:if>
 				</div>
 				<hr>
 				<div id="input-wrapper" style="height: 125px; border: 1px solid lightsteelblue;">
 					<c:if test="${member ne null}">
-						<img alt="profile" src="/coffee/member/download?id=${member.id}" class="profile">
-						<c:out value="${member.nickname}" />
+						<img alt="profile" src="/coffee/member/download?nickname=${member.nickname}" class="profile">
+						<b><c:out value="${member.nickname}" /></b>
 					</c:if>
 					<c:if test="${member eq null}">
 						<img alt="profile" src="/images/login_image.png" class="profile">
 						<span>로그인이 필요한 기능입니다.</span>
 					</c:if>
-					<form action="/coffee/dailyboardComment/regComment" method="post"style="display: flex;justify-content: space-between;flex-wrap: nowrap;">
+					<form action="/coffee/dailyboardComment/regComment" method="post" style="display: flex;justify-content: space-between;flex-wrap: nowrap;">
 						<input type="hidden" name="boardNo" value="${vo.no}">
 						<input type="hidden" name="nickname" value="${member.nickname}">
 						<input class="input-box" type="text" placeholder="댓글을 입력하세요." name="content">
 						<div style="display: flex; justify-content: flex-end;">
-							<button class="button">
+							<button class="button signupBtn">
 							  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
 							    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"></path>
 							  </svg>
@@ -212,5 +247,78 @@
 				</div>
 			</div>
 		</div>
+		
+		
+		<script type="text/javascript">
+			//validate
+			var nickname = '${member.nickname}';
+			
+			if(nickname.length == 0) {
+				$('.signupBtn').on('click', function(e) {
+					e.preventDefault();
+					
+					alert('로그인이 필요한 기능입니다.');
+					location.href='/coffee/member/loginForm';
+				})
+			}
+		
+			function modCommentForm(idx) {
+				var content = $('.content')[idx];
+				var comment = $('.comment')[idx];
+				
+				if(content.style.display == "none") {
+					content.style.display = "inline-block";
+					comment.style.display = "none";
+				} else {
+					content.style.display = "none";
+					comment.style.display = "flex";
+				}
+			}
+			
+			function modComment(no, boardNo, idx) {
+				var comment = $(".comment")[idx];
+				var content = comment.children[0].value;
+				var i_content = $('.content')[idx];
+
+				$.ajax({
+					url: '/coffee/dailyboardComment/modComment',
+					type: 'POST',
+					dataType: 'text',
+					data: {no: no, boardNo: boardNo, content: content},
+					success: function(data) {
+						i_content.innerText = data;
+						
+						i_content.style.display = 'inline-block';
+						comment.style.display = 'none';
+					}
+				});
+				
+			}
+			
+			function recommentForm(idx, parentNo) {
+				console.log('parentNo: ', parentNo);
+				var recForm = document.createElement("div");
+				recForm.innerHTML = '<form action="/coffee/dailyboardComment/regComment" method="post">'
+										+ '<input type="hidden" name="nickname" value="${member.nickname}">'
+										+ '<input type="hidden" name="boardNo" value="${vo.no}">'
+										+ '<input type="hidden" name="parentNo" value="' + parentNo + '">'
+										+ '<span class="comment" style="display: flex;justify-content: space-between;flex-wrap: nowrap;">'
+											+ '<span style="padding-top: 0.5rem; margin-bottom: -1.2rem;">└ &nbsp;</span>'
+											+ '<input class="input-box" type="text" name="content" value="${list.content}">'
+									 		+ '<div style="display: flex; justify-content: flex-end;">'
+												+ '<button class="button signupBtn" onclick="javascript: modComment(${list.no}, ${vo.no}, ${loop.index})" style="font-size: 12px; margin: auto; ">'
+												  	+ '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">'
+												    	+ '<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"></path>'
+												  	+ '</svg>'
+												  	+ '<div class="text" style="margin: 0 1.2em;"> 댓글 작성 </div>'
+												+ '</button>'
+											+ '</div>'
+											+ '<span class="underline"></span>'
+										+ '</span>'
+									+ '</form>';
+				var comment = document.getElementsByClassName("content")[idx];
+				comment.parentElement.appendChild(recForm);
+			}
+		</script>
 	</body>
 </html>

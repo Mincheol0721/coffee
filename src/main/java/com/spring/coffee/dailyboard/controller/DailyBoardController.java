@@ -44,11 +44,17 @@ public class DailyBoardController {
 	private DailyBoardCommentService commentService;
 	
 	@RequestMapping("dailyBoardList")
-	public @ResponseBody ModelAndView dailyBoardList(@RequestParam(value = "pageNum", required = false) String pageNum, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public @ResponseBody ModelAndView dailyBoardList(@RequestParam(value = "pageNum", required = false) String pageNum, 
+													@RequestParam(value = "keyword", required = false) String keyword, 
+													@RequestParam(value = "category", required = false) String category, 
+													HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView mav = new ModelAndView();
 		
-		Map<String, Object> map = new HashMap<String, Object>();
-		map = service.listDailyBoard(pageNum);
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("pageNum", pageNum);
+		paramMap.put("keyword", keyword);
+		paramMap.put("category", category);
+		Map<String, Object> map = service.listDailyBoard(paramMap, request, response);
 		
 		mav.addObject("isBoard", true);
 		mav.addObject("list", map);
@@ -77,7 +83,7 @@ public class DailyBoardController {
 		
 		service.insertDailyBoard(request, response);
 		
-		mav.setViewName("redirect:/coffee/board/dailyBoardList");
+		mav.setViewName("redirect:/coffee/dailyboard/dailyBoardList");
 		
 		return mav;
 	} 
@@ -129,7 +135,7 @@ public class DailyBoardController {
 		
 		int no = service.updateDailyBoard(request, response);
 		
-		mav.setViewName("redirect:/coffee/board/dailyBoardDetail?no="+no);
+		mav.setViewName("redirect:/coffee/dailyboard/dailyBoardDetail?no="+no);
 		
 		return mav;
 	} 
@@ -138,7 +144,7 @@ public class DailyBoardController {
 	public ModelAndView delDailyBoard(@RequestParam("no") int no, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		service.delDailyBoard(no);
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("redirect:/coffee/board/dailyBoardList");
+		mav.setViewName("redirect:/coffee/dailyboard/dailyBoardList");
 		return mav;
 	}
 
@@ -147,5 +153,4 @@ public class DailyBoardController {
 		service.thumbnail(no, request, response);
 	}
 	
-
 }

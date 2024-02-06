@@ -46,5 +46,5 @@ public interface MemberMapper {
 	void delMember(String id);
 	
 	@Select("SELECT id FROM member WHERE nickname=#{nickname}")
-	String getIdByNickname(String nickname);
+	String getIdFromNickname(String nickname);
 }
