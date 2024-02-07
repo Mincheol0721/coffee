@@ -134,7 +134,7 @@ public class DailyBoardService {
 	public void uploadImg(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		request.setCharacterEncoding("UTF-8");
 		List<String> fileNames = new ArrayList<String>();
-		log.info("request no: " + (String)request.getAttribute("no"));
+		
 		// TODO Auto-generated method stub
 		int no = mapper.getDailyBoardNo();
 		//File Information
@@ -226,7 +226,7 @@ public class DailyBoardService {
 		
 		updateImg(map);
 		
-		return Integer.parseInt(map.get("no").toString());
+		return( Integer.parseInt(map.get("no").toString()) );
 	}
 
 	public void delDailyBoard(int no) throws Exception {

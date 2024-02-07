@@ -42,7 +42,7 @@ public interface DailyBoardMapper {
 	
 	void addFile(Map<String, Object> fileMap);
 	
-	@Select("SELECT COUNT(*) FROM dailyBoard")
+	@Select("SELECT MAX(no) FROM dailyBoard")
 	int getDailyBoardCount();
 	
 	int getSearchDailyBoardCount(Map<String, Object> paramMap);
