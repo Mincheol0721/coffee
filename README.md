@@ -46,6 +46,26 @@
 #### 6. 비밀번호 수정 페이지
 ![6  updatePwd](https://github.com/Mincheol0721/coffee/assets/41099574/e4b48f29-d977-46a8-8cd2-c2d716480cc1)
 
+#### 7-1. 일상게시판 (비회원)
+![7  dailyBoardList(비회원)](https://github.com/Mincheol0721/coffee/assets/41099574/27f45b9e-496e-4d52-9cd4-154c6a91b86f)
+![7  dailyBoardDetail(비회원)](https://github.com/Mincheol0721/coffee/assets/41099574/457d77a1-ad0c-47f3-a408-4cd04860f705)
+
+#### 7-2. 일상게시판 (회원)
+![7  dailyBoardList(회원)](https://github.com/Mincheol0721/coffee/assets/41099574/ff7cc643-9e0a-47a7-b76a-5ee961e3d9b3)
+![7  dailyBoardDetail(회원 본인)](https://github.com/Mincheol0721/coffee/assets/41099574/9d8aae14-7451-4413-860d-34714fe4f2b2)
+
+#### 7-3. 일상게시판 (검색)
+![7  dailyBoardList(검색)](https://github.com/Mincheol0721/coffee/assets/41099574/48bc9695-4bfd-498b-9770-d3fc5821e6f4)
+
+#### 7-4. 일상게시판 (글 작성)
+![7-4  regDailyBoard](https://github.com/Mincheol0721/coffee/assets/41099574/d2dc1e66-bd73-41f6-8371-0c9aae09c3f7)
+
+#### 7-4. 일상게시판 (댓글 작성)
+![7-5  regDailyBoardComment](https://github.com/Mincheol0721/coffee/assets/41099574/0ee2ec30-3151-4cf5-872a-5693a1a0de1d)
+
+
+
+
 
 
 
