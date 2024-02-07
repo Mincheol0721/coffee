@@ -17,7 +17,7 @@
 	<div class="form-container">
 		<p class="title">마이페이지</p>
 			<div class="profile">
-				<img src="/coffee/member/download?id=${member.id}" id="thumbnail">
+				<img src="/coffee/member/download?nickname=${member.nickname}" id="thumbnail">
 			</div>
 			<div class="input-group">
 				<label for="name">이름</label> 
