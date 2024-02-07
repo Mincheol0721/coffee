@@ -57,8 +57,8 @@ public class DailyBoardService {
 		String keyField = (String)paramMap.get("keyField");
 		
 //		log.info("pageNum " + pageNum);
-		log.info("keyword: " + keyword);
-		log.info("keyField: " + keyField);
+//		log.info("keyword: " + keyword);
+//		log.info("keyField: " + keyField);
 		
 		Map<String, Object> countMap = new HashMap<String, Object>();
 		countMap.put("keyField", keyField);
@@ -77,11 +77,11 @@ public class DailyBoardService {
 		List<DailyBoardVO> vo = new ArrayList<>();
 		
 		if(keyword == null || keyword.length() == 0) {
-			System.out.println("If");
+//			System.out.println("If");
 			vo = mapper.getDailyBoardList(paramMap);
 			count = mapper.getDailyBoardCount(); 
 		} else if(keyword != null && keyword.length() > 0) {
-			System.out.println("Else If");
+//			System.out.println("Else If");
 			vo = mapper.searchDailyBoardList(paramMap);
 			count = mapper.getSearchDailyBoardCount(countMap); 
 		}
@@ -90,7 +90,7 @@ public class DailyBoardService {
 		
 //		log.info("pageSize: " + pageSize);
 //		log.info("pageBlock: " + pageBlock);
-		log.info("pageCount: " + (int)Math.ceil(count/pageSize));
+//		log.info("pageCount: " + (int)Math.ceil(count/pageSize));
 		
 		map.put("pageSize", pageSize);
 		map.put("pageBlock", pageBlock);
@@ -123,7 +123,7 @@ public class DailyBoardService {
 		
 		no = mapper.getDailyBoardNo();
 		
-		log.info("newBoardNo: " + no);
+//		log.info("newBoardNo: " + no);
 		
 		map.put("no", no);
 		
@@ -136,7 +136,7 @@ public class DailyBoardService {
 		List<String> fileNames = new ArrayList<String>();
 		
 		// TODO Auto-generated method stub
-		int no = mapper.getDailyBoardNo();
+		int no = mapper.getDailyBoardNo() + 1;
 		//File Information
 		//파일정보         
 		String sFileInfo = "";
@@ -186,7 +186,7 @@ public class DailyBoardService {
 		sFileInfo += "&sFileName="+ sFileName;
 		sFileInfo += "&sFileURL=/dailyboard/" + no + "/" + fileName;
 		
-		System.out.println("sfileInfo: " + sFileInfo);
+//		System.out.println("sfileInfo: " + sFileInfo);
 		
 		PrintWriter print = response.getWriter();
 		
@@ -219,7 +219,7 @@ public class DailyBoardService {
 			String value = request.getParameter(key);
 			
 			map.put(key, value);
-			log.info(key + ": " + value);
+//			log.info(key + ": " + value);
 		}
 
 		mapper.updateDailyBoard(map);
@@ -248,12 +248,12 @@ public class DailyBoardService {
 			log.info("img: " + img);
 			String src = img.attr("src");
 			src = src.substring(src.lastIndexOf('/')+1);
-			log.info("src: " + src);
+//			log.info("src: " + src);
 			fileNames.add(src);
 		}
 		fileMap.put("fileNames", fileNames);
 		fileMap.put("no", Integer.parseInt(map.get("no").toString()));
-		log.info("img no: " + Integer.parseInt(map.get("no").toString()));
+//		log.info("img no: " + Integer.parseInt(map.get("no").toString()));
 		
 		mapper.addFile(fileMap);
 	}

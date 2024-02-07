@@ -140,6 +140,8 @@
 			.commentItems {
 				width: 100%;
 				height: 4rem;
+/* 				border-bottom: 1px solid lightgray; */
+				margin-top: 0.6em;
 			}
 		</style>
 	</head>
@@ -175,14 +177,14 @@
 						<c:forEach var="list" items="${commentList}" varStatus="loop">
 								<c:choose>
 									<c:when test="${list.level > 1}">
-										<span style="display: flex;"  class="commentItems">
+										<span style="display: inline-flex;" class="commentItems">
 										<c:forEach begin="1" end="${list.level-1}" step="1">
 											<span style="padding-left: 20px"></span>
 										</c:forEach>
 										└ &nbsp;
 									</c:when>
 									<c:otherwise>
-										<span style="display: inline-flex;" class="commentItems">
+										<span style="display: inline-block;" class="commentItems">
 									</c:otherwise>
 								</c:choose>
 								<div style="width: 100%;">
@@ -191,7 +193,7 @@
 										<b>${list.nickname }</b>&nbsp;&nbsp;&nbsp;<small style="font-size: 11px;">${list.writeDate }</small>
 										<c:if test="${not empty member}">
 											<small>
-												<a href="javascript:recommentForm(${loop.index}, ${list.no})">&nbsp;<i class="fa-regular fa-comment"></i></a>
+												<a href="javascript:recommentForm(${loop.index}, ${list.no})" class="newFrm hide">&nbsp;<i class="fa-regular fa-comment"></i></a>
 											</small>
 										</c:if>
 										<c:if test="${list.nickname eq member.nickname}">
@@ -215,6 +217,28 @@
 										</div>
 										<span class="underline"></span>
 									</span>
+									<div class="recFrm hide" style="display: none;">
+										<form action="/coffee/dailyboardComment/regComment" method="post">
+											<input type="hidden" name="nickname" value="${member.nickname}">
+											<input type="hidden" name="boardNo" value="${vo.no}"> 
+											<input type="hidden" name="parentNo"> 
+											<span class="comment" style="display: flex; justify-content: space-between; flex-wrap: nowrap;">
+												<span style="padding-top: 0.5rem; margin-bottom: -1.2rem;">
+													└&nbsp;
+												</span> 
+												<input class="input-box" type="text" name="content" value="">
+												<div style="display: flex; justify-content: flex-end;">
+													<button class="button signupBtn"  onclick="javascript: modComment(${list.no}, ${vo.no}, ${loop.index})" style="font-size: 12px; margin: auto;">
+														<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+													    	<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"></path>
+													  	</svg>
+														<div class="text" style="margin: 0 1.2em;">댓글 작성</div>
+													</button>
+												</div> 
+												<span class="underline"></span>
+											</span>
+										</form>
+									</div>
 								</div>
 							</span>
 						</c:forEach>
@@ -298,28 +322,25 @@
 			}
 			
 			function recommentForm(idx, parentNo) {
-				console.log('parentNo: ', parentNo);
-				var recForm = document.createElement("div");
-				recForm.innerHTML = '<form action="/coffee/dailyboardComment/regComment" method="post">'
-										+ '<input type="hidden" name="nickname" value="${member.nickname}">'
-										+ '<input type="hidden" name="boardNo" value="${vo.no}">'
-										+ '<input type="hidden" name="parentNo" value="' + parentNo + '">'
-										+ '<span class="comment" style="display: flex;justify-content: space-between;flex-wrap: nowrap;">'
-											+ '<span style="padding-top: 0.5rem; margin-bottom: -1.2rem;">└ &nbsp;</span>'
-											+ '<input class="input-box" type="text" name="content" value="${list.content}">'
-									 		+ '<div style="display: flex; justify-content: flex-end;">'
-												+ '<button class="button signupBtn" onclick="javascript: modComment(${list.no}, ${vo.no}, ${loop.index})" style="font-size: 12px; margin: auto; ">'
-												  	+ '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">'
-												    	+ '<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"></path>'
-												  	+ '</svg>'
-												  	+ '<div class="text" style="margin: 0 1.2em;"> 댓글 작성 </div>'
-												+ '</button>'
-											+ '</div>'
-											+ '<span class="underline"></span>'
-										+ '</span>'
-									+ '</form>';
-				var comment = document.getElementsByClassName("content")[idx];
-				comment.parentElement.appendChild(recForm);
+				
+				$('input[name=parentNo]').val(parentNo);
+				
+				var link = document.getElementsByClassName('newFrm')[idx];
+				var recFrm = document.getElementsByClassName('recFrm')[idx];
+				var comments = document.getElementsByClassName("commentItems");
+				
+				if(recFrm.style.display == 'none' || recFrm.style.display == '') {
+					recFrm.style.display = 'block';
+					for(var i=idx+1; i<comments.length; i++) {
+						comments[i].style.marginTop = "2em";
+					}
+				} else {
+					recFrm.style.display = 'none';
+					for(var i=idx+1; i<comments.length; i++) {
+						comments[i].style.marginTop = "0.6em";
+					}
+				}
+				
 			}
 		</script>
 	</body>
