@@ -46,17 +46,18 @@ public class DailyBoardController {
 	@RequestMapping("dailyBoardList")
 	public @ResponseBody ModelAndView dailyBoardList(@RequestParam(value = "pageNum", required = false) String pageNum, 
 													@RequestParam(value = "keyword", required = false) String keyword, 
-													@RequestParam(value = "category", required = false) String category, 
+													@RequestParam(value = "keyField", required = false) String keyField, 
 													HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView mav = new ModelAndView();
 		
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put("pageNum", pageNum);
 		paramMap.put("keyword", keyword);
-		paramMap.put("category", category);
+		paramMap.put("keyField", keyField);
 		Map<String, Object> map = service.listDailyBoard(paramMap, request, response);
 		
 		mav.addObject("isBoard", true);
+		mav.addObject("searching", paramMap);
 		mav.addObject("list", map);
 		mav.addObject("center", viewPath + "dailyBoardList.jsp");
 		mav.setViewName("main");
@@ -104,7 +105,7 @@ public class DailyBoardController {
 		MemberVO owner = service.getOwnerDetail(nickname);
 		
 		List<DailyBoardCommentVO> commentList = commentService.getCommentList(no);
-		log.info(commentList.toString());
+//		log.info(commentList.toString());
 		
 		mav.addObject("commentList", commentList);
 		mav.addObject("owner", owner);

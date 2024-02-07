@@ -5,41 +5,35 @@
   
 <mapper namespace="com.spring.coffee.mapper.DailyBoardMapper">
 
-	<select id="getDailyBoardList" parameterType="java.util.Map" resultType="com.spring.coffee.dailyboard.vo.DailyBoardVO">
+	<select id="searchDailyBoardList" parameterType="java.util.Map" resultType="com.spring.coffee.dailyboard.vo.DailyBoardVO">
 		<![CDATA[
 			SELECT * 
 			FROM ( 
 				SELECT ROWNUM AS rn, b.* 
-				FROM  
-							
+				FROM ( 
+				 	SELECT 
+				 		d.no as no,
+	                   	d.title as title,
+	                   	d.content as content,
+	                   	d.nickname as nickname,
+	                   	d.writeDate as writeDate,
+	                   	d.readCount as readCount,
+	                   	d.fileName as fileName
+	                FROM dailyboard d
+	                WHERE 
 		]]>
-		<if test="category != null and keyword != null">
-			 <![CDATA[
-			 	( 
-			 	SELECT 
-			 		d.no as no,
-                   	d.title as title,
-                   	d.content as content,
-                   	d.nickname as nickname,
-                   	d.writeDate as writeDate,
-                   	d.readCount as readCount,
-                   	d.fileName as fileName
-                FROM dailyboard d
-                WHERE title LIKE '%' || '2' || '%'
-                ORDER BY writeDate DESC
+<!-- 			<choose> -->
+<!-- 				<when test="keyField == 'title'">d.title</when> -->
+<!-- 				<when test="keyField == 'content'">d.content</when> -->
+<!-- 				<when test="keyField == 'nickname'">d.nickname</when> -->
+<!-- 			</choose> -->
+		<![CDATA[
+	                ${keyField} LIKE '%' || #{keyword} || '%'
+	                ORDER BY writeDate DESC
                 ) b 
 				WHERE ROWNUM <= #{endRow}
 			) WHERE rn > #{startRow}
-			 ]]>
-		</if>
-		<if test="category == null">
-			<![CDATA[
-					dailyBoard b 
-					WHERE ROWNUM <= #{endRow} 
-					ORDER BY writeDate DESC
-				) WHERE rn > #{startRow} 
-			]]>
-		</if>
+		]]>
 	</select>
 
     <update id="addFile" parameterType="java.util.Map">
@@ -54,13 +48,10 @@
         ]]>
     </update>
 	
-	<select id="getDailyBoardCount" resultType="int" parameterType="java.util.Map">
+	<select id="getSearchDailyBoardCount" resultType="int" parameterType="java.util.Map">
 		<![CDATA[
-			SELECT COUNT(*) FROM dailyBoard 
+			SELECT COUNT(*) FROM dailyBoard WHERE ${keyField} LIKE '%' || #{keyword} || '%'
 		]]>
-		<if test="category != null">
-				WHERE ${category} LIKE '%' || #{keyword} || '%'
-		</if>
 	</select>
 		
 </mapper>

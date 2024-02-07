@@ -3,6 +3,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
 <html>
@@ -26,23 +27,22 @@
 			</div>
 			<div style="width: 100%; height: 3rem;">
 	    		<form action="/coffee/dailyboard/dailyBoardList" method="post">
-	    			<select name="category" style="display: inline-block;">
-	    				<option value="">------------</option>
-	    				<option value="title">제목</option>
+	    			<select name="keyField" style="display: inline-block;">
 	    				<option value="content">내용</option>
+	    				<option value="title">제목</option>
 	    				<option value="nickname">작성자</option>
 	    			</select>
 					<div class="search">
 					  	<div class="search-box">
 					    	<div class="search-field">
-						      		<input placeholder="Search..." class="input keyword" type="text" name="keyword">
-						      		<div class="search-box-icon">
-						        		<button class="btn-icon-content search">
-						          			<i class="search-icon">
-						            			<svg xmlns="://www.w3.org/2000/svg" version="1.1" viewBox="0 0 512 512"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" fill="#000"></path></svg>
-						          			</i>
-						        		</button>
-						      		</div>
+					      		<input placeholder="Search..." class="input keyword" type="text" name="keyword">
+					      		<div class="search-box-icon">
+					        		<button class="btn-icon-content searchBtn">
+					          			<i class="search-icon">
+					            			<svg xmlns="://www.w3.org/2000/svg" version="1.1" viewBox="0 0 512 512"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" fill="#000"></path></svg>
+					          			</i>
+					        		</button>
+					      		</div>
 					    	</div>
 					  	</div>
 					</div>
@@ -77,7 +77,7 @@
 							</td>
 							<td class="boardTitle">${vo.title}</td>
 							<td class="boardUser">${vo.nickname}</td>
-							<td class="boardWriteDate">${vo.writeDate}</td>
+							<td class="boardWriteDate">${fn:substring(vo.writeDate, 0, 10)}</td>
 							<td class="boardReadCount">${vo.readCount}</td>
 						</tr>
 					</c:forEach>
@@ -104,21 +104,75 @@
 			</div>
 			<nav aria-label="Page navigation example" style="margin: 1rem auto;">
 				<c:if test="${not empty list.vo}">
-					<fmt:parseNumber var="pageCount" value="${list.count/list.pageSize + (list.count % list.pageSize eq 0 ? 0 : 1)}" integerOnly="true" />
+					<c:set var="pageBlock" value="${list.pageBlock}" />
+					<c:set var="pageSize" value="${list.pageSize}" />
+					<c:set var="count" value="${list.count}" />
+					<c:set var="currentPage" value="${list.currentPage}" />
+					<fmt:parseNumber var="pageGroup" value="${currentPage / pageBlock + (currentPage % pageBlock eq 0 ? 0 : 1)}" integerOnly="true" />
+					<fmt:parseNumber var="pageCount" value="${count/pageSize + (count % pageSize eq 0 ? 0 : 1)}" integerOnly="true" />
 					<ul class="pagination" style="float: right; margin-right: 20px">
 						<!-- 글이 존재 한다면 -->
 						<c:if test="${not empty list.vo}">
-							<c:set var="startPage" value="${1}" />
+							<c:set var="startPage" value="${( (pageGroup - 1) * pageBlock ) + 1}" />
+							<c:set var="endPage" value="${pageGroup * pageBlock}" />
+						</c:if>
+						<c:if test="${endPage >= pageCount}">
+							<c:set var="endPage" value="${pageCount}" />
 						</c:if>
 						
-						<c:set var="pageBlock" value="${list.pageBlock}" />
+						<!-- 이전 페이지 계산 -->
+						<c:if test="${startPage > pageBlock}">
+							<li class="page-item">
+								<a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?pageNum=${startPage - pageBlock}
+									<c:if test="${not empty category}">&category=${category}</c:if>
+									<c:if test="${searching.keyField != ''}">&keyField=${searching.keyField}</c:if>
+									<c:if test="${searching.keyword != ''}">&keyword=${searching.keyword}</c:if>
+									" aria-label="Previous">
+						      		<span aria-hidden="true">&laquo;</span>
+						    	</a>
+							</li>
+						</c:if>
 						
+						<!-- 페이지 번호 띄우기 -->
+						<c:forEach var="n" begin="${startPage}" end="${endPage}">
+							<c:choose>
+								<c:when test="${n == list.currentPage}">
+									<li class="page-item active"><a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?pageNum=${currentPage}
+									<c:if test="${not empty category}">&category=${category}</c:if>
+									<c:if test="${searching.keyField != ''}">&keyField=${searching.keyField}</c:if>
+									<c:if test="${searching.keyword != ''}">&keyword=${searching.keyword}</c:if>
+									">${list.currentPage}</a></li>
+								</c:when>
+								<c:otherwise>
+									<li class="page-item"><a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?pageNum=${n}
+									<c:if test="${not empty category}">&category=${category}</c:if>
+									<c:if test="${searching.keyField != ''}">&keyField=${searching.keyField}</c:if>
+									<c:if test="${searching.keyword != ''}">&keyword=${searching.keyword}</c:if>
+									">${n}</a></li>
+								</c:otherwise>
+							</c:choose>
+						</c:forEach>
+						
+						<!-- 다음 페이지 계산 -->
+						<c:if test="${endPage < pageCount}">
+							<a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?pageNum=${startPage + pageBlock}
+									<c:if test="${not empty category}">&category=${category}</c:if>
+									<c:if test="${searching.keyField != ''}">&keyField=${searching.keyField}</c:if>
+									<c:if test="${searching.keyword != ''}">&keyword=${searching.keyword}</c:if>
+									" aria-label="NEXT">
+									<span aria-hidden="true">&raquo;</span>
+								</a>
+							</li>
+						</c:if>
+						
+<%-- 						<c:out value="pageBlock: ${pageBlock} / pageSize: ${pageSize} / count: ${count} / pageCount: ${pageCount} / pageGroup: ${pageGroup} / startPage: ${startPage} / endPage: ${endPage}" />  --%>
+					
+					<%--
 						<!-- pageSize로 설정한 수보다 글이 더 많으면 -->
 						<fmt:parseNumber var="result" value="${list.currentPage / pageBlock}" integerOnly="true" />
 						<c:if test="${list.currentPage > pageBlock}">
 							<c:set var="startPage" value="${result * pageBlock + 1}" />
 						</c:if>
-						<c:out value="result: ${result}" />
 						
 						<!-- pageSize보다 글 개수가 더 적으면 -->
 						<c:if test="${list.currentPage % pageBlock eq 0}">
@@ -142,7 +196,11 @@
 						<!-- 시작페이지가 pageBlock보다 크면 -->
 						<c:if test="${startPage > pageBlock}">
 							<li class="page-item">
-								<a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?<c:if test="${not empty category}">category=${category}&</c:if>pageNum=${startPage - list.pageBlock}" aria-label="Previous">
+								<a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?
+									<c:if test="${not empty category}">category=${category}&</c:if>
+									<c:if test="${searching.keyField != null || searching.keyField != ''}">keyField=${searching.keyField}&</c:if>
+									<c:if test="${searching.keyword != null || searching.keyword != ''}">keyword=${searching.keyword}&</c:if>
+									pageNum=${startPage - list.pageBlock}" aria-label="Previous">
 						      		<span aria-hidden="true">&laquo;</span>
 						    	</a>
 							</li>
@@ -152,10 +210,18 @@
 						<c:forEach var="n" begin="${startPage}" end="${endPage}">
 							<c:choose>
 								<c:when test="${n == list.currentPage}">
-									<li class="page-item active"><a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?<c:if test="${not empty category}">category=${category}&</c:if>pageNum=${list.currentPage}">${list.currentPage}</a></li>
+									<li class="page-item active"><a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?
+									<c:if test="${not empty category}">category=${category}&</c:if>
+									<c:if test="${searching.keyField != null || searching.keyField != ''}">keyField=${searching.keyField}&</c:if>
+									<c:if test="${searching.keyword != null || searching.keyword != ''}">keyword=${searching.keyword}&</c:if>
+									pageNum=${list.currentPage}">${list.currentPage}</a></li>
 								</c:when>
 								<c:otherwise>
-									<li class="page-item"><a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?<c:if test="${not empty category}">category=${category}&</c:if>pageNum=${n}">${n}</a></li>
+									<li class="page-item"><a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?
+									<c:if test="${not empty category}">category=${category}&</c:if>
+									<c:if test="${searching.keyField != null || searching.keyField != ''}">keyField=${searching.keyField}&</c:if>
+									<c:if test="${searching.keyword != null || searching.keyword != ''}">keyword=${searching.keyword}&</c:if>
+									pageNum=${n}">${n}</a></li>
 								</c:otherwise>
 							</c:choose>
 						</c:forEach>
@@ -163,13 +229,17 @@
 						<!-- 끝페이지 이후 다음 글 존재하면 -->
 						<c:if test="${endPage < pageCount}">
 							<li class="page-item">
-								<a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?<c:if test="${not empty category}">category=${category}&</c:if>pageNum=${startPage + pageBlock}">
+								<a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?
+								<c:if test="${not empty category}">category=${category}&</c:if>
+								<c:if test="${searching.keyField != null || searching.keyField != ''}">keyField=${searching.keyField}&</c:if>
+								<c:if test="${searching.keyword != null || searching.keyword != ''}">keyword=${searching.keyword}&</c:if>
+								pageNum=${startPage + pageBlock}">
 									<span aria-hidden="true">&raquo;</span>
 								</a>
 							</li>
 						</c:if>
 						
-<%-- 						<c:out value="endPage: ${endPage}/ pageCount: ${pageCount}/ pageBlock: ${pageBlock}/ startPage: ${startPage}" /> --%>
+ 						<c:out value="endPage: ${endPage}/ pageCount: ${pageCount}/ pageBlock: ${pageBlock}/ startPage: ${startPage}" /> --%>
 						
 					</ul>					
 				</c:if>
@@ -178,6 +248,5 @@
 				</c:if>
 			</nav>
 		</main>		
-		 
 	</body>
 </html>

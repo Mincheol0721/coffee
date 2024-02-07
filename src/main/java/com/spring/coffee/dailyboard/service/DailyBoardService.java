@@ -35,7 +35,7 @@ import net.coobird.thumbnailator.Thumbnails;
 @Slf4j
 public class DailyBoardService {
 	
-	private final static String viewPath = "/WEB-INF/views/board/";
+	private final static String viewPath = "/WEB-INF/views/dailyBoard/";
 	
 	@Value("${upload.directory}")
 	private String uploadPath;
@@ -47,29 +47,28 @@ public class DailyBoardService {
 	private DailyBoardVO vo;
 	
 	public Map<String, Object> listDailyBoard(Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		int pageSize = 10;
-		int pageBlock = 5;
-		int count = 0;
-		int no = 0;
+		int pageSize = 10;  //페이지 당 컨텐츠 개수 
+		int pageBlock = 5;  //한 블럭 당 보여질 페이지 개수
+		int count = 0;  //총 컨텐츠 개수
+		int no = 0;  //컨텐츠 번호
 		
 		String pageNum = (String)paramMap.get("pageNum");
 		String keyword = (String)paramMap.get("keyword");
-		String category = (String)paramMap.get("category");
-		log.info("pageNum " + pageNum);
-		log.info("keyword " + keyword);
-		log.info("category " + category);
+		String keyField = (String)paramMap.get("keyField");
+		
+//		log.info("pageNum " + pageNum);
+		log.info("keyword: " + keyword);
+		log.info("keyField: " + keyField);
 		
 		Map<String, Object> countMap = new HashMap<String, Object>();
-		countMap.put("category", category);
+		countMap.put("keyField", keyField);
 		countMap.put("keyword", keyword);
 		
 		if(pageNum == null) pageNum = "1";
 		
-		int currentPage = Integer.parseInt(pageNum);
-		count = mapper.getDailyBoardCount(countMap);
-		log.info("count: " + count);
-		int startRow = (currentPage - 1) * pageSize + 1;
-		int endRow = currentPage * pageSize;
+		int currentPage = Integer.parseInt(pageNum);  //현재 페이지
+		int startRow = (currentPage - 1) * pageSize + 1;  //페이지 내 컨텐츠 시작 번호
+		int endRow = currentPage * pageSize;  //페이지 내 컨텐츠 끝 번호
 		
 		paramMap.put("startRow", (startRow-1));
 		paramMap.put("endRow", endRow);
@@ -77,14 +76,21 @@ public class DailyBoardService {
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<DailyBoardVO> vo = new ArrayList<>();
 		
-		if(count > 0) {
+		if(keyword == null || keyword.length() == 0) {
+			System.out.println("If");
 			vo = mapper.getDailyBoardList(paramMap);
-			no = count - (currentPage - 1) * pageSize;
+			count = mapper.getDailyBoardCount(); 
+		} else if(keyword != null && keyword.length() > 0) {
+			System.out.println("Else If");
+			vo = mapper.searchDailyBoardList(paramMap);
+			count = mapper.getSearchDailyBoardCount(countMap); 
 		}
+		no = count - (currentPage - 1) * pageSize;
+		log.info("count: " + count);
 		
-		log.info("pageSize: " + pageSize);
-		log.info("pageBlock: " + pageBlock);
-		log.info("pageCount: " + (count / pageSize + (count % pageSize == 0 ? 0 : 1)));
+//		log.info("pageSize: " + pageSize);
+//		log.info("pageBlock: " + pageBlock);
+		log.info("pageCount: " + (int)Math.ceil(count/pageSize));
 		
 		map.put("pageSize", pageSize);
 		map.put("pageBlock", pageBlock);
@@ -100,7 +106,7 @@ public class DailyBoardService {
 
 		String absPath = uploadPath + "/dailyBoard/";
 		Map map = new HashMap();
-		int no = mapper.getDailyBoardNo();
+		int no = 0;
 		
 		Enumeration enu = request.getParameterNames();
 		
@@ -114,7 +120,13 @@ public class DailyBoardService {
 		}
 		
 		mapper.addDailyBoard(map);
+		
+		no = mapper.getDailyBoardNo();
+		
+		log.info("newBoardNo: " + no);
+		
 		map.put("no", no);
+		
 		updateImg(map);
 		
 	}
@@ -122,9 +134,9 @@ public class DailyBoardService {
 	public void uploadImg(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		request.setCharacterEncoding("UTF-8");
 		List<String> fileNames = new ArrayList<String>();
-				
+		log.info("request no: " + (String)request.getAttribute("no"));
 		// TODO Auto-generated method stub
-		int no = mapper.getDailyBoardNo() + 1;
+		int no = mapper.getDailyBoardNo();
 		//File Information
 		//파일정보         
 		String sFileInfo = "";
@@ -197,7 +209,6 @@ public class DailyBoardService {
 
 	public int updateDailyBoard(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-		String absPath = uploadPath + "/dailyBoard/";
 		Map map = new HashMap();
 		
 		Enumeration enu = request.getParameterNames();
