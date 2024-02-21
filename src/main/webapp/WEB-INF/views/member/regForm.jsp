@@ -21,7 +21,7 @@
 </head>
 <body>
 	<div class="form-container">
-		<p class="title">로그인</p>
+		<p class="title">회원가입</p>
 		<c:if test="${map eq null}">
 			<form class="form" action="/coffee/member/addMember" method="post" enctype="multipart/form-data">
 		</c:if>

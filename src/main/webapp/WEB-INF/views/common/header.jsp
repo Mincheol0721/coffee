@@ -32,7 +32,7 @@
 		            		<span class="nav-span dropdown text-end users">게시판</span>
 		          		</a>
 		          		<ul class="dropdown-menu">
-				            <li><a class="dropdown-item" href="/coffee/board/dailyBoardList">일상 게시판</a></li>
+				            <li><a class="dropdown-item" href="/coffee/dailyboard/dailyBoardList">일상 게시판</a></li>
 				            <li><a class="dropdown-item" href="#">커피 게시판</a></li>
 				            <li><a class="dropdown-item" href="#">질의응답 게시판</a></li>
 		          		</ul>
@@ -55,39 +55,46 @@
     		
             	<div class="dropdown text-end users">
               		<a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-	              		<c:if test="${isLogOn ne true}">
+	              		<c:if test="${empty member}">
 	               		 	<img src="/images/login_image.png" alt="user" width="32" height="32" class="rounded-circle">
 	              		</c:if>
-	              		<c:if test="${isLogOn eq true}">
-	                		<img src="/coffee/member/download?id=${member.id }" alt="user" width="32" height="32" class="rounded-circle">
+	              		<c:if test="${not empty member}">
+	                		<img src="/coffee/member/download?nickname=${member.nickname}" alt="user" width="32" height="32" class="rounded-circle">
 	              		</c:if>
               		</a>
    					<c:choose>
-    					<c:when test="${isLogOn ne true}">
+    					<c:when test="${empty member}">
 		              		<ul class="dropdown-menu text-small">
 		                		<li><a class="dropdown-item" href="/coffee/member/loginForm">로그인</a></li>
 		                		<li><a class="dropdown-item" href="/coffee/member/regForm">회원가입</a></li>
 	              			</ul>
     					</c:when>
-    					<c:when test="${isLogOn eq true}">
+    					<c:when test="${not empty member}">
 							<!-- 로그인 시 화면-->
 							<ul class="dropdown-menu text-small">
 				  				<li><a class="dropdown-item" href="/coffee/member/memberDetail">마이페이지</a></li>
 				  				<li><a class="dropdown-item" href="/coffee/member/modForm">회원정보수정</a></li>
 				  				<li><hr class="dropdown-divider"></li>
 				  				<li>
+				  					<a class="dropdown-item" href="/coffee/member/logout">로그아웃</a>
+				  					<%-- 
 				  					<c:if test="${isOwnMember eq true}">
 				  						<a class="dropdown-item" href="/coffee/member/logout">로그아웃</a>
 				  					</c:if>
 				  					<c:if test="${isKakao eq true}">
-				  						<a class="dropdown-item" href="https://kauth.kakao.com/oauth/logout?client_id=6f333d17c0737d247630d8be3aeead82&logout_redirect_uri=http://localhost:8090/coffee/member/kakaoLogout">로그아웃</a>
+<!-- 				  						<a class="dropdown-item" href="https://kauth.kakao.com/oauth/logout?client_id=6f333d17c0737d247630d8be3aeead82&logout_redirect_uri=http://localhost:8090/coffee/member/kakaoLogout">로그아웃</a> -->
+										<a class="dropdown-item" href="/coffee/member/logout">로그아웃</a>
 				  					</c:if>
 				  					<c:if test="${isGoogle eq true}">
-				  						<a class="dropdown-item" href="https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=http://localhost:8090/coffee/member/googleLogout">로그아웃</a>
+<!-- 				  						<a class="dropdown-item" href="https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=http://localhost:8090/coffee/member/googleLogout">로그아웃</a> -->
+				  						<a class="dropdown-item" href="/coffee/member/logout">로그아웃</a>
+<!-- 				  						<a class="dropdown-item" href="https://mail.google.com/mail/u/0/?logout&hl=en">로그아웃</a> -->
 				  					</c:if>
 				  					<c:if test="${isNaver eq true}">
-				  						<a class="dropdown-item" href="/coffee/member/naverLogout">로그아웃</a>
+<!-- 				  						<a class="dropdown-item" href="/coffee/member/naverLogout">로그아웃</a> -->
+										<a class="dropdown-item" href="/coffee/member/logout">로그아웃</a>
 				  					</c:if>
+				  					--%>
 			  					</li>
 							</ul>
     					</c:when>

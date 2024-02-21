@@ -22,7 +22,7 @@
 </head>
 <body>
 	<div class="form-container">
-	<c:out value="message: ${message }" />
+<%-- 	<c:out value="message: ${message }" /> --%>
 		<p class="title">비밀번호 변경</p>
 		<form class="form" action="/coffee/member/modPassword" method="post">
 		<input type="hidden" name="id" value="${member.id}">

@@ -57,9 +57,11 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("member")
+@Slf4j
+@RequestMapping("coffee/member")
 public class MemberController {
 	
 	private final static String viewPath = "/WEB-INF/views/member/";
@@ -88,7 +90,7 @@ public class MemberController {
 		MemberVO member = new MemberVO();
 		
 		member = memberMapper.login(vo);
-//		System.out.println("member: " + member.getId());
+		//System.out.println("member: " + member.getId());
 		
 		//id와 비밀번호로 조회 해온 정보가 존재 시 로그인 처리
 		if(member != null) {
@@ -110,7 +112,7 @@ public class MemberController {
 	@RequestMapping(value="kakaoLogin", produces = "application/json;charset=UTF-8", method=RequestMethod.GET)
 	public @ResponseBody ModelAndView kakaoLogin(String code, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView mav = new ModelAndView();
-		System.out.println("############# " + code);
+		//System.out.println("############# " + code);
 		//POST방식으로 key=value 데이터를 카카오 서버쪽으로 Token요청
 		RestTemplate rt = new RestTemplate();
 		
@@ -135,7 +137,7 @@ public class MemberController {
 		ObjectMapper objectMapper = new ObjectMapper();
 		OAuthToken oauthToken = objectMapper.readValue(responseEntity.getBody(), OAuthToken.class);
 		
-		System.out.println("kakaoLogin access_token: " + oauthToken.getAccess_token());
+		//System.out.println("kakaoLogin access_token: " + oauthToken.getAccess_token());
 		//-------------------------------------------------------------------------------------------------------------------------------------------------------
 		//받은 엑세스 토큰을 카카오 서버로 전달하여 카카오 DB에 저장된 회원정보 받기
 		RestTemplate rt2 = new RestTemplate();
@@ -152,7 +154,7 @@ public class MemberController {
 		ResponseEntity<String> responseEntity2 = rt.exchange("https://kapi.kakao.com/v2/user/me", HttpMethod.POST, kakaoProfileRequest, String.class);
 		
 		//응답데이터 확인
-		System.out.println("responseEntity2: " + responseEntity2.getBody());
+		//System.out.println("responseEntity2: " + responseEntity2.getBody());
 		
 		//JSONObject의 값들을 파싱하여 vo클래스의 변수에 매핑하여 저장시킬 라이브러리로 ObjectMapper 사용
 		ObjectMapper objectMapper2 = new ObjectMapper();
@@ -167,7 +169,7 @@ public class MemberController {
 		MemberVO member = memberMapper.getMemberBySocialId(socialId);
 		
 		if(member != null) {
-			System.out.println("kakao 아이디 존재");
+			//System.out.println("kakao 아이디 존재");
 			Map<String, Object> map = new HashMap<String, Object>();
 			memberMapper.login(member);
 			
@@ -177,13 +179,13 @@ public class MemberController {
 			
 			mav.setViewName("redirect:/coffee/main");
 		} else {
-			System.out.println("kakao 아이디 미존재");
+			//System.out.println("kakao 아이디 미존재");
 			Map<String, String> map = new HashMap<String, String>();
 			map.put("socialId", socialId);
 			map.put("name", kakaoInfo.getKakao_account().getName());
 			map.put("email", kakaoInfo.getKakao_account().getEmail());
 			map.put("fileName", kakaoInfo.getProperties().getProfile_image());
-			System.out.println("profileImage: " + kakaoInfo.getProperties().getProfile_image());
+			//System.out.println("profileImage: " + kakaoInfo.getProperties().getProfile_image());
 			
 			mav.addObject("kakaoReg", true);
 			mav.addObject("map", map);
@@ -196,7 +198,7 @@ public class MemberController {
 	
 	@RequestMapping("oauth2google")
 	public @ResponseBody ModelAndView googleLogin(String code, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		System.out.println("######################## " + code);
+		//System.out.println("######################## " + code);
 		ModelAndView mav = new ModelAndView();
 		HttpSession session = request.getSession();
 		
@@ -211,13 +213,13 @@ public class MemberController {
 		params.add("grant_type", "authorization_code");
 		//구글 서버에 HTTP POST 메소드로 token요청
 		ResponseEntity<String> responseEntity = rt.postForEntity("https://oauth2.googleapis.com/token", params, String.class);
-		System.out.println(responseEntity.getBody());
+		//System.out.println(responseEntity.getBody());
 		
 		//JSONObject의 값들을 파싱하여 vo클래스의 변수에 매핑하여 저장시킬 라이브러리로 ObjectMapper 사용
 		ObjectMapper objectMapper = new ObjectMapper();
 		OAuthToken oauthToken = objectMapper.readValue(responseEntity.getBody(), OAuthToken.class);
 		
-		System.out.println("google access_token: " + oauthToken.getAccess_token());
+		//System.out.println("google access_token: " + oauthToken.getAccess_token());
 		//-------------------------------------------------------------------------------------------------------------------------------------------------------
 		//받은 엑세스 토큰을 구글 서버로 전달하여 구글 DB에 저장된 회원정보 받기
 		RestTemplate rt2 = new RestTemplate();
@@ -232,7 +234,7 @@ public class MemberController {
 		//구글 서버에 HTTP POST 메소드로 token값을 문자열로 받아 저장
 		ResponseEntity<String> responseEntity2 = rt.exchange("https://www.googleapis.com/oauth2/v2/userinfo", HttpMethod.GET, googleProfileRequest, String.class);
 		//응답데이터 확인
-		System.out.println("responseEntity2: " + responseEntity2.getBody());
+		//System.out.println("responseEntity2: " + responseEntity2.getBody());
 		
 		//JSONObject 값들을 파싱하여 VO클래스의 변수에 저장
 		ObjectMapper objectMapper2 = new ObjectMapper();
@@ -243,7 +245,7 @@ public class MemberController {
 		MemberVO member = memberMapper.getMemberBySocialId(socialId);
 		
 		if(member != null) {
-			System.out.println("Google 아이디 존재");
+			//System.out.println("Google 아이디 존재");
 			Map<String, Object> map = new HashMap<String, Object>();
 			memberMapper.login(member);
 			
@@ -253,14 +255,14 @@ public class MemberController {
 			
 			mav.setViewName("redirect:/coffee/main");
 		} else {
-			System.out.println("Google 아이디 미존재");
+			//System.out.println("Google 아이디 미존재");
 			Map<String, String> map = new HashMap<String, String>();
 			map.put("socialId", socialId);
 			map.put("name", googleInfo.getName());
 			map.put("email", googleInfo.getEmail());
 			map.put("fileName", googleInfo.getPicture());
-			System.out.println("email: " + googleInfo.getEmail());
-			System.out.println("profileImage: " + googleInfo.getPicture());
+			//System.out.println("email: " + googleInfo.getEmail());
+			//System.out.println("profileImage: " + googleInfo.getPicture());
 			
 			mav.addObject("googleReg", true);
 			mav.addObject("map", map);
@@ -295,7 +297,7 @@ public class MemberController {
 		params.add("grant_type", "authorization_code");
 		//네이버 서버에 HTTP POST 메소드로 token요청
 		ResponseEntity<String> responseEntity = rt.postForEntity("https://nid.naver.com/oauth2.0/token", params, String.class);
-		System.out.println(responseEntity.getBody());
+		//System.out.println(responseEntity.getBody());
 		
 		//JSONObject의 값들을 파싱하여 vo클래스의 변수에 매핑하여 저장시킬 라이브러리로 ObjectMapper 사용
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -305,7 +307,7 @@ public class MemberController {
 		session.setAttribute("client_secret", clientSecret);
 		session.setAttribute("access_token", oauthToken.getAccess_token());
 		
-		System.out.println("naver access_token: " + oauthToken.getAccess_token());
+		//System.out.println("naver access_token: " + oauthToken.getAccess_token());
 		//-------------------------------------------------------------------------------------------------------------------------------------------------------
 		//받은 엑세스 토큰을 네이버 서버로 전달하여 네이버 DB에 저장된 회원정보 받기
 		RestTemplate rt2 = new RestTemplate();
@@ -321,7 +323,7 @@ public class MemberController {
 		//네이버 서버에 HTTP POST 메소드로 token값을 문자열로 받아 저장
 		ResponseEntity<String> responseEntity2 = rt.exchange("https://openapi.naver.com/v1/nid/me", HttpMethod.POST, naverProfileRequest, String.class);
 		//응답데이터 확인
-		System.out.println("responseEntity2: " + responseEntity2.getBody());
+		//System.out.println("responseEntity2: " + responseEntity2.getBody());
 		
 		//JSONObject 값들을 파싱하여 VO클래스의 변수에 저장
 		ObjectMapper objectMapper2 = new ObjectMapper();
@@ -330,11 +332,11 @@ public class MemberController {
 		
 		//회원정보 조회를 위해 id얻기
 		String socialId = naverInfo.getResponse().getId();
-		System.out.println("name: " + naverInfo.getResponse().getName());
+		//System.out.println("name: " + naverInfo.getResponse().getName());
 		MemberVO member = memberMapper.getMemberBySocialId(socialId);
 		
 		if(member != null) {
-			System.out.println("Naver 아이디 존재");
+			//System.out.println("Naver 아이디 존재");
 			Map<String, Object> map = new HashMap<String, Object>();
 			memberMapper.login(member);
 			
@@ -344,7 +346,7 @@ public class MemberController {
 			
 			mav.setViewName("redirect:/coffee/main");
 		} else {
-			System.out.println("Naver 아이디 미존재");
+			//System.out.println("Naver 아이디 미존재");
 			Map<String, String> map = new HashMap<String, String>();
 			map.put("socialId", socialId);
 			map.put("name", naverInfo.getResponse().getName());
@@ -371,7 +373,7 @@ public class MemberController {
 	
 	@RequestMapping(value="addMember", method = {RequestMethod.GET, RequestMethod.POST})
 	public ModelAndView addMember(@RequestParam("file") MultipartFile file, MultipartHttpServletRequest request, RedirectAttributes rAttr) throws Exception {
-		System.out.println("addMember탑승");
+		//System.out.println("addMember탑승");
 		ModelAndView mav = new ModelAndView();
 		MemberVO member = new MemberVO();
 		
@@ -380,7 +382,7 @@ public class MemberController {
 		
 		//파일 경로 저장할 변수 설정
 		String filePath = uploadPath + "/member/";
-		System.out.println("filePath: " + filePath);
+		//System.out.println("filePath: " + filePath);
 		//파일명 저장
 		String fileName = file.getOriginalFilename();
 		
@@ -407,14 +409,14 @@ public class MemberController {
 		}
 		//파일 업로드할 폴더를 생성하기 위해 경로 설정
 		File memDir = new File(filePath + id); 
-		System.out.println("memDir폴더 경로: " + memDir.getPath());
+		//System.out.println("memDir폴더 경로: " + memDir.getPath());
 		//폴더가 존재하지 않을 시 폴더 생성
 		if(!memDir.exists()) {
-			System.out.println("memDir 폴더 생성을 위해 if문 탑승");
+			//System.out.println("memDir 폴더 생성을 위해 if문 탑승");
 			if(memDir.mkdir()) {
-				System.out.println("memDir 폴더 생성 성공");
+				//System.out.println("memDir 폴더 생성 성공");
 			} else {
-				System.out.println("memDir 폴더 생성 실패");
+				//System.out.println("memDir 폴더 생성 실패");
 			}
 		}
 		
@@ -432,7 +434,7 @@ public class MemberController {
 	@RequestMapping(value = "addKakaoMember", method = {RequestMethod.GET, RequestMethod.POST})
 	public ModelAndView addKakaoMember(@RequestParam("file") MultipartFile file, MultipartHttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView mav = new ModelAndView();
-		System.out.println("addKakaoMember탑승");
+		//System.out.println("addKakaoMember탑승");
 		MemberVO member = new MemberVO();
 		HttpSession session = request.getSession();
 		
@@ -457,12 +459,13 @@ public class MemberController {
 			String value = request.getParameter(key);
 			
 			map.put(key, value);
+//			log.info(key + ": " + value);
 		}
 		
 		//id 값 저장
 		String id = map.get("id").toString();
 		//이미지 URL에서 이미지를 다운받아 저장하기 위해 URL정보 저장
-		String imgURL = map.get("imgURL").toString();
+		String imgURL = map.get("fileName").toString();
 		
 		//이미지 URL 생성
 		URL url = new URL(imgURL);
@@ -478,7 +481,7 @@ public class MemberController {
 		}
 		//이미지 파일 이름 추출
 		String fileName = imgURL.substring(imgURL.lastIndexOf('/') + 1);
-		System.out.println("추출한 파일명: " + fileName);
+		//System.out.println("추출한 파일명: " + fileName);
 		map.put("fileName", fileName);
 		
 		//저장할 이미지 파일 경로 생성
@@ -486,7 +489,7 @@ public class MemberController {
 		//이미지를 파일로 저장
 		Files.copy(in, savePath, StandardCopyOption.REPLACE_EXISTING);
 		
-		System.out.println("이미지 다운로드 및 저장 완료: " + savePath);
+		//System.out.println("이미지 다운로드 및 저장 완료: " + savePath);
 		
 		//mapper호출하여 db에 값 insert
 		memberMapper.addSocialMember(map);
@@ -521,7 +524,7 @@ public class MemberController {
 	@RequestMapping(value = "addGoogleMember", method = {RequestMethod.GET, RequestMethod.POST})
 	public ModelAndView addGoogleMember(@RequestParam("file") MultipartFile file, MultipartHttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView mav = new ModelAndView();
-		System.out.println("addGoogleMember탑승");
+		//System.out.println("addGoogleMember탑승");
 		MemberVO member = new MemberVO();
 		HttpSession session = request.getSession();
 		
@@ -567,7 +570,7 @@ public class MemberController {
 		}
 		//이미지 파일 이름 추출
 		String fileName = imgURL.substring(imgURL.lastIndexOf('=') + 1);
-		System.out.println("추출한 파일명: " + fileName);
+		//System.out.println("추출한 파일명: " + fileName);
 		map.put("fileName", fileName);
 		
 		//저장할 이미지 파일 경로 생성
@@ -575,7 +578,7 @@ public class MemberController {
 		//이미지를 파일로 저장
 		Files.copy(in, savePath, StandardCopyOption.REPLACE_EXISTING);
 		
-		System.out.println("이미지 다운로드 및 저장 완료: " + savePath);
+		//System.out.println("이미지 다운로드 및 저장 완료: " + savePath);
 		
 		//mapper호출하여 db에 값 insert
 		memberMapper.addSocialMember(map);
@@ -610,7 +613,7 @@ public class MemberController {
 	@RequestMapping(value = "addNaverMember", method = {RequestMethod.GET, RequestMethod.POST})
 	public ModelAndView addNaverMember(@RequestParam("file") MultipartFile file, MultipartHttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView mav = new ModelAndView();
-		System.out.println("addNaverMember탑승");
+		//System.out.println("addNaverMember탑승");
 		MemberVO member = new MemberVO();
 		HttpSession session = request.getSession();
 		
@@ -655,7 +658,7 @@ public class MemberController {
 		}
 		//이미지 파일 이름 추출
 		String fileName = imgURL.substring(imgURL.lastIndexOf('/') + 1);
-		System.out.println("추출한 파일명: " + fileName);
+		//System.out.println("추출한 파일명: " + fileName);
 		map.put("fileName", fileName);
 		
 		//저장할 이미지 파일 경로 생성
@@ -663,7 +666,7 @@ public class MemberController {
 		//이미지를 파일로 저장
 		Files.copy(in, savePath, StandardCopyOption.REPLACE_EXISTING);
 		
-		System.out.println("이미지 다운로드 및 저장 완료: " + savePath);
+		//System.out.println("이미지 다운로드 및 저장 완료: " + savePath);
 		
 		//mapper호출하여 db에 값 insert
 		memberMapper.addSocialMember(map);
@@ -733,7 +736,7 @@ public class MemberController {
 		String clientID = (String)session.getAttribute("client_id");
 		String clientSecret = (String)session.getAttribute("client_secret");
 		String accessToken = (String)session.getAttribute("access_token");
-		System.out.println("logout: " + clientID + " / " + clientSecret + " / " + accessToken);
+		//System.out.println("logout: " + clientID + " / " + clientSecret + " / " + accessToken);
 		
 		//네이버 로그아웃 요청
 		HttpHeaders headers = new HttpHeaders();
@@ -748,7 +751,7 @@ public class MemberController {
 		HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
 		ResponseEntity<String> responseEntity = new RestTemplate().postForEntity("https://nid.naver.com/oauth2.0/token", requestEntity, String.class);
 		
-		System.out.println("Naver Logout Response: " + requestEntity.getBody());
+		//System.out.println("Naver Logout Response: " + requestEntity.getBody());
 		
 		session.invalidate();
 		mav.setViewName("redirect:/coffee/main");
@@ -798,7 +801,7 @@ public class MemberController {
 		member = memberMapper.getMemberById(id);
 		
 		if(member.getPassword().equals(curPassword)) {
-			System.out.println("현재 비밀번호 일치하여 수정실행!");
+			//System.out.println("현재 비밀번호 일치하여 수정실행!");
 			memberMapper.modPassword(id, password);
 			
 			mav.setViewName("redirect:/coffee/member/memberDetail");
@@ -806,7 +809,7 @@ public class MemberController {
 			return mav;
 		} else {
 			//비밀번호 변경 클릭 시 자꾸 message 출력되는 현상 fix필요
-			System.out.println("현재 비밀번호 틀림!");
+			//System.out.println("현재 비밀번호 틀림!");
 			
 			mav.addObject("message", "failed");
 			mav.addObject("center", viewPath + "modPasswordForm.jsp");
@@ -819,7 +822,7 @@ public class MemberController {
 
 	@RequestMapping(value="modMember", method = {RequestMethod.GET, RequestMethod.POST})
 	public ModelAndView modMember(@RequestParam("file") MultipartFile file, MultipartHttpServletRequest request, RedirectAttributes rAttr) throws Exception {
-		System.out.println("modMember탑승");
+		//System.out.println("modMember탑승");
 		ModelAndView mav = new ModelAndView();
 		MemberVO member = new MemberVO();
 		HttpSession session = request.getSession();
@@ -846,14 +849,14 @@ public class MemberController {
 		String id = (String)map.get("id");
 		
 		//파일명 받아오기
-		System.out.println("update fileName: " + fileName);
+		//System.out.println("update fileName: " + fileName);
 		
 		//기존 이미지 폴더 경로 얻기
 		String imgPath = filePath + id;
-		System.out.println("modMember imgPath: " + imgPath);
+		//System.out.println("modMember imgPath: " + imgPath);
 
 		if(!file.isEmpty()) {
-			System.out.println("if문 탑승! 수정한 이미지 파일 존재!");
+			//System.out.println("if문 탑승! 수정한 이미지 파일 존재!");
 			fileName = file.getOriginalFilename();
 			map.put("fileName", fileName);
 			//기존 이미지 삭제
@@ -877,7 +880,7 @@ public class MemberController {
 			
 			filePath = imgPath + "/" + fileName;
 			File dest = new File(filePath);
-			System.out.println("filePath: " + filePath);
+			//System.out.println("filePath: " + filePath);
 			// 파일을 해당 폴더로 복사
 			Files.copy(file.getInputStream(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
 		}
@@ -889,9 +892,10 @@ public class MemberController {
 	}
 	
 	@RequestMapping("download")
-	public void download(@RequestParam("id") String id, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		System.out.println("id: " + id);
+	public void download(@RequestParam("nickname") String nickname, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		//System.out.println("id: " + id);
 		HttpSession session = request.getSession();
+		String id = memberMapper.getIdFromNickname(nickname);
 		MemberVO member = memberMapper.getMemberById(id);
 		String fileName = member.getFileName();
 		
@@ -905,8 +909,8 @@ public class MemberController {
 		//이미지 파일을 조작할 수 있는 파일객체 생성
 		File image = new File(filePath);
 		
-		System.out.println("파일 경로: " + filePath);
-		System.out.println("파일: " + image);
+		//System.out.println("파일 경로: " + filePath);
+		//System.out.println("파일: " + image);
 		
 		response.setHeader("Cache-Control", "no-cache");
 		response.addHeader("Content-disposition", "attachment; fileName=" + URLEncoder.encode(fileName, "UTF-8"));
@@ -932,10 +936,10 @@ public class MemberController {
 	
 	@RequestMapping("nickValidate")
 	public String nickValidate(@RequestParam("nickname") String nickname, HttpServletRequest request, HttpServletResponse response) {
-		System.out.println("닉네임 유효성 검사: " + nickname);
+		//System.out.println("닉네임 유효성 검사: " + nickname);
 		
 		String validatedNickname = memberMapper.nickValidate(nickname);
-		System.out.println("닉네임: " + validatedNickname);
+		//System.out.println("닉네임: " + validatedNickname);
 		
 		if(validatedNickname == null) {
 			return "사용가능";
@@ -947,10 +951,10 @@ public class MemberController {
 	
 	@RequestMapping("idValidate")
 	public String idValidate(@RequestParam("id") String id, HttpServletRequest request, HttpServletResponse response) {
-		System.out.println("아이디 유효성 검사: " + id);
+		//System.out.println("아이디 유효성 검사: " + id);
 		
 		String validatedId = memberMapper.idValidate(id);
-		System.out.println("닉네임: " + validatedId);
+		//System.out.println("닉네임: " + validatedId);
 		
 		if(validatedId == null) {
 			return "사용가능";
@@ -960,6 +964,11 @@ public class MemberController {
 		
 	}
 	
+	@RequestMapping("delMember")
+	public void delMember(@RequestParam("id") String id, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		memberMapper.delMember(id);
+		request.getSession().invalidate();
+	}
 	
 	
 }

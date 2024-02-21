@@ -21,7 +21,7 @@
 			<div class="profile">
 				<input type="file" name="file" id="file" onchange="setThumbnail(event);">
 				<label for="file"> 
-					<img src="/coffee/member/download?id=${member.id}" id="thumbnail">
+					<img src="/coffee/member/download?nickname=${member.nickname}" id="thumbnail">
 					<input type="hidden" name="fileName" value="${member.fileName}" >
 				</label>
 			</div>
