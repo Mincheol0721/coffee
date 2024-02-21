@@ -15,6 +15,10 @@
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+		<!-- CSS -->
+		<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+		<!-- JS -->
+		<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 		<style type="text/css">
 			#whole {
 				width: 80%;
@@ -156,6 +160,26 @@
 				<span style="float: right; font-size: small;">조회수 : ${vo.readCount}</span>
 			</div>
 			<hr>
+			<c:if test="${empty vo.fileNames }">
+			<div style="text-align: center; font-weight: bold;">
+				등록된 이미지가 없습니다.
+			</div>
+			</c:if>
+			<c:if test="${not empty vo.fileNames }">
+				<div class="swiper mySwiper" style="width: 400px; height: 400px;">
+					    <div class="swiper-wrapper">
+							<c:forEach var="fileName" items="${vo.fileNames}">
+								<div class="swiper-slide" style="">
+									<img src="/coffee/coffeeboard/imageList/${vo.no}/${fileName}" style="width: 400px; height: 400px; object-fit: scale-down;">
+								</div>
+							</c:forEach>
+						</div>
+						<div class="swiper-button-next"></div>
+						<div class="swiper-button-prev"></div>
+					    <div class="swiper-pagination"></div>
+	  			</div>
+			</c:if>
+			<hr>
 			<div id="content">
 				${vo.content}
 			</div>
@@ -274,8 +298,26 @@
 			</div>
 		</div>
 		
-		
+		<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 		<script type="text/javascript">
+			
+			var swiper = new Swiper(".mySwiper", {
+				spaceBetween: 30,
+			    centeredSlides: true,
+			    autoplay: {
+			      delay: 3000,
+			      disableOnInteraction: false,
+			    },
+			    pagination: {
+			      el: ".swiper-pagination",
+			      clickable: true,
+			    },
+			    navigation: {
+			      nextEl: ".swiper-button-next", // 다음 버튼 요소 선택자
+			      prevEl: ".swiper-button-prev"  // 이전 버튼 요소 선택자
+			    },
+		    });
+		
 			//validate
 			var nickname = '${member.nickname}';
 			
@@ -348,6 +390,7 @@
 				}
 				
 			}
+			
 		</script>
 	</body>
 </html>

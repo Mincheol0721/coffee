@@ -34,6 +34,27 @@
 			    padding: 10px;
 			    box-sizing: border-box;
 			}		
+			#btn {
+				width: 80%;
+				margin: auto;
+			}
+			.bn59 {
+				background-color: #141414;
+				float: right;
+				color: white;
+				border: 1px solid rgba(54, 54, 54, 0.6);
+				font-weight: 600;
+				position: relative;
+				outline: none;
+				border-radius: 50px;
+				display: inline-flex;
+				justify-content: center;
+				align-items: center;
+				cursor: pointer;
+				height: 45px;
+				width: 130px;
+				opacity: 1;		
+			}
 		</style>
 	</head>
 	<body style="text-align: center;">
@@ -48,7 +69,9 @@
 				<textarea name="content" id="content" class="textarea" placeholder="Insert the contents." rows="20" cols="50" style="overflow: scroll; width: 100%; padding: 0.5em; resize: none;"></textarea>
 				<div class="thumbnails"></div>
 			</div> 
-			<input type="submit" value="submit" id="submit" />
+			<div id="btn">
+				<input type="submit" value="글 작성" id="submit"  class="bn59" />
+			</div>
 		</form>
 		
 		<script>
