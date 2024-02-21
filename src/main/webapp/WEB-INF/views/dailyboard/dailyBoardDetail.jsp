@@ -53,7 +53,7 @@
 			
 			.input-box {
 				font-size: 16px;
-				padding: 10px 0;
+/* 				padding: 10px 0; */
 				border: none;
 				border-bottom: 2px solid #ccc;
 /* 				color: #08AEEA; */
@@ -202,7 +202,7 @@
 										</c:if>
 									</div>
 									<span class="content" style="display: inline-block;">${list.content}</span>
-									<span class="comment" style="display: none;justify-content: space-between;flex-wrap: nowrap;">
+									<span class="comment" style="display: none; justify-content: space-between; flex-wrap: nowrap;">
 										<input class="input-box" type="text" name="content" value="${list.content}">
 									 	<div style="display: flex; justify-content: flex-end;">
 											<button class="button signupBtn" onclick="javascript: modComment(${list.no}, ${vo.no}, ${loop.index})" 
@@ -290,7 +290,13 @@
 		
 			function modCommentForm(idx) {
 				var content = $('.content')[idx];
-				var comment = $('.comment')[idx];
+// 				var comment = $('.comment')[idx];
+				var comment = content.nextElementSibling;
+				
+				console.log(idx);
+				console.log(content);
+// 				console.log(content.nextElementSibling);
+				console.log(comment);
 				
 				if(content.style.display == "none") {
 					content.style.display = "inline-block";

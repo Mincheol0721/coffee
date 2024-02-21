@@ -15,7 +15,7 @@
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 		<style type="text/css">
-			.viewAll {
+			viewAll {
 				background-color: #eee;
 				border: none;
 				margin-left: 1em;
@@ -50,14 +50,11 @@
 		<main style="width: 80%; margin: 0 auto;">
 			<!-- Home -->
 			<div style="text-align: center; margin: 0 auto;">
-				<h1 style="padding-top:1rem;">일상 게시판
-				<c:if test="${(category ne null) or (not empty category)}">
-					 - <c:out value="${category}" />
-				</c:if></h1>
+				<h1 style="padding-top:1rem;">질의응답 게시판</h1>
 				<hr>
 			</div>
 			<div style="width: 100%; height: 3rem;">
-	    		<form action="/coffee/dailyboard/dailyBoardList" method="post">
+	    		<form action="/coffee/qnaboard/qnaBoardList" method="post">
 	    			<select name="keyField" style="display: inline-block;">
 	    				<option value="content">내용</option>
 	    				<option value="title">제목</option>
@@ -77,8 +74,8 @@
 					    	</div>
 					  	</div>
 					</div>
-		    		<button class="viewAll" onclick="location.href='/coffee/dailyboard/dailyBoardList'">전체보기</button>
 	    		</form>
+	    		<button class="viewAll" onclick="location.href='/coffee/coffeeboard/coffeeBoardList'">전체보기</button>
 			</div>
 			<br>
 			<table class="table table-striped" style="margin: 0 auto;">
@@ -102,10 +99,10 @@
 				<c:set var="no" value="${list.no}" />
 					<c:forEach var="vo" items="${list.vo}" varStatus="loop">
 					<c:set var="index" value="${loop.index + 1}" />
-						<tr class="boardArticles" onclick="location.href='${path}/coffee/dailyboard/dailyBoardDetail?no=${vo.no}'">
+						<tr class="boardArticles" onclick="location.href='${path}/coffee/qnaboard/qnaBoardDetail?no=${vo.no}'">
 							<td class="boardNo">${index + ((list.currentPage-1) * 10)}</td>
 							<td class="boardImg">
-								<img src="${path}/coffee/dailyboard/thumbnail?no=${vo.no}">
+								<img src="${path}/coffee/qnaboard/thumbnail?no=${vo.no}">
 							</td>
 							<td class="boardTitle">${vo.title}</td>
 							<td class="boardUser">${vo.nickname}</td>
@@ -118,7 +115,7 @@
 			</table>
 			<div style="display: inline-block; width: 100%; margin: 1em 0 -1em;">
 				<c:if test="${not empty member}">
-					<button class="cssbuttons-io-button writeBtn" onclick="location.href='/coffee/dailyboard/dailyBoardForm'">
+					<button class="cssbuttons-io-button writeBtn" onclick="location.href='/coffee/qna/qnaForm'">
 						글작성
 						<div class="icon">
 						   <svg
@@ -155,7 +152,7 @@
 						<!-- 이전 페이지 계산 -->
 						<c:if test="${startPage > pageBlock}">
 							<li class="page-item">
-								<a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?pageNum=${startPage - pageBlock}
+								<a class="page-link" href="${path}/coffee/qnaboard/qnaBoardList?pageNum=${startPage - pageBlock}
 									<c:if test="${not empty category}">&category=${category}</c:if>
 									<c:if test="${searching.keyField != ''}">&keyField=${searching.keyField}</c:if>
 									<c:if test="${searching.keyword != ''}">&keyword=${searching.keyword}</c:if>
@@ -169,14 +166,14 @@
 						<c:forEach var="n" begin="${startPage}" end="${endPage}">
 							<c:choose>
 								<c:when test="${n == list.currentPage}">
-									<li class="page-item active"><a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?pageNum=${currentPage}
+									<li class="page-item active"><a class="page-link" href="${path}/coffee/qnaboard//qnaBoardList?pageNum=${currentPage}
 									<c:if test="${not empty category}">&category=${category}</c:if>
 									<c:if test="${searching.keyField != ''}">&keyField=${searching.keyField}</c:if>
 									<c:if test="${searching.keyword != ''}">&keyword=${searching.keyword}</c:if>
 									">${list.currentPage}</a></li>
 								</c:when>
 								<c:otherwise>
-									<li class="page-item"><a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?pageNum=${n}
+									<li class="page-item"><a class="page-link" href="${path}/coffee/qnaboard/qnaBoardList?pageNum=${n}
 									<c:if test="${not empty category}">&category=${category}</c:if>
 									<c:if test="${searching.keyField != ''}">&keyField=${searching.keyField}</c:if>
 									<c:if test="${searching.keyword != ''}">&keyword=${searching.keyword}</c:if>
@@ -187,7 +184,7 @@
 						
 						<!-- 다음 페이지 계산 -->
 						<c:if test="${endPage < pageCount}">
-							<a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?pageNum=${startPage + pageBlock}
+							<a class="page-link" href="${path}/coffee/qnaboard/qnaBoardList?pageNum=${startPage + pageBlock}
 									<c:if test="${not empty category}">&category=${category}</c:if>
 									<c:if test="${searching.keyField != ''}">&keyField=${searching.keyField}</c:if>
 									<c:if test="${searching.keyword != ''}">&keyword=${searching.keyword}</c:if>
@@ -228,7 +225,7 @@
 						<!-- 시작페이지가 pageBlock보다 크면 -->
 						<c:if test="${startPage > pageBlock}">
 							<li class="page-item">
-								<a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?
+								<a class="page-link" href="${path}/coffee/qnaboard/qnaBoardList?
 									<c:if test="${not empty category}">category=${category}&</c:if>
 									<c:if test="${searching.keyField != null || searching.keyField != ''}">keyField=${searching.keyField}&</c:if>
 									<c:if test="${searching.keyword != null || searching.keyword != ''}">keyword=${searching.keyword}&</c:if>
@@ -242,14 +239,14 @@
 						<c:forEach var="n" begin="${startPage}" end="${endPage}">
 							<c:choose>
 								<c:when test="${n == list.currentPage}">
-									<li class="page-item active"><a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?
+									<li class="page-item active"><a class="page-link" href="${path}/coffee/qnaboard/qnaBoardList?
 									<c:if test="${not empty category}">category=${category}&</c:if>
 									<c:if test="${searching.keyField != null || searching.keyField != ''}">keyField=${searching.keyField}&</c:if>
 									<c:if test="${searching.keyword != null || searching.keyword != ''}">keyword=${searching.keyword}&</c:if>
 									pageNum=${list.currentPage}">${list.currentPage}</a></li>
 								</c:when>
 								<c:otherwise>
-									<li class="page-item"><a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?
+									<li class="page-item"><a class="page-link" href="${path}/coffee/qnaboard/qnaBoardList?
 									<c:if test="${not empty category}">category=${category}&</c:if>
 									<c:if test="${searching.keyField != null || searching.keyField != ''}">keyField=${searching.keyField}&</c:if>
 									<c:if test="${searching.keyword != null || searching.keyword != ''}">keyword=${searching.keyword}&</c:if>
@@ -261,7 +258,7 @@
 						<!-- 끝페이지 이후 다음 글 존재하면 -->
 						<c:if test="${endPage < pageCount}">
 							<li class="page-item">
-								<a class="page-link" href="${path}/coffee/dailyboard/dailyBoardList?
+								<a class="page-link" href="${path}/coffee/qnaboard/qnaBoardList?
 								<c:if test="${not empty category}">category=${category}&</c:if>
 								<c:if test="${searching.keyField != null || searching.keyField != ''}">keyField=${searching.keyField}&</c:if>
 								<c:if test="${searching.keyword != null || searching.keyword != ''}">keyword=${searching.keyword}&</c:if>

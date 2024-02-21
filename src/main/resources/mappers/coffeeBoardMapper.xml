@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.spring.coffee.mapper.CoffeeBoardMapper">
+	<resultMap id="coffeeBoardResult" type="com.spring.coffee.coffeeboard.vo.CoffeeBoardVO">
+		<result property="no" column="no"/>
+		<result property="title" column="title"/>
+		<result property="content" column="content"/>
+		<result property="nickname" column="nickname"/>
+		<result property="readCount" column="readCount"/>
+		<result property="writeDate" column="writeDate"/>
+	    <result property="fileNames" column="fileName" typeHandler="com.spring.coffee.coffeeboard.utils.OracleTypeHandler"/>
+	</resultMap>
+
+	<select id="searchCoffeeBoardList" parameterType="java.util.Map" resultType="com.spring.coffee.coffeeboard.vo.CoffeeBoardVO">
+		<![CDATA[
+			SELECT * 
+			FROM ( 
+				SELECT ROWNUM AS rn, b.* 
+				FROM ( 
+				 	SELECT 
+				 		b.no as no,
+	                   	b.title as title,
+	                   	b.content as content,
+	                   	b.nickname as nickname,
+	                   	b.writeDate as writeDate,
+	                   	b.readCount as readCount,
+	                   	b.fileName as fileName
+	                FROM coffeeboard b
+	                WHERE ${keyField} LIKE '%' || #{keyword} || '%'
+	                ORDER BY writeDate DESC
+                ) b 
+				WHERE ROWNUM <= #{endRow}
+			) WHERE rn > #{startRow}
+		]]>
+	</select>
+
+	<select id="getSearchCoffeeBoardCount" resultType="int" parameterType="java.util.Map">
+		<![CDATA[
+			SELECT COUNT(*) FROM coffeeBoard WHERE ${keyField} LIKE '%' || #{keyword} || '%'
+		]]>
+	</select>
+	
+	<insert id="insertCoffeeBoard" parameterType="java.util.Map">
+		<![CDATA[
+			INSERT INTO coffeeboard (no, title, content, nickname, fileName)
+			VALUES (cb_no.nextval, #{title}, #{content}, #{nickname}, StringArray(
+		]]>
+		<foreach collection="fileList" item="fileName" separator=", " close="))">
+			#{fileName}
+		</foreach>
+	</insert>
+	
+	<select id="getCoffeeBoardDetail" resultMap="coffeeBoardResult" parameterType="int">
+		<![CDATA[
+			SELECT no, title, content, nickName, writeDate, readCount, 
+			CAST(MULTISET (SELECT column_value FROM TABLE(fileName)) AS sys.odcivarchar2list) AS fileName 
+			FROM coffeeBoard WHERE no = #{no}
+		]]>
+	</select>
+		
+	<!-- 
+    <update id="addFile" parameterType="java.util.Map">
+        <![CDATA[
+        	UPDATE dailyBoard SET fileName=StringArray(
+        ]]>
+        <foreach collection="fileNames" item="fileName" separator=", " close=")">
+        	#{fileName}
+        </foreach>
+        <![CDATA[
+	        WHERE no=#{no}
+        ]]>
+    </update>
+     -->
+	
+</mapper>
