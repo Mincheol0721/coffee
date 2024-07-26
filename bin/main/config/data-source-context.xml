@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	                    http://www.springframework.org/schema/beans/spring-beans.xsd
+	                    http://www.springframework.org/schema/util
+	                    http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<!-- dataSource bean -->
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">
+	    <property name="jdbcUrl" value="${spring.datasource.url}" />
+	    <property name="username" value="${spring.datasource.username}" />
+	    <property name="password" value="${spring.datasource.password}" />
+	    <property name="driverClassName" value="${spring.datasource.driver-class-name}" />
+	    <property name="minimumIdle" value="10" />
+	    <property name="maximumPoolSize" value="20" />
+	</bean>
+
+	<bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="typeAliasesPackage" value="com.spring.coffee" />
+		<property name="configLocation" value="classpath:/mybatis/mybatis_config.xml" />
+		<property name="mapperLocations">
+			<list>
+				<value>classpath:/mybatis/query/**/*.xml</value>
+			</list>
+		</property>
+		<property name="databaseIdProvider" ref="databaseIdProvider"/>
+	</bean>
+
+	<bean id="bizTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" lazy-init="true">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+
+	<!-- default -->
+	<alias name="sqlSessionFactoryBean" alias="sqlSessionFactoryBean"/>
+	<alias name="transactionManager" alias="transactionManager"/>
+
+	<!-- Set up or detect a System property called "org.springframework.batch.support.SystemPropertyInitializer.ENVIRONMENT" used to construct a properties file on the classpath.  The default is "hsql".  -->
+	<bean id="environment"
+		class="org.springframework.batch.support.SystemPropertyInitializer">
+		<property name="defaultValue" value="sqlserver"/>
+	</bean>
+
+	<!-- Properties -->
+	<util:properties id="appProperties" location="classpath:/application.properties" />
+
+</beans>

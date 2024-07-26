@@ -1,0 +1,190 @@
+@charset "UTF-8";
+
+table img {
+	width: 70%;
+	/* 			height: 150px; */
+}
+
+table td {
+	text-align: center;
+}
+
+.cssbuttons-io-button {
+	float: right;
+	margin-bottom: 10px;
+	margin-right: 20px;
+	background: #a370f0;
+	color: white;
+	font-family: inherit;
+	padding: 0.35em;
+	padding-left: 1.2em;
+	font-size: 17px;
+	font-weight: 500;
+	border-radius: 0.9em;
+	border: none;
+	letter-spacing: 0.05em;
+	display: flex;
+	align-items: center;
+	box-shadow: inset 0 0 1.6em -0.6em #714da6;
+	overflow: hidden;
+	position: relative;
+	height: 2.8em;
+	padding-right: 3.3em;
+	cursor: pointer;
+}
+
+.cssbuttons-io-button .icon {
+	background: white;
+	margin-left: 1em;
+	position: absolute;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 2.2em;
+	width: 2.2em;
+	border-radius: 0.7em;
+	box-shadow: 0.1em 0.1em 0.6em 0.2em #7b52b9;
+	right: 0.3em;
+	transition: all 0.3s;
+}
+
+.cssbuttons-io-button:hover .icon {
+	width: calc(100% - 0.6em);
+}
+
+.cssbuttons-io-button .icon svg {
+	width: 1.1em;
+	transition: transform 0.3s;
+	color: #7b52b9;
+}
+
+.cssbuttons-io-button:hover .icon svg {
+	transform: translateX(0.1em);
+}
+
+.cssbuttons-io-button:active .icon {
+	transform: scale(0.95);
+}
+
+
+/* SearchBox Start */
+.search {
+	display: inline-block;
+	margin: 0.5em auto;
+	width: 70%;
+	--input-line: #222;
+	--input-text-color: #808080;
+	--input-text-hover-color: transparent;
+	--input-border-color: #808080;
+	--input-border-hover-color: #999999;
+	--input-bg-color: #fff;
+	--search-max-width: 50%;
+	--search-min-width: 150px;
+	--border-radius: 5px;
+	--transition-cubic-bezier: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-box {
+	max-width: var(--search-max-width);
+	min-width: var(--search-min-width);
+	height: 35px;
+	border: 1px solid var(--input-border-color);
+	border-radius: var(--border-radius);
+	padding: 5px 15px;
+	background: var(--input-bg-color);
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+	transition: var(--transition-cubic-bezier);
+}
+
+.search-box:hover {
+	border-color: var(--input-border-hover-color);
+}
+
+/*Section input*/
+.search-field {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	left: -5px;
+	border: 0;
+}
+
+.input {
+	width: calc(100% - 29px);
+	height: 100%;
+	border: 0;
+	border-color: transparent;
+	font-size: 1rem;
+	padding-right: 0px;
+	color: var(--input-line);
+	background: var(--input-bg-color);
+	border-right: 2px solid var(--input-border-color);
+	outline: none;
+}
+
+.input::-webkit-input-placeholder {
+	color: var(--input-text-color);
+}
+
+.input::-moz-input-placeholder {
+	color: var(--input-text-color);
+}
+
+.input::-ms-input-placeholder {
+	color: var(--input-text-color);
+}
+
+.input:focus::-webkit-input-placeholder {
+	color: var(--input-text-hover-color);
+}
+
+.input:focus::-moz-input-placeholder {
+	color: var(--input-text-hover-color);
+}
+
+.input:focus::-ms-input-placeholder {
+	color: var(--input-text-hover-color);
+}
+
+/*Search button*/
+.search-box-icon {
+	width: 52px;
+	height: 35px;
+	position: absolute;
+	top: -6px;
+	right: -21px;
+	background: transparent;
+	border-bottom-right-radius: var(--border-radius);
+	border-top-right-radius: var(--border-radius);
+	transition: var(--transition-cubic-bezier);
+}
+
+.search-box-icon:hover {
+	background: var(--input-border-color);
+}
+
+.btn-icon-content {
+	width: 52px;
+	height: 35px;
+	top: -6px;
+	right: -21px;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	border-bottom-right-radius: var(--border-radius);
+	border-top-right-radius: var(--border-radius);
+	transition: var(--transition-cubic-bezier);
+	opacity: .4;
+}
+
+.btn-icon-content:hover {
+	opacity: .8;
+}
+
+.search-icon {
+	width: 15px;
+	height: 15px;
+	position: absolute;
+	top: 5px;
+	right: 12px;
+}
