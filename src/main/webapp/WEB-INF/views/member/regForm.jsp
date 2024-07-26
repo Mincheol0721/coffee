@@ -14,8 +14,8 @@
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script type="text/javascript">
 	$(function() {
-		
-		
+
+
 	});
 </script>
 </head>
@@ -23,21 +23,21 @@
 	<div class="form-container">
 		<p class="title">회원가입</p>
 		<c:if test="${map eq null}">
-			<form class="form" action="/coffee/member/addMember" method="post" enctype="multipart/form-data">
+			<form class="form" action="/member/insertMemberInfo" method="post" enctype="multipart/form-data">
 		</c:if>
 		<c:if test="${kakaoReg eq true}">
-			<form class="form" action="/coffee/member/addKakaoMember" method="post" enctype="multipart/form-data">
+			<form class="form" action="/member/insertKakaoMember" method="post" enctype="multipart/form-data">
 		</c:if>
 		<c:if test="${googleReg eq true}">
-			<form class="form" action="/coffee/member/addGoogleMember" method="post" enctype="multipart/form-data">
+			<form class="form" action="/member/insertGoogleMember" method="post" enctype="multipart/form-data">
 		</c:if>
 		<c:if test="${naverReg eq true}">
-			<form class="form" action="/coffee/member/addNaverMember" method="post" enctype="multipart/form-data">
+			<form class="form" action="/member/insertNaverMember" method="post" enctype="multipart/form-data">
 		</c:if>
 		<input type="hidden" id="socailId" name="socialId" value="${map.socialId}">
 			<div class="profile">
 				<input type="file" name="file" id="file" onchange="setThumbnail(event);">
-				<label for="file"> 
+				<label for="file">
 				<c:if test="${map eq null}">
 					<img src="/images/profile.png" id="thumbnail">
 				</c:if>
@@ -49,37 +49,37 @@
 			</div>
 			<c:if test="${map ne null}">
 			<div class="input-group">
-				<label for="id">아이디<span class="idValidate valMsg"></span> </label> 
+				<label for="id">아이디<span class="idValidate valMsg"></span> </label>
 				<input type="text"	name="id" id="id" placeholder="" required>
 			</div>
 			<div class="input-group">
-				<label for="password">비밀번호<span class="passwordValidate valMsg"></span> </label> 
+				<label for="password">비밀번호<span class="passwordValidate valMsg"></span> </label>
 				<input type="password" name="password" id="password" placeholder="" required>
 			</div>
 			<div class="input-group">
-				<label for="passwordConfirm">비밀번호 확인 <span class="passwordConfirmValidate valMsg"></span></label> 
+				<label for="passwordConfirm">비밀번호 확인 <span class="passwordConfirmValidate valMsg"></span></label>
 				<input type="password" name="passwordConfirm" id="passwordConfirm" placeholder="" required>
 			</div>
 				<input type="hidden" name="id" id="id" value="${map.id}">
 			<div class="input-group">
-				<label for="name">이름</label> 
+				<label for="name">이름</label>
 				<input type="text" name="name" id="name" value="${map.name}" placeholder="" required>
 			</div>
 			<div class="input-group">
-				<label for="nickname">주민등록번호</label> 
+				<label for="nickname">주민등록번호</label>
 				<input type="text" name="ssn" id="ssn" placeholder="하이픈(-)을 포함하여 입력해주세요. 예)930101-1234567" required>
 			</div>
 			<div class="input-group">
-				<label for="nickname">닉네임 <span class="nickValidate valMsg"></span> </label> 
+				<label for="nickname">닉네임 <span class="nickValidate valMsg"></span> </label>
 				<input type="text" name="nickname" id="nickname" placeholder="" required>
 			</div>
-			
+
 			<div class="input-group">
-				<label for="nickname">이메일</label> 
+				<label for="nickname">이메일</label>
 				<input type="email" name="email" id="email" value="${map.email}" placeholder="" required>
 			</div>
 			<div class="input-group">
-				<label for="mobile">전화번호</label> 
+				<label for="mobile">전화번호</label>
 				<input type="tel" name="mobile" id="mobile" placeholder="" required>
 			</div>
 			<div class="input-group">
@@ -99,35 +99,35 @@
 			</c:if>
 			<c:if test="${map eq null}">
 				<div class="input-group">
-					<label for="id">아이디<span class="idValidate valMsg"></span> </label> 
+					<label for="id">아이디<span class="idValidate valMsg"></span> </label>
 					<input type="text"	name="id" id="id" placeholder="" required>
 				</div>
 				<div class="input-group">
-					<label for="password">비밀번호<span class="passwordValidate valMsg"></span> </label> 
+					<label for="password">비밀번호<span class="passwordValidate valMsg"></span> </label>
 					<input type="password" name="password" id="password" placeholder="" required>
 				</div>
 				<div class="input-group">
-					<label for="passwordConfirm">비밀번호 확인 <span class="passwordConfirmValidate valMsg"></span></label> 
+					<label for="passwordConfirm">비밀번호 확인 <span class="passwordConfirmValidate valMsg"></span></label>
 					<input type="password" name="passwordConfirm" id="passwordConfirm" placeholder="" required>
 				</div>
 				<div class="input-group">
-				<label for="nickname">이름</label> 
+				<label for="nickname">이름</label>
 				<input type="text" name="name" id="name" placeholder="" required>
 				</div>
 				<div class="input-group">
-					<label for="nickname">주민등록번호</label> 
+					<label for="nickname">주민등록번호</label>
 					<input type="text" name="ssn" id="ssn" placeholder="하이픈(-)을 포함하여 입력해주세요. 예)930101-1234567" required>
 				</div>
 				<div class="input-group">
-					<label for="nickname">닉네임 <span class="nickValidate valMsg"></span> </label> 
+					<label for="nickname">닉네임 <span class="nickValidate valMsg"></span> </label>
 					<input type="text" name="nickname" id="nickname" placeholder="" required>
 				</div>
 				<div class="input-group">
-					<label for="nickname">이메일</label> 
+					<label for="nickname">이메일</label>
 					<input type="email" name="email" id="email" placeholder="" required>
 				</div>
 				<div class="input-group">
-					<label for="mobile">전화번호</label> 
+					<label for="mobile">전화번호</label>
 					<input type="tel" name="mobile" id="mobile" placeholder="" required>
 				</div>
 				<div class="input-group">
@@ -145,17 +145,17 @@
 					<input type="text" id="sample6_extraAddress" name="jibunAddr" placeholder="참고항목(OO동)" required>
 				</div>
 			</c:if>
-			
+
 			<br>
 			<button class="sign">회원가입</button>
 		</form>
 		<br>
 		<p class="signup">
 			계정이 있으신가요?
-			<a rel="noopener noreferrer" href="/coffee/member/loginForm" class="">로그인하기</a>
+			<a rel="noopener noreferrer" href="/member/loginForm" class="">로그인하기</a>
 		</p>
 	</div>
-	
+
 	<script type="text/javascript" src="/js/regMember.js"></script>
 	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 	<script>
@@ -163,19 +163,19 @@
 	        new daum.Postcode({
 	            oncomplete: function(data) {
 	                // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
-	
+
 	                // 각 주소의 노출 규칙에 따라 주소를 조합한다.
 	                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
 	                var addr = ''; // 주소 변수
 	                var extraAddr = ''; // 참고항목 변수
-	
+
 	                //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
 	                if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
 	                    addr = data.roadAddress;
 	                } else { // 사용자가 지번 주소를 선택했을 경우(J)
 	                    addr = data.jibunAddress;
 	                }
-	
+
 	                // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
 	                if(data.userSelectedType === 'R'){
 	                    // 법정동명이 있을 경우 추가한다. (법정리는 제외)
@@ -193,11 +193,11 @@
 	                    }
 	                    // 조합된 참고항목을 해당 필드에 넣는다.
 	                    document.getElementById("sample6_extraAddress").value = extraAddr;
-	                
+
 	                } else {
 	                    document.getElementById("sample6_extraAddress").value = '';
 	                }
-	
+
 	                // 우편번호와 주소 정보를 해당 필드에 넣는다.
 	                document.getElementById('sample6_postcode').value = data.zonecode;
 	                document.getElementById("sample6_address").value = addr;
@@ -206,12 +206,12 @@
 	            }
 	        }).open();
 	    }
-	    
+
 	    function setThumbnail(e) {
 			var input = e.target;
 			var reader = new FileReader();
 			var thumbnail = document.getElementById('thumbnail');
-			
+
 			reader.onload = function(e) {
 				thumbnail.setAttribute('src', e.target.result);
 			}

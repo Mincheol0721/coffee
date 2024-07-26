@@ -24,18 +24,18 @@
 	<div class="form-container">
 <%-- 	<c:out value="message: ${message }" /> --%>
 		<p class="title">비밀번호 변경</p>
-		<form class="form" action="/coffee/member/modPassword" method="post">
+		<form class="form" action="/member/modPassword" method="post">
 		<input type="hidden" name="id" value="${member.id}">
 			<div class="input-group">
-				<label for="curPassword">현재 비밀번호</label> 
+				<label for="curPassword">현재 비밀번호</label>
 				<input type="password" name="curPassword" id="curPassword" placeholder="">
 			</div>
 			<div class="input-group">
-				<label for="curPassword">비밀번호 입력</label> 
+				<label for="curPassword">비밀번호 입력</label>
 				<input type="password" name="password" id="password" placeholder="">
 			</div>
 			<div class="input-group">
-				<label for="curPassword">현재 비밀번호</label> 
+				<label for="curPassword">현재 비밀번호</label>
 				<input type="password" name="passwordConfirm" id="passwordConfirm" placeholder="">
 			</div>
 			<br>

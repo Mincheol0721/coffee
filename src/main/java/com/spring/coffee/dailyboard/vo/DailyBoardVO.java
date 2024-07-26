@@ -1,5 +1,6 @@
 package com.spring.coffee.dailyboard.vo;
 
+import org.apache.ibatis.type.Alias;
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.Setter;
 @Component
 @NoArgsConstructor
 @AllArgsConstructor
+@Alias("dailyBoardInfo")
 public class DailyBoardVO {
 	private int no;
 	private String title;
@@ -18,7 +20,7 @@ public class DailyBoardVO {
 	private String nickname;
 	private int readCount;
 	private String[] fileNames;
-	
+
 	public int getNo() {
 		return no;
 	}
@@ -61,5 +63,5 @@ public class DailyBoardVO {
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
-		
+
 }

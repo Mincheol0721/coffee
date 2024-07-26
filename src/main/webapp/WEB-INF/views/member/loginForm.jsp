@@ -20,19 +20,19 @@
 					alert('회원 정보가 틀립니다. 다시 입력해주세요.');
 				});
 			</script>
-		</c:when>	
-	</c:choose>	
+		</c:when>
+	</c:choose>
 </head>
 <body>
 	<div class="form-container">
 		<p class="title">로그인</p>
-		<form class="form" action="/coffee/member/login" method="post">
+		<form class="form" action="/member/login" method="post">
 			<div class="input-group">
-				<label for="username">아이디</label> 
+				<label for="username">아이디</label>
 				<input type="text"	name="id" id="id" placeholder="">
 			</div>
 			<div class="input-group">
-				<label for="password">비밀번호</label> 
+				<label for="password">비밀번호</label>
 				<input type="password" name="password" id="password" placeholder="">
 				<div class="forgot">
 					<a rel="noopener noreferrer" href="#">비밀번호를 잊으셨나요?</a>
@@ -46,17 +46,17 @@
 			<div class="line"></div>
 		</div>
 		<div class="social-icons">
-			<a href="https://accounts.google.com/o/oauth2/v2/auth?client_id=1870458841-rqbmjhnqhn43rk2ecv1gppvhvhj2i4tp.apps.googleusercontent.com&redirect_uri=http://localhost:8090/coffee/member/oauth2google&response_type=code&scope=profile">
+			<a href="https://accounts.google.com/o/oauth2/v2/auth?client_id=1870458841-rqbmjhnqhn43rk2ecv1gppvhvhj2i4tp.apps.googleusercontent.com&redirect_uri=http://localhost:8090/member/oauth2google&response_type=code&scope=profile">
 				<button aria-label="Log in with Google" class="icon">
 					<img src="/images/google.png" class="loginIcon">
 				</button>
 			</a>
-			<a href="https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=6f333d17c0737d247630d8be3aeead82&redirect_uri=http://localhost:8090/coffee/member/kakaoLogin&prompt=select_account'">
+			<a href="https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=6f333d17c0737d247630d8be3aeead82&redirect_uri=http://localhost:8090/member/kakaoLogin&prompt=select_account'">
 				<button aria-label="Log in with kakao" class="icon">
 					<img src="/images/kakao.png" class="loginIcon">
 				</button>
 			</a>
-			<a href="https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=LqbceHaqklXQzbcgejR8&redirect_uri=http://localhost:8090/coffee/member/naverLogin&state=<%=new BigInteger(130, new SecureRandom()).toString()%>">
+			<a href="https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=LqbceHaqklXQzbcgejR8&redirect_uri=http://localhost:8090/member/naverLogin&state=<%=new BigInteger(130, new SecureRandom()).toString()%>">
 				<button aria-label="Log in with naver" class="icon">
 					<img src="/images/naver.png" class="loginIcon">
 				</button>
@@ -64,7 +64,7 @@
 		</div>
 		<p class="signup">
 			계정이 없으신가요?
-			<a rel="noopener noreferrer" href="/coffee/member/regForm" class="">회원가입하기</a>
+			<a rel="noopener noreferrer" href="/member/regForm" class="">회원가입하기</a>
 		</p>
 	</div>
 </body>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="member">
+    <resultMap id="memberInfoRow" type="memberInfo">
+        <id     property="id"           column="ID"           /> <!-- 유저 ID -->
+		<result property="socialId"     column="SOCIAL_ID"    /> <!-- SNS ID -->
+		<result property="password"     column="PASSWORD"     /> <!-- 비밀번호 -->
+		<result property="name"         column="NAME"         /> <!-- 유저명 -->
+		<result property="ssn"          column="SSN"          /> <!-- 유저 주민등록번호 -->
+		<result property="nickname"     column="NICKNAME"     /> <!-- 유저 닉네임 -->
+		<result property="email"        column="EMAIL"        /> <!-- 유저 이메일 -->
+		<result property="mobile"       column="MOBILE"       /> <!-- 유저 전화번호 -->
+		<result property="regDate"      column="REG_DATE"     /> <!-- 유저 등록일 -->
+		<result property="zipcode"      column="ZIPCODE"      /> <!-- 우편번호 -->
+		<result property="roadAddr"     column="ROAD_ADDR"    /> <!-- 도로명주소 -->
+		<result property="detailAddr"   column="DETAIL_ADDR"  /> <!-- 상세주소 -->
+		<result property="jibunAddr"    column="JIBUN_ADDR"   /> <!-- 지번주소 -->
+		<result property="fileName"     column="FILE_NAME"    /> <!-- 파일명 -->
+    </resultMap>
+
+	<select id="selectMemberInfo" resultMap="memberInfoRow">
+        SELECT  ID
+			,   SOCIAL_ID
+			,   PASSWORD
+			,   NAME
+			,   SSN
+			,   NICKNAME
+			,   EMAIL
+			,   MOBILE
+			,   REG_DATE
+			,   ZIPCODE
+			,   ROAD_ADDR
+			,   DETAIL_ADDR
+			,   JIBUN_ADDR
+			,   FILE_NAME
+       FROM     MEMBER
+	   <where>
+	        <if test="id not in {null, ''}">
+	            AND ID = #{id}
+	        </if>
+	        <if test="password not in {null, ''}">
+	            AND PASSWORD = HASHBYTES('SHA2_256', CAST(#{password} as VARBINARY(MAX)))
+	        </if>
+        </where>
+	</select>
+
+	<insert id="insertMemberInfo">
+	   INSERT INTO MEMBER (
+	           ID
+           ,   SOCIAL_ID
+           ,   PASSWORD
+           ,   NAME
+           ,   SSN
+           ,   NICKNAME
+           ,   EMAIL
+           ,   MOBILE
+           ,   REG_DATE
+           ,   ZIPCODE
+           ,   ROAD_ADDR
+           ,   DETAIL_ADDR
+           ,   JIBUN_ADDR
+           ,   FILE_NAME
+	   ) VALUES (
+	           #{id}
+           ,   #{socialId}
+           ,   HASHBYTES('SHA2_256', #{password})
+		   ,   #{name}
+		   ,   #{ssn}
+		   ,   #{nickname}
+		   ,   #{email}
+		   ,   #{mobile}
+		   ,   #{regDate}
+		   ,   #{zipcode}
+		   ,   #{roadAddr}
+		   ,   #{detailAddr}
+		   ,   #{jibunAddr}
+           ,   #{fileName}
+	   )
+	</insert>
+
+	<update id="updateMemberInfo">
+        UPDATE  MEMBER
+        SET     ID = #{id}
+			,   SOCIALID = #{socialId}
+			,   PASSWORD = HASHBYTES('SHA2_256', #{password})
+			,   NAME = #{name}
+			,   SSN = #{ssn}
+			,   NICKNAME = #{nickname}
+			,   EMAIL = #{email}
+			,   MOBILE = #{mobile}
+			,   REGDATE = #{regDate}
+			,   ZIPCODE = #{zipcode}
+			,   ROADADDR = #{roadAddr}
+			,   DETAILADDR = #{detailAddr}
+			,   JIBUNADDR = #{jibunAddr}
+			,   FILENAME = #{filename}
+		<where>
+		    <if test="id not in {null, ''}">
+                AND ID = #{id}
+            </if>
+            <if test="password not in {null, ''}">
+                AND PASSWORD = HASHBYTES('SHA2_256', #{password})
+            </if>
+		</where>
+	</update>
+
+	<delete id="deleteMemberInfo">
+	   DELETE  FROM    MEMBER
+	   <where>
+	       <if test="id not in {null, ''}">
+	           AND ID = #{id}
+	       </if>
+	       <if test="socialId not in {null, ''}">
+	           AND SOCIALID = #{socialId}
+	       </if>
+	       <if test="password not in {null, ''}">
+	           AND PASSWORD = HASHBYTES('SHA2_256', #{password})
+	       </if>
+	   </where>
+	</delete>
+
+</mapper>

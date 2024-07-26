@@ -1,5 +1,6 @@
 package com.spring.coffee.dailyboard.vo;
 
+import org.apache.ibatis.type.Alias;
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Component
 @AllArgsConstructor
 @NoArgsConstructor
+@Alias("dailyBoardCommentInfo")
 public class DailyBoardCommentVO {
 	private int level;
 	private int no;

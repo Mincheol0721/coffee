@@ -65,10 +65,10 @@
             <td>
               <input id="myRange" class="slider" value="50" max="100" min="0" step="25" type="range">
               <span class="rangeStr">
-                <font size="1.5">강한 산미</font> 
-                <font size="1.5">약한 산미</font> 
-                <font size="1.5">밸런스</font> 
-                <font size="1.5">약한 바디</font> 
+                <font size="1.5">강한 산미</font>
+                <font size="1.5">약한 산미</font>
+                <font size="1.5">밸런스</font>
+                <font size="1.5">약한 바디</font>
                 <font size="1.5">강한 바디</font>
               </span>
             </td>
@@ -76,6 +76,6 @@
         </table>
       </div>
     </div>
-	
+
 </body>
 </html>

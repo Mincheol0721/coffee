@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController("seImgUpload")
 @Slf4j
 public class ImgUploadController {
-	
+
 	@Value("${upload.directory}")
 	private String uploadPath;
 	/*
@@ -34,7 +34,7 @@ public class ImgUploadController {
 		String callback = vo.getCallback();
 		String callback_fn = vo.getCallback_fn();
 		String file_result = "";
-		
+
 		if(vo.getFiledata() != null && vo.getFiledata().getOriginalFilename() != null) {
 			String originalName = vo.getFiledata().getOriginalFilename();
 			String ext = originalName.substring(originalName.lastIndexOf(".") + 1);
@@ -42,21 +42,21 @@ public class ImgUploadController {
 			String filePath = dftPath + "/temp/";
 			File file = new File(filePath);
 			log.info("path: " + filePath);
-			
+
 			if(!file.exists()) {
 				file.mkdirs();
 			}
-			
+
 			String fileName = new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date()) + UUID.randomUUID().toString() + "." + ext;
-			
+
 			vo.getFiledata().transferTo(new File(filePath + fileName));
-			file_result += "&bNewLine=true&sFileName=" + originalName + "&sFileURL=/" + filePath + fileName; 
+			file_result += "&bNewLine=true&sFileName=" + originalName + "&sFileURL=/" + filePath + fileName;
 			log.info("file_result: " + file_result);
-			
+
 		} else {
 			file_result += "&errstr=error";
 		}
-		
+
 		return "redirect:" + callback + "?callback_func" + callback_fn + file_result;
 	}
 	*/
@@ -65,7 +65,7 @@ public class ImgUploadController {
 		System.out.println("controller in");
 		request.setCharacterEncoding("UTF-8");
 		List<String> fileList = new ArrayList<String>();
-		
+
 		//File Information
 		//파일정보         
 		String sFileInfo = "";
@@ -82,13 +82,13 @@ public class ImgUploadController {
 		if(!file.exists()) {
 			file.mkdirs();
 		}
-		
+
 		String realFileNm = "";
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
 		String today= formatter.format(new java.util.Date());
 		realFileNm = today+UUID.randomUUID().toString() + filename.substring(filename.lastIndexOf("."));
 		String rlFileNm = filePath + realFileNm;
-		
+
 		///////////////// 서버에 파일쓰기 /////////////////          
 		InputStream is = request.getInputStream();
 		OutputStream os=new FileOutputStream(rlFileNm);
@@ -103,22 +103,22 @@ public class ImgUploadController {
 		}
 		os.flush();
 		os.close();
-		
+
 		///////////////// 서버에 파일쓰기 /////////////////         
 		// 정보 출력         
 		sFileInfo += "&bNewLine=true";
 		// img 태그의 title 속성을 원본파일명으로 적용시켜주기 위함         
 		sFileInfo += "&sFileName="+ filename;
 		sFileInfo += "&sFileURL=/dailyboard/temp/" + realFileNm;
-		
+
 		System.out.println("sfileInfo: " + sFileInfo);
 		log.info("realFileName: " + realFileNm);
-		
+
 		PrintWriter print = response.getWriter();
-		
+
 		print.print(sFileInfo);
 		print.flush();
 		print.close();
 	}
-	
+
 }

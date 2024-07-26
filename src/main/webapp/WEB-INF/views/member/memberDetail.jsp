@@ -17,26 +17,26 @@
 	<div class="form-container">
 		<p class="title">마이페이지</p>
 			<div class="profile">
-				<img src="/coffee/member/download?nickname=${member.nickname}" id="thumbnail">
+				<img src="/member/download?nickname=${member.nickname}" id="thumbnail">
 			</div>
 			<div class="input-group">
-				<label for="name">이름</label> 
+				<label for="name">이름</label>
 				<input type="text" name="name" id="name" class="detail" value="${vo.name}" placeholder="" disabled>
 			</div>
 			<div class="input-group">
-				<label for="nickname">주민등록번호</label> 
+				<label for="nickname">주민등록번호</label>
 				<input type="text" name="ssn" id="ssn" class="detail" value="${fn:substring(vo.ssn, 0, 8)}******" disabled>
 			</div>
 			<div class="input-group">
-				<label for="nickname">닉네임</label> 
+				<label for="nickname">닉네임</label>
 				<input type="text" name="nickname" id="nickname" class="detail" value="${vo.nickname}" placeholder="" disabled>
 			</div>
 			<div class="input-group">
-				<label for="nickname">이메일</label> 
+				<label for="nickname">이메일</label>
 				<input type="email" name="email" id="email" class="detail" value="${vo.email}" placeholder="" disabled>
 			</div>
 			<div class="input-group">
-				<label for="mobile">전화번호</label> 
+				<label for="mobile">전화번호</label>
 				<input type="tel" name="mobile" id="mobile" class="detail" value="${vo.mobile}" placeholder="" disabled>
 			</div>
 			<div class="input-group">
@@ -53,7 +53,7 @@
 				<input type="text" id="sample6_extraAddress" name="jibunAddr" class="detail" placeholder="참고항목(OO동)" value="${vo.jibunAddr}" disabled>
 			</div>
 			<br>
-			<button class="sign" onclick="location.href='/coffee/member/modForm'">회원정보 수정</button>
+			<button class="sign" onclick="location.href='/member/modForm'">회원정보 수정</button>
 			<button class="sign" onclick="delMember();">회원탈퇴</button>
 		<br>
 	</div>
@@ -61,7 +61,7 @@
 		function delMember() {
 			confirm('계정정보를 삭제하시겠습니까?');
 			$.ajax({
-				url: '/coffee/member/delMember?id=${vo.id}',
+				url: '/member/delMember?id=${vo.id}',
 				type: 'POST',
 				dataType: 'text',
 				data: ${vo.id},
@@ -70,7 +70,7 @@
 					location.href='/coffee/main';
 				}
 			});
-// 			location.href='/coffee/member/delMember?id=${vo.id}';
+// 			location.href='/member/delMember?id=${vo.id}';
 		}
 	</script>
 </body>
