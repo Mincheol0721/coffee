@@ -23,7 +23,7 @@ public interface MemberService {
 	ModelAndView naverLogout(HttpServletRequest request, HttpServletResponse response) throws Exception;
 	ModelAndView detailMember(HttpServletRequest request, HttpServletResponse response) throws Exception;
 	ModelAndView modPassword(String curPassword, String password, String id) throws Exception;
-	ModelAndView modMember(MultipartFile file, MultipartHttpServletRequest request, RedirectAttributes rAttr) throws Exception;
+	ModelAndView updateMemberInfo(MemberVO memberVo, MultipartFile file, MultipartHttpServletRequest request, RedirectAttributes rAttr) throws Exception;
 	void download(HttpServletRequest request, HttpServletResponse response) throws Exception;
 	int deleteMember(MemberVO memberVo) throws Exception;
 }

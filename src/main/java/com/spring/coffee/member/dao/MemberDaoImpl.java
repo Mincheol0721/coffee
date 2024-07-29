@@ -54,4 +54,8 @@ public class MemberDaoImpl {
 		return sqlSession.selectOne("member.nickValidate", nickname);
 	}
 
+	public int updatePasswordInfo(MemberVO memberVo) {
+		return sqlSession.update("member.updatePasswordInfo", memberVo);
+	}
+
 }

@@ -21,18 +21,18 @@
       	<header class="p-3 mb-3">
         	<div class="container">
           		<div class="justify-content-lg-start logoBox">
-            		<a href="/coffee/main" class="mb-2 mb-lg-0 link-body-emphasis logoLink">
+            		<a href="/main" class="mb-2 mb-lg-0 link-body-emphasis logoLink">
               			<img src="/images/logo.png" alt="" class="header-logo">
             		</a>
             	<ul class="nav navbar">
-              		<li><a href="/coffee/main" class="nav-link px-2 link-secondary"><img src="/images/home.png" alt="HOME" ><br> <span class="nav-span">홈</span></a></li>
+              		<li><a href="/main" class="nav-link px-2 link-secondary"><img src="/images/home.png" alt="HOME" ><br> <span class="nav-span">홈</span></a></li>
               		<li class="nav-item dropdown">
 		          		<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 		            		<img src="/images/coffee.png" alt="COFFEE" style="margin-right: 1.5rem;"> <br>
 		            		<span class="nav-span dropdown text-end users">게시판</span>
 		          		</a>
 		          		<ul class="dropdown-menu">
-				            <li><a class="dropdown-item" href="/coffee/dailyboard/dailyBoardList">일상 게시판</a></li>
+				            <li><a class="dropdown-item" href="/dailyboard/dailyBoardList">일상 게시판</a></li>
 				            <li><a class="dropdown-item" href="#">커피 게시판</a></li>
 				            <li><a class="dropdown-item" href="#">질의응답 게시판</a></li>
 		          		</ul>

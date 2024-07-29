@@ -16,12 +16,12 @@
 <body>
 	<div class="form-container">
 		<p class="title">회원정보 수정</p>
-			<form class="form" action="/coffee/member/modMember" method="post" enctype="multipart/form-data">
+			<form class="form" action="/member/modMember" method="post" enctype="multipart/form-data">
 			<input type="hidden" name="id" value="${member.id}">
 			<div class="profile">
 				<input type="file" name="file" id="file" onchange="setThumbnail(event);">
 				<label for="file">
-					<img src="/coffee/member/download?nickname=${member.nickname}" id="thumbnail">
+					<img src="/member/download?nickname=${member.nickname}" id="thumbnail">
 					<input type="hidden" name="fileName" value="${member.fileName}" >
 				</label>
 			</div>
@@ -31,7 +31,8 @@
 			</div>
 			<div class="input-group">
 				<label for="nickname">주민등록번호</label>
-				<input type="text" name="ssn" id="ssn" value="${fn:substring(member.ssn, 0, 8)}******" disabled>
+				<input type="text" value="${fn:substring(member.ssn, 0, 8)}******" disabled>
+				<input type="hidden" name="ssn" id="ssn" value="${member.ssn}">
 			</div>
 			<div class="input-group">
 				<label for="nickname">닉네임</label>
@@ -61,7 +62,7 @@
 			</div>
 
 			<br>
-			<button class="button" type="button" onclick="location.href='/coffee/member/modPasswordForm'">
+			<button class="button" type="button" onclick="location.href='/member/modPasswordForm'">
 			    <p>비밀번호 변경</p>
 			    <svg stroke-width="4" stroke="currentColor" viewBox="0 0 24 24" fill="none" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg">
 			        <path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linejoin="round" stroke-linecap="round"></path>

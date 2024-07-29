@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <c:set var="vo" value="${vo}" />
+<c:set var="member" value="${member}" />
 <!DOCTYPE html>
 <html>
 <head>

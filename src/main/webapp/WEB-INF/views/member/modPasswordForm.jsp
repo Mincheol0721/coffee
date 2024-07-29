@@ -25,6 +25,7 @@
 <%-- 	<c:out value="message: ${message }" /> --%>
 		<p class="title">비밀번호 변경</p>
 		<form class="form" action="/member/modPassword" method="post">
+		<c:out value="id: ${member.id}" />
 		<input type="hidden" name="id" value="${member.id}">
 			<div class="input-group">
 				<label for="curPassword">현재 비밀번호</label>

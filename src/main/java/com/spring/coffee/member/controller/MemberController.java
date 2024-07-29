@@ -183,8 +183,8 @@ public class MemberController {
 	}
 
 	@RequestMapping(value="modMember", method = {RequestMethod.GET, RequestMethod.POST})
-	public ModelAndView modMember(@RequestParam("file") MultipartFile file, MultipartHttpServletRequest request, RedirectAttributes rAttr) throws Exception {
-		return memberService.modMember(file, request, rAttr);
+	public ModelAndView updateMemberInfo(@ModelAttribute MemberVO memberVo, @RequestParam("file") MultipartFile file, MultipartHttpServletRequest request, RedirectAttributes rAttr) throws Exception {
+		return memberService.updateMemberInfo(memberVo, file, request, rAttr);
 	}
 
 	@RequestMapping("download")

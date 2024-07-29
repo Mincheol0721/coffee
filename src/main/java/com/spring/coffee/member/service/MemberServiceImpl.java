@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.http.HttpRequest;
 import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -596,25 +597,6 @@ public class MemberServiceImpl implements MemberService {
 		return mav;
 	}
 
-	private MemberVO setMemberVo(MemberVO member, Map map, String fileName) {
-		member.setId(map.get("id").toString());
-		if (map.get("password") != null) {
-			member.setPassword(map.get("password").toString().getBytes());
-		}
-		member.setName(map.get("name").toString());
-		member.setSsn(map.get("ssn").toString());
-		member.setNickname(map.get("nickname").toString());
-		member.setEmail(map.get("email").toString());
-		member.setMobile(map.get("mobile").toString());
-		member.setZipcode(map.get("zipcode").toString());
-		member.setRoadAddr(map.get("roadAddr").toString());
-		member.setDetailAddr(map.get("detailAddr").toString());
-		member.setJibunAddr(map.get("jibunAddr").toString());
-		member.setFileName(fileName);
-
-		return member;
-	}
-
 	@Override
 	public ModelAndView naverLogout(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView mav = new ModelAndView();
@@ -663,101 +645,101 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public ModelAndView modPassword(String curPassword, String password, String id) throws Exception {
-//		ModelAndView mav = new ModelAndView();
-//		MemberVO memberVo = new MemberVO();
-//		memberVo.setId(id);
-//		memberVo.setPassword(curPassword.getBytes());
-//		member = memberDao.selectMemberInfoRow(memberVo);
-//
-//		if(member != null) {
-//			memberVo.setPassword(password.getBytes());
-//			//System.out.println("현재 비밀번호 일치하여 수정실행!");
-//			memberDao.updateMemberInfoRow(memberVo);
-//
-//			mav.setViewName("redirect:/member/memberDetail");
-//		} else {
-//			//비밀번호 변경 클릭 시 자꾸 message 출력되는 현상 fix필요
-//			//System.out.println("현재 비밀번호 틀림!");
-//
-//			mav.addObject("message", "failed");
-//			mav.addObject("center", viewPath + "modPasswordForm.jsp");
-//			mav.setViewName("main");
-//		}
-//
-//		return mav;
-		return null;
+		ModelAndView mav = new ModelAndView();
+		MemberVO memberVo = new MemberVO();
+		memberVo.setId(id);
+		memberVo.setPassword(curPassword.getBytes());
+		member = memberDao.selectMemberInfoRow(memberVo);
+//		log.info("member조회 완료: {}", memberVo.getId());
+
+		if(member != null) {
+			memberVo.setPassword(password.getBytes());
+			System.out.println("현재 비밀번호 일치하여 수정실행!");
+			memberDao.updatePasswordInfo(memberVo);
+			member = memberDao.selectMemberInfoRow(memberVo);
+			mav.addObject("member", memberVo);
+
+			mav.setViewName("redirect:/member/memberDetail");
+		} else {
+			//비밀번호 변경 클릭 시 자꾸 message 출력되는 현상 fix필요
+			System.out.println("현재 비밀번호 틀림!");
+
+			mav.addObject("message", "failed");
+			mav.addObject("center", viewPath + "modPasswordForm.jsp");
+			mav.setViewName("main");
+		}
+
+		return mav;
 	}
 
 	@Override
-	public ModelAndView modMember(MultipartFile file, MultipartHttpServletRequest request, RedirectAttributes rAttr) throws Exception {
-//		//System.out.println("modMember탑승");
-//		ModelAndView mav = new ModelAndView();
-//		MemberVO member = new MemberVO();
-//		HttpSession session = request.getSession();
-//		//파일 명 인코딩
-//		request.setCharacterEncoding("UTF-8");
-//
-//		//파일 경로 저장할 변수 설정
-//		String filePath = uploadPath + "/member/";
-//
-//		//입력한 값들의 정보를 저장할 Map 생성
-//		Map map = new HashMap();
-//
-//		//request에서 값들을 꺼내와 저장한 후 배열자체를 반환할 Enumeration객체 생성
-//		Enumeration enu = request.getParameterNames();
-//
-//		while (enu.hasMoreElements()) {
-//			String key = (String)enu.nextElement();
-//			String value = request.getParameter(key);
-//
-//			map.put(key, value);
-//		}
-//
-//		String fileName = (String)map.get("fileName");
-//		String id = (String)map.get("id");
-//
-//		//파일명 받아오기
-//		//System.out.println("update fileName: " + fileName);
-//
-//		//기존 이미지 폴더 경로 얻기
-//		String imgPath = filePath + id;
-//		//System.out.println("modMember imgPath: " + imgPath);
-//
-//		if(!file.isEmpty()) {
-//			//System.out.println("if문 탑승! 수정한 이미지 파일 존재!");
-//			fileName = file.getOriginalFilename();
-//			map.put("fileName", fileName);
-//			//기존 이미지 삭제
-//			File existingFile = new File(imgPath);
-//			//기존 이미지 폴더 및 파일 삭제
-//			if(existingFile.isDirectory()) {
-//				File[] files = existingFile.listFiles();
-//				if(files != null) {
-//					for(File image : files) {
-//						image.delete();
-//					}
-//				}
-//				existingFile.delete();
-//			}
-//
-//			//새 이미지 업로드
-//			//폴더 생성을 위해 경로 설정
-//			File memDir = new File(imgPath);
-//			//폴더 생성
-//			memDir.mkdir();
-//
-//			filePath = imgPath + "/" + fileName;
-//			File dest = new File(filePath);
-//			//System.out.println("filePath: " + filePath);
-//			// 파일을 해당 폴더로 복사
-//			Files.copy(file.getInputStream(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
-//		}
-//
-//		memberDao.modMember(map);
-//
-//		mav.setViewName("redirect:/member/memberDetail");
-//		return mav;
-		return null;
+	public ModelAndView updateMemberInfo(MemberVO memberVo, MultipartFile file, MultipartHttpServletRequest request, RedirectAttributes rAttr) throws Exception {
+		//System.out.println("modMember탑승");
+		ModelAndView mav = new ModelAndView();
+		MemberVO member = new MemberVO();
+		HttpSession session = request.getSession();
+		//파일 명 인코딩
+		request.setCharacterEncoding("UTF-8");
+
+		//파일 경로 저장할 변수 설정
+		String filePath = uploadPath + "/member/";
+
+		//입력한 값들의 정보를 저장할 Map 생성
+		Map map = new HashMap();
+
+		//request에서 값들을 꺼내와 저장한 후 배열자체를 반환할 Enumeration객체 생성
+		Enumeration enu = request.getParameterNames();
+
+		while (enu.hasMoreElements()) {
+			String key = (String)enu.nextElement();
+			String value = request.getParameter(key);
+
+			map.put(key, value);
+		}
+
+		String id = memberVo.getId();
+		String fileName = (String)map.get("fileName");
+
+		//기존 이미지 폴더 경로 얻기
+		String imgPath = filePath + id;
+		//System.out.println("modMember imgPath: " + imgPath);
+
+		if(!file.isEmpty()) {
+			//System.out.println("if문 탑승! 수정한 이미지 파일 존재!");
+			fileName = file.getOriginalFilename();
+			map.put("fileName", fileName);
+			//기존 이미지 삭제
+			File existingFile = new File(imgPath);
+			//기존 이미지 폴더 및 파일 삭제
+			if(existingFile.isDirectory()) {
+				File[] files = existingFile.listFiles();
+				if(files != null) {
+					for(File image : files) {
+						image.delete();
+					}
+				}
+				existingFile.delete();
+			}
+
+			//새 이미지 업로드
+			//폴더 생성을 위해 경로 설정
+			File memDir = new File(imgPath);
+			//폴더 생성
+			memDir.mkdir();
+
+			filePath = imgPath + "/" + fileName;
+			File dest = new File(filePath);
+			//System.out.println("filePath: " + filePath);
+			// 파일을 해당 폴더로 복사
+			Files.copy(file.getInputStream(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		}
+
+		memberVo.setFileName(fileName);
+		memberDao.updateMemberInfoRow(memberVo);
+
+		session.setAttribute("member", memberVo);
+		mav.setViewName("redirect:/member/memberDetail");
+		return mav;
 	}
 
 	@Override

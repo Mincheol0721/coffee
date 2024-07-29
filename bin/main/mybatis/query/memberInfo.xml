@@ -83,20 +83,16 @@
 
 	<update id="updateMemberInfo">
         UPDATE  MEMBER
-        SET     ID = #{id}
-			,   SOCIAL_ID = #{socialId}
-			,   PASSWORD = HASHBYTES('SHA2_256', #{password})
-			,   NAME = #{name}
+        SET     NAME = #{name}
 			,   SSN = #{ssn}
 			,   NICKNAME = #{nickname}
 			,   EMAIL = #{email}
 			,   MOBILE = #{mobile}
-			,   REGDATE = #{regDate}
 			,   ZIPCODE = #{zipcode}
-			,   ROADADDR = #{roadAddr}
-			,   DETAILADDR = #{detailAddr}
-			,   JIBUNADDR = #{jibunAddr}
-			,   FILENAME = #{filename}
+			,   ROAD_ADDR = #{roadAddr}
+			,   DETAIL_ADDR = #{detailAddr}
+			,   JIBUN_ADDR = #{jibunAddr}
+			,   FILE_NAME = #{fileName}
 		<where>
 		    <if test="id not in {null, ''}">
                 AND ID = #{id}
@@ -133,4 +129,15 @@
         FROM    MEMBER
         WHERE NICKNAME = #{nickname}
     </select>
+
+    <update id="updatePasswordInfo">
+        UPDATE  MEMBER
+        SET     PASSWORD = HASHBYTES('SHA2_256', #{password})
+        <where>
+            <if test="id not in {null, ''}">
+                AND ID = #{id}
+            </if>
+        </where>
+    </update>
+
 </mapper>
