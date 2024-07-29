@@ -61,13 +61,13 @@
 		function delMember() {
 			confirm('계정정보를 삭제하시겠습니까?');
 			$.ajax({
-				url: '/member/delMember?id=${vo.id}',
+				url: '/member/delMember',
 				type: 'POST',
 				dataType: 'text',
-				data: ${vo.id},
+				data: '${vo.id}',
 				success: function(data) {
-					alert('deleted');
-					location.href='/coffee/main';
+					alert('계정이 삭제되었습니다.');
+					location.href='/main';
 				}
 			});
 // 			location.href='/member/delMember?id=${vo.id}';

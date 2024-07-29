@@ -13,10 +13,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script type="text/javascript">
-	$(function() {
-
-
-	});
 </script>
 </head>
 <body>
@@ -60,7 +56,6 @@
 				<label for="passwordConfirm">비밀번호 확인 <span class="passwordConfirmValidate valMsg"></span></label>
 				<input type="password" name="passwordConfirm" id="passwordConfirm" placeholder="" required>
 			</div>
-				<input type="hidden" name="id" id="id" value="${map.id}">
 			<div class="input-group">
 				<label for="name">이름</label>
 				<input type="text" name="name" id="name" value="${map.name}" placeholder="" required>

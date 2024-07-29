@@ -31,10 +31,6 @@ public class MemberDaoImpl {
 	}
 
 	public MemberVO selectMemberInfoRow(MemberVO memberVo) {
-		log.info("*".repeat(90));
-		MemberVO vo = sqlSession.selectOne("member.selectMemberInfo", memberVo);
-		log.info("memberId: {} / memberPw: {}", memberVo.getId(), memberVo.getPassword());
-		log.info("*".repeat(90));
 		return sqlSession.selectOne("member.selectMemberInfo", memberVo);
 	}
 
@@ -48,6 +44,14 @@ public class MemberDaoImpl {
 
 	public int deleteMemberInfoRow(MemberVO memberVo) {
 		return sqlSession.delete("member.deleteMemberInfo", memberVo);
+	}
+
+	public int idValidate(String id) {
+		return sqlSession.selectOne("member.idValidate", id);
+	}
+
+	public int nickValidate(String nickname) {
+		return sqlSession.selectOne("member.nickValidate", nickname);
 	}
 
 }

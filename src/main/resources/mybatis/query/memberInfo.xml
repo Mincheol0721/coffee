@@ -24,7 +24,6 @@
 	<select id="selectMemberInfo" resultMap="memberInfoRow">
         SELECT  ID
 			,   SOCIAL_ID
-			,   PASSWORD
 			,   NAME
 			,   SSN
 			,   NICKNAME
@@ -44,6 +43,9 @@
 	        <if test="password not in {null, ''}">
 	            AND PASSWORD = HASHBYTES('SHA2_256', CAST(#{password} as VARBINARY(MAX)))
 	        </if>
+	        <if test="socialId not in {null, ''}">
+	           AND SOCIAL_ID = #{socialId}
+	        </if>
         </where>
 	</select>
 
@@ -57,7 +59,6 @@
            ,   NICKNAME
            ,   EMAIL
            ,   MOBILE
-           ,   REG_DATE
            ,   ZIPCODE
            ,   ROAD_ADDR
            ,   DETAIL_ADDR
@@ -72,7 +73,6 @@
 		   ,   #{nickname}
 		   ,   #{email}
 		   ,   #{mobile}
-		   ,   #{regDate}
 		   ,   #{zipcode}
 		   ,   #{roadAddr}
 		   ,   #{detailAddr}
@@ -84,7 +84,7 @@
 	<update id="updateMemberInfo">
         UPDATE  MEMBER
         SET     ID = #{id}
-			,   SOCIALID = #{socialId}
+			,   SOCIAL_ID = #{socialId}
 			,   PASSWORD = HASHBYTES('SHA2_256', #{password})
 			,   NAME = #{name}
 			,   SSN = #{ssn}
@@ -114,7 +114,7 @@
 	           AND ID = #{id}
 	       </if>
 	       <if test="socialId not in {null, ''}">
-	           AND SOCIALID = #{socialId}
+	           AND SOCIAL_ID = #{socialId}
 	       </if>
 	       <if test="password not in {null, ''}">
 	           AND PASSWORD = HASHBYTES('SHA2_256', #{password})
@@ -122,4 +122,15 @@
 	   </where>
 	</delete>
 
+    <select id="idValidate" resultType="int">
+        SELECT  COUNT(*)
+        FROM    MEMBER
+        WHERE ID = #{id}
+    </select>
+
+    <select id="nickValidate" resultType="int">
+        SELECT  COUNT(*)
+        FROM    MEMBER
+        WHERE NICKNAME = #{nickname}
+    </select>
 </mapper>

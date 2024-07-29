@@ -52,7 +52,23 @@ public class MemberController {
 
 	@RequestMapping("login")
 	public ModelAndView login(@ModelAttribute MemberVO memberVo, RedirectAttributes rAttr, HttpServletRequest request) throws Exception {
-		return memberService.login(memberVo, rAttr, request);
+		ModelAndView mav = new ModelAndView();
+		member = memberService.login(memberVo);
+
+		//id와 비밀번호로 조회 해온 정보가 존재 시 로그인 처리
+		if(member != null) {
+			HttpSession session = request.getSession();
+			session.setAttribute("member", member);
+			session.setAttribute("isLogOn", true);
+			session.setAttribute("isOwnMember", true);
+
+			mav.setViewName("redirect:/main");
+		//id 비밀번호로 조회한 정보가 존재하지 않을경우
+		} else {
+			rAttr.addFlashAttribute("result", "loginFailed");
+			mav.setViewName("redirect:/member/loginForm");
+		}
+		return mav;
 	}
 
 	@RequestMapping(value="kakaoLogin", produces = "application/json;charset=UTF-8", method=RequestMethod.GET)
@@ -80,23 +96,24 @@ public class MemberController {
 	}
 
 	@RequestMapping(value="insertMemberInfo", method = {RequestMethod.GET, RequestMethod.POST})
-	public ModelAndView insertMemberInfo(@RequestParam("file") MultipartFile file, MultipartHttpServletRequest request, RedirectAttributes rAttr) throws Exception {
-		return memberService.insertMemberInfo(file, request, rAttr);
+	public ModelAndView insertMemberInfo(@ModelAttribute MemberVO memberVo, @RequestParam("file") MultipartFile file, MultipartHttpServletRequest request, RedirectAttributes rAttr) throws Exception {
+		return memberService.insertMemberInfo(memberVo, file, request, rAttr);
 	}
 
 	@RequestMapping(value = "insertKakaoMember", method = {RequestMethod.GET, RequestMethod.POST})
-	public ModelAndView insertKakaoMember(@RequestParam("file") MultipartFile file, MultipartHttpServletRequest request, HttpServletResponse response) throws Exception {
-		return insertKakaoMember(file, request, response);
+	public ModelAndView insertKakaoMember(@ModelAttribute MemberVO memberVo, @RequestParam("file") MultipartFile file, MultipartHttpServletRequest request, HttpServletResponse response) throws Exception {
+		log.info("controller id: {}", memberVo.getId());
+		return memberService.insertKakaoMember(memberVo, file, request, response);
 	}
 
 	@RequestMapping(value = "insertGoogleMember", method = {RequestMethod.GET, RequestMethod.POST})
-	public ModelAndView insertGoogleMember(@RequestParam("file") MultipartFile file, MultipartHttpServletRequest request, HttpServletResponse response) throws Exception {
-		return memberService.insertGoogleMember(file, request, response);
+	public ModelAndView insertGoogleMember(@ModelAttribute MemberVO memberVo, @RequestParam("file") MultipartFile file, MultipartHttpServletRequest request, HttpServletResponse response) throws Exception {
+		return memberService.insertGoogleMember(memberVo, file, request, response);
 	}
 
 	@RequestMapping(value = "insertNaverMember", method = {RequestMethod.GET, RequestMethod.POST})
-	public ModelAndView insertNaverMember(@RequestParam("file") MultipartFile file, MultipartHttpServletRequest request, HttpServletResponse response) throws Exception {
-		return memberService.insertNaverMember(file, request, response);
+	public ModelAndView insertNaverMember(@ModelAttribute MemberVO memberVo, @RequestParam("file") MultipartFile file, MultipartHttpServletRequest request, HttpServletResponse response) throws Exception {
+		return memberService.insertNaverMember(memberVo, file, request, response);
 	}
 
 	@RequestMapping("logout")
@@ -104,7 +121,7 @@ public class MemberController {
 		ModelAndView mav = new ModelAndView();
 		HttpSession session = request.getSession();
 		session.invalidate();
-		mav.setViewName("redirect:/coffee/main");
+		mav.setViewName("redirect:/main");
 		mav.addObject("logout", "logout");
 
 		return mav;
@@ -117,7 +134,7 @@ public class MemberController {
 		HttpSession session = request.getSession();
 		session.invalidate();
 
-		mav.setViewName("redirect:/coffee/main");
+		mav.setViewName("redirect:/main");
 
 		return mav;
 	}
@@ -127,7 +144,7 @@ public class MemberController {
 		HttpSession session = request.getSession();
 		session.invalidate();
 
-		return new ModelAndView("redirect:/coffee/main");
+		return new ModelAndView("redirect:/main");
 	}
 
 	@RequestMapping("naverLogout")
@@ -171,42 +188,42 @@ public class MemberController {
 	}
 
 	@RequestMapping("download")
-	public void download(@RequestParam("nickname") String nickname, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		memberService.download(nickname, request, response);
+	public void download(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		memberService.download(request, response);
 	}
 
-//	@RequestMapping("nickValidate")
-//	public String nickValidate(@RequestParam("nickname") String nickname, HttpServletRequest request, HttpServletResponse response) {
-//		//System.out.println("닉네임 유효성 검사: " + nickname);
-//
-//		String validatedNickname = memberMapper.nickValidate(nickname);
-//		//System.out.println("닉네임: " + validatedNickname);
-//
-//		if(validatedNickname == null) {
-//			return "사용가능";
-//		} else {
-//			return "사용불가";
-//		}
-//
-//	}
-//
-//	@RequestMapping("idValidate")
-//	public String idValidate(@RequestParam("id") String id, HttpServletRequest request, HttpServletResponse response) {
-//		//System.out.println("아이디 유효성 검사: " + id);
-//
-//		String validatedId = memberMapper.idValidate(id);
-//		//System.out.println("닉네임: " + validatedId);
-//
-//		if(validatedId == null) {
-//			return "사용가능";
-//		} else {
-//			return "사용불가";
-//		}
-//
-//	}
+	@RequestMapping("nickValidate")
+	public String nickValidate(@RequestParam("nickname") String nickname, HttpServletRequest request, HttpServletResponse response) {
+		//System.out.println("닉네임 유효성 검사: " + nickname);
+
+		int validatedNickname = memberDao.nickValidate(nickname);
+		//System.out.println("닉네임: " + validatedNickname);
+
+		if(validatedNickname == 0) {
+			return "사용가능";
+		} else {
+			return "사용불가";
+		}
+
+	}
+
+	@RequestMapping("idValidate")
+	public String idValidate(@RequestParam("id") String id, HttpServletRequest request, HttpServletResponse response) {
+		//System.out.println("아이디 유효성 검사: " + id);
+
+		int validatedId = memberDao.idValidate(id);
+
+		if(validatedId == 0) {
+			return "사용가능";
+		} else {
+			return "사용불가";
+		}
+
+	}
 
 	@RequestMapping("delMember")
 	public void delMember(@ModelAttribute MemberVO memberVo, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		memberVo = (MemberVO) request.getSession().getAttribute("member");
 		memberService.deleteMember(memberVo);
 		request.getSession().invalidate();
 	}

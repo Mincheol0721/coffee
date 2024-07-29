@@ -1,5 +1,5 @@
 plugins {
-    id 'application'
+    id 'java'
     id 'war'
     id 'org.springframework.boot' version '3.3.1'
     id 'io.spring.dependency-management' version '1.1.4'
@@ -156,4 +156,8 @@ dependencies {
     testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-parameters'
 }

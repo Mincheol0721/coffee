@@ -24,7 +24,7 @@ public class MemberVO {
 	private String socialId;
 
 	// 비밀번호
-	private String password;
+	private byte[] password;
 
 	// 유저명
 	private String name;
