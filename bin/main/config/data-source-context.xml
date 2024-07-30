@@ -37,7 +37,6 @@
 	<alias name="sqlSessionFactoryBean" alias="sqlSessionFactoryBean"/>
 	<alias name="transactionManager" alias="transactionManager"/>
 
-
 	<!-- Properties -->
 	<util:properties id="appProperties" location="classpath:/application.properties" />
 </beans>

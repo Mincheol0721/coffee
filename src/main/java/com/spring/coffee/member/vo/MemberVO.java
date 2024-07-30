@@ -16,6 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Component
+@Alias("memberInfo")
 public class MemberVO {
 	// 유저 ID
 	private String id;

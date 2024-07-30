@@ -44,7 +44,7 @@
 	            AND PASSWORD = HASHBYTES('SHA2_256', CAST(#{password} as VARBINARY(MAX)))
 	        </if>
 	        <if test="socialId not in {null, ''}">
-	           AND SOCIAL_ID = #{socialId}
+                AND SOCIAL_ID = #{socialId}
 	        </if>
         </where>
 	</select>

@@ -32,9 +32,9 @@
 		            		<span class="nav-span dropdown text-end users">게시판</span>
 		          		</a>
 		          		<ul class="dropdown-menu">
-				            <li><a class="dropdown-item" href="/dailyboard/dailyBoardList">일상 게시판</a></li>
-				            <li><a class="dropdown-item" href="#">커피 게시판</a></li>
-				            <li><a class="dropdown-item" href="#">질의응답 게시판</a></li>
+				            <li><a class="dropdown-item" href="/dailyBoard/dailyBoardList">일상 게시판</a></li>
+				            <li><a class="dropdown-item" href="/coffeeboard/coffeeBoardList">커피 게시판</a></li>
+				            <li><a class="dropdown-item" href="/qnaboard/qnaBoardList">질의응답 게시판</a></li>
 		          		</ul>
 					</li>
               		<li class="nav-item dropdown">
@@ -48,6 +48,7 @@
                 			<li><a class="dropdown-item" href="#">입점 문의</a></li>
 		          		</ul>
 					</li>
+              		<li><a href="/findShop" class="nav-link px-2 link-secondary"><img src="/images/map.png" alt="find" ><br> <span class="nav-span">카페 찾기</span></a></li>
            		</ul>
             	<form role="search">
               		<input type="search" class="form-control" placeholder="Search..." aria-label="Search">

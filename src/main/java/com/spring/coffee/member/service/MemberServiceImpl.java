@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.net.http.HttpRequest;
 import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -30,7 +29,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -39,7 +37,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.spring.coffee.common.util.HashUtil;
 import com.spring.coffee.member.dao.MemberDaoImpl;
 import com.spring.coffee.member.vo.GoogleInfo;
 import com.spring.coffee.member.vo.KakaoInfo;
@@ -745,10 +742,25 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public void download(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		HttpSession session = request.getSession();
-		MemberVO memberVo = (MemberVO)session.getAttribute("member");
-		String id = memberVo.getId();
-
-		String fileName = memberVo.getFileName();
+		MemberVO memberVo = null;
+		String id = request.getParameter("id");
+		String fileName = null;
+		if (session != null) {
+			memberVo = (MemberVO)session.getAttribute("member");
+			if (memberVo != null) {
+				id = memberVo.getId();
+				fileName = memberVo.getFileName();
+			}
+		} else {
+			memberVo.setId(id);
+			memberVo = memberDao.selectMemberInfoRow(memberVo);
+			fileName = memberVo.getFileName();
+		}
+		log.info("*".repeat(90));
+		log.info("**		다운로드 메소드 호출");
+		log.info("** id: {}", id);
+		log.info("** fileName: {}", fileName);
+		log.info("*".repeat(90));
 
 		//사진을 내려받기 위한 출력스트림 통로 객체 생성
 		OutputStream out = response.getOutputStream();

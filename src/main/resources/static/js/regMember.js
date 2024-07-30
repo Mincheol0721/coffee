@@ -3,10 +3,10 @@ var nickname = $('#nickname');
 nickname.on('keyup', function() {
 //	console.log('nickname: ' + nickname.val());
 	$('.nickValidate').css('font-size', 'small');
-
+	
 	if(nickname.val().length >= 4 && nickname.val().length <=16) {
 		$.ajax({
-			url: '/member/nickValidate',
+			url: '/coffee/member/nickValidate',
 			type: 'POST',
 			data: {nickname: nickname.val()},
 			success: function(data) {
@@ -37,21 +37,21 @@ $('.passwordValidate').css('font-size', 'small');
 
 password.on('keyup', function() {
 	var validate = reg.test(password.val());
-//	console.log('password: ' + password.val());
-//	console.log('validate: ' + validate);
-
+	console.log('password: ' + password.val());
+	console.log('validate: ' + validate);
+	
 	if(!validate) {
 		$('.passwordValidate').text(' | 비밀번호는 4자 이상 20자 이하, 숫자, 영문자, 특수문자를 모두 포함해야합니다.');
 		$('.passwordValidate').css('color', 'red');
 	} else {
 		$('.passwordValidate').text('');
 	}
-
+	
 	if(password.val().search(" ") != -1) {
 		$('.passwordValidate').text(' | 비밀번호는 공백을 포함할 수 없습니다.');
 		$('.passwordValidate').css('color', 'red');
-	}
-
+	} 
+	
 });
 
 passwordConfirm.on('keyup', function() {
@@ -67,18 +67,18 @@ passwordConfirm.on('keyup', function() {
 var id = $('#id');
 $('.idValidate').css('font-size', 'small');
 
-id.on('blur', function(){
-//	console.log('id: ' + id.val());
+id.on('blur', function(){	
+	console.log('id: ' + id.val());
 	if(id.val().length < 4 || id.val().length > 25) {
 		$('.idValidate').text(' | 아이디는 4자 이상 25자 이하로 작성해주세요.');
 		$('.idValidate').css('color', '#9CA3AF');
 	} else {
 		$.ajax({
-			url: '/member/idValidate',
+			url: '/coffee/member/idValidate',
 			type: 'POST',
 			data: {id: id.val()},
 			success: function(data) {
-//				console.log('data: ' + data);
+				console.log('data: ' + data);
 				if(data == '사용가능') {
 					$('.idValidate').text(' | 사용 가능한 아이디입니다.');
 					$('.idValidate').css('color', 'conrflowerblue');

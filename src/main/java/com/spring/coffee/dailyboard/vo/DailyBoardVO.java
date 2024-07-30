@@ -1,67 +1,38 @@
 package com.spring.coffee.dailyboard.vo;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 import org.apache.ibatis.type.Alias;
 import org.springframework.stereotype.Component;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Component
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 @Alias("dailyBoardInfo")
 public class DailyBoardVO {
+	// 글번호
 	private int no;
+
+	// 글제목
 	private String title;
+
+	// 글내용
 	private String content;
-	private String writeDate;
-	private String nickname;
+
+	// 작성자
+	private String id;
+	private String nickname; // 작성자의 닉네임으로 표기하기 위한 임시 변수
+
+	// 작성일
+	private LocalDateTime writeDate;
+
+	// 조회수
 	private int readCount;
-	private String[] fileNames;
 
-	public int getNo() {
-		return no;
-	}
-	public void setNo(int no) {
-		this.no = no;
-	}
-	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
-	}
-	public String getContent() {
-		return content;
-	}
-	public void setContent(String content) {
-		this.content = content;
-	}
-	public String getWriteDate() {
-		return writeDate;
-	}
-	public void setWriteDate(String writeDate) {
-		this.writeDate = writeDate;
-	}
-	public int getReadCount() {
-		return readCount;
-	}
-	public void setReadCount(int readCount) {
-		this.readCount = readCount;
-	}
-	public String[] getFileNames() {
-		return fileNames;
-	}
-	public void setFileNames(String[] fileNames) {
-		this.fileNames = fileNames;
-	}
-	public String getNickname() {
-		return nickname;
-	}
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
-	}
-
+	// 파일명
+	private String fileName;
 }

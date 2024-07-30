@@ -11,6 +11,7 @@
 	</settings>
 
 	<typeAliases>
-	   <typeAlias type="com.spring.coffee.member.vo.MemberVO" alias="memberInfo" />
+<!-- 	   <typeAlias type="com.spring.coffee.member.vo.MemberVO" alias="memberInfo" /> -->
+	   <typeAlias type="com.spring.coffee.dailyboard.vo.DailyBoardVO" alias="dailyBoardInfo" />
 	</typeAliases>
 </configuration>

@@ -15,6 +15,7 @@
 							http://www.springframework.org/schema/context/spring-context.xsd">
 
 <!-- 	<bean id="memberVo" class="com.spring.coffee.member.vo.MemberVO" scope="step" /> -->
+<!-- 	<bean id="dailyBoardVo" class="com.spring.coffee.dailyboard.vo.DailyBoardVO" scope="step" /> -->
 
 </beans>
 
