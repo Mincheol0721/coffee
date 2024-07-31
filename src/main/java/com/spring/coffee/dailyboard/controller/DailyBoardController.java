@@ -77,15 +77,17 @@ public class DailyBoardController {
 	}
 
 	@RequestMapping("insertDailyBoard")
-	public ModelAndView insertDailyBoard(@ModelAttribute DailyBoardVO dailyBoardVo, @RequestParam("files[]") MultipartFile[] files, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView insertDailyBoard(@ModelAttribute DailyBoardVO dailyBoardVo, @RequestParam("file") MultipartFile[] files, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		request.setCharacterEncoding("UTF-8");
 
 		ModelAndView mav = new ModelAndView();
 
 		log.info("*".repeat(90));
 		log.info("**		게시글 정보 수집");
+		log.info("** 게시글 작성자: {}", dailyBoardVo.getId());
 		log.info("** 게시글 제목: {}", dailyBoardVo.getTitle());
 		log.info("** 게시글 내용: {}", dailyBoardVo.getContent());
+		log.info("** 첨부 파일명: {}", files[0].getOriginalFilename());
 		log.info("*".repeat(90));
 
 //		service.insertDailyBoard(dailyBoardVo, request, response);

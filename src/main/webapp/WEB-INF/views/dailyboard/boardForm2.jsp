@@ -3,7 +3,7 @@
 	pageEncoding="UTF-8"%>
 
 <%
-// 	MemberVO member = (MemberVO)session.getAttribute("member");
+	MemberVO member = (MemberVO)session.getAttribute("member");
 %>
 
 <!DOCTYPE html>
@@ -54,7 +54,7 @@
 		<h1>게시글 작성</h1>
 		<hr style="width: 80%; margin: 1.2em auto;">
 		<form id="frm" action="/dailyBoard/insertDailyBoard" method="post" enctype="multipart/form-data">
-<%-- 			<input type="hidden" name="id" value="<%=member.getId()%>"> --%>
+			<input type="hidden" name="id" value="<%=member.getId()%>">
 			<input type="text" id="title" name="title" style="width: 80%;" placeholder="제목을 입력해주세요.">
 			<hr style="width: 80%; margin: 1.2em auto;">
 			<div id="smarteditor">
@@ -62,7 +62,6 @@
 			    </div>
 			    <textarea id="contentArea" name="content" style="display: none"></textarea>
                 <input type="file" name="file" id="file" multiple="multiple" style="display: none;">
-                <ul id="fileList" style="display: none;"></ul>
 			</div>
 			<div id="btn">
 				<input type="submit" value="글 작성" id="submit"  class="bn59" />
@@ -100,16 +99,17 @@
 		    });
 
 		    function handleFiles(files) {
+				const fileInputDataTransfer = new DataTransfer();
+				
 		        // 파일 처리 로직
 		        for (const file of files) {
 		        	if(file && file.type.startsWith("image")) {
-		        		const listItem = document.createElement('li');
-		        		listItem.textContent = file.name;
-		        		fileList.append(listItem);
+		        		fileInputDataTransfer.items.add(file);
 		        		displayImage(file);
-		        		console.log('file: ', file);
 		        	}
 		        }
+		        
+		        fileInput.files = fileInputDataTransfer.files;
 		    }
 
 		    function displayImage(file) {
@@ -131,24 +131,10 @@
 		    	reader.readAsDataURL(file);
 		    }
 
-		    $('#submit').on('click', function(){
-		    	// div 내용을 textArea로 복사
-		    	content.value = contentDiv.innerHTML;
-		        formData.append('content', content.value);
-
-		        $.ajax({
-		        	url: '/dailyBoard/insertDailyBoard',
-		        	type: 'POST',
-		        	data: formData,
-		        	processData: false, // FormData는 jQuery가 처리하지 않도록 설정
-		            contentType: false, // 브라우저가 자동으로 Content-Type을 설정하지 않도록 설정
-		        	success: function(data) {
-		        		console.log('Success: ', data);
-		        	}, error: function(e, txt) {
-		        		console.log('Error: ', e, txt);
-		        	}
-		        });
-		    })
+		    contentDiv.on('keyup', function(){
+				content.innerHTML = contentDiv;
+				console.log(content.innerHTML);
+		    });
 		</script>
 	</body>
 </html>
