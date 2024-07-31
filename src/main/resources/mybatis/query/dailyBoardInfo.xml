@@ -115,13 +115,18 @@
 		WHERE    ID = #{id}
 	</select>
 
+	<select id="selectMaxNoInfo" resultType="int">
+        SELECT  MAX(NO)
+        FROM    DAILYBOARD
+	</select>
+
 	<update id="updateReadCountInfo">
         UPDATE  DAILYBOARD
 		SET     READ_COUNT = READ_COUNT + 1
 		WHERE   NO = #{no}
 	</update>
 
-	<insert id="insertDailyBoardFiles">
+	<insert id="insertDailyBoardFilesInfo">
         INSERT INTO DAILYBOARDFILES (
                 BOARD_NO
             ,   FILE_NAME

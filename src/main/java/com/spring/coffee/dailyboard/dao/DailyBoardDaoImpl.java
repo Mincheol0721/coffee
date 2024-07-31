@@ -51,7 +51,7 @@ public class DailyBoardDaoImpl {
 	}
 
 	public int insertFileInfo(DailyBoardFilesInfoVo filesInfoVo) {
-		return sqlSession.insert("dailyBoard.insertDailyBoardFile", filesInfoVo);
+		return sqlSession.insert("dailyBoard.insertDailyBoardFilesInfo", filesInfoVo);
 	}
 
 	public void updateReadCount(int no) {
@@ -59,7 +59,10 @@ public class DailyBoardDaoImpl {
 	}
 
 	public int selectDailyBoardCountInfo(String id) {
-		// TODO Auto-generated method stub
 		return sqlSession.selectOne("dailyBoard.selectDailyBoardCountInfoById", id);
+	}
+
+	public int selectMaxNo() {
+		return sqlSession.selectOne("dailyBoard.selectMaxNoInfo");
 	}
 }

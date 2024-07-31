@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.coffee.dailyboard.service.DailyBoardCommentService;
@@ -69,28 +70,34 @@ public class DailyBoardController {
 		ModelAndView mav = new ModelAndView();
 
 		mav.addObject("isBoard", true);
-		mav.addObject("center", viewPath + "boardForm.jsp");
+		mav.addObject("center", viewPath + "boardForm2.jsp");
 		mav.setViewName("main");
 
 		return mav;
 	}
 
 	@RequestMapping("insertDailyBoard")
-	public ModelAndView insertDailyBoard(@ModelAttribute DailyBoardVO dailyBoardVo, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView insertDailyBoard(@ModelAttribute DailyBoardVO dailyBoardVo, @RequestParam("files[]") MultipartFile[] files, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		request.setCharacterEncoding("UTF-8");
 
 		ModelAndView mav = new ModelAndView();
 
-		service.insertDailyBoard(dailyBoardVo, request, response);
+		log.info("*".repeat(90));
+		log.info("**		게시글 정보 수집");
+		log.info("** 게시글 제목: {}", dailyBoardVo.getTitle());
+		log.info("** 게시글 내용: {}", dailyBoardVo.getContent());
+		log.info("*".repeat(90));
 
-		mav.setViewName("redirect:/dailyBoard/dailyBoardList");
+//		service.insertDailyBoard(dailyBoardVo, request, response);
+
+		mav.setViewName("redirect:/dailyBoard/dailyBoardForm");
 
 		return mav;
 	}
 
 	@RequestMapping("seImgUploader")
 	public void seImgUploader(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		log.info("controller filename: " + request.getHeader("file-name"));
+		log.info("** controller filename: " + request.getHeader("file-name"));
 		service.uploadImg(request, response);
 	}
 
@@ -115,7 +122,7 @@ public class DailyBoardController {
 	}
 
 	@RequestMapping("modDailyBoardForm")
-	public ModelAndView modDailyBoardForm(@RequestParam("no") int no, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView updateDailyBoardForm(@RequestParam("no") int no, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView mav = new ModelAndView();
 
 		vo = service.selectDailyBoardDetail(no, request);
@@ -126,13 +133,13 @@ public class DailyBoardController {
 		return mav;
 	}
 
-	@RequestMapping("modDailyBoard")
-	public ModelAndView modDailyBoard(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	@RequestMapping("updateDailyBoard")
+	public ModelAndView updateDailyBoard(@ModelAttribute DailyBoardVO dailyBoardVo, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		request.setCharacterEncoding("UTF-8");
 
 		ModelAndView mav = new ModelAndView();
 
-		int no = service.updateDailyBoard(request, response);
+		int no = service.updateDailyBoard(dailyBoardVo, request, response);
 
 		mav.setViewName("redirect:/dailyBoard/dailyBoardDetail?no="+no);
 

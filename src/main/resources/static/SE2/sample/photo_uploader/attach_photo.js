@@ -333,7 +333,7 @@
     function html5Upload() {
     	var tempFile,
     		sUploadURL;
-
+        console.log(boardNo);
     	sUploadURL= '/dailyBoard/seImgUploader'; 	//upload URL
 //    	sUploadURL= 'file_uploader_html5.php'; 	//upload URL
 
@@ -343,7 +343,7 @@
     		try{
 	    		if(!!tempFile){
 	    			//Ajax통신하는 부분. 파일과 업로더할 url을 전달한다.
-	    			callAjaxForHTML5(tempFile,sUploadURL).done(
+	    			callAjaxForHTML5(tempFile,sUploadURL, boardNo).done(
 
 					);
 	    			k += 1;
@@ -483,7 +483,7 @@
  	 */
  	function callFileUploader (){
  		oFileUploader = new jindo.FileUploader(jindo.$("uploadInputBox"),{
- 			sUrl  : location.href.replace(/\/[^\/]*$/, '') + '/coffee/board/uploadImg',	//샘플 URL입니다.
+ 			sUrl  : location.href.replace(/\/[^\/]*$/, '') + '/board/uploadImg',	//샘플 URL입니다.
  	        sCallback : '/SE2/sample/photo_uploader/callback.html',	//업로드 이후에 iframe이 redirect될 콜백페이지의 주소
  	    	sFiletype : "*.jpg;*.png;*.bmp;*.gif",						//허용할 파일의 형식. ex) "*", "*.*", "*.jpg", 구분자(;)
  	    	sMsgNotAllowedExt : 'JPG, GIF, PNG, BMP 확장자만 가능합니다',	//허용할 파일의 형식이 아닌경우에 띄워주는 경고창의 문구

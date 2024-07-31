@@ -110,24 +110,36 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 
 //		log.info("newBoardNo: " + no);
 		no = dailyBoardDao.selectDailyBoardCountInfo(dailyBoardVo.getId());
-		map.put("no", no);
+		dailyBoardVO.setNo(no);
+		dailyBoardVo = dailyBoardDao.selectDailyBoardInfoRow(dailyBoardVO);
 
-//		updateImg(map);
-
+		updateImg(dailyBoardVo);
 	}
 
 	@Override
 	public void uploadImg(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		request.setCharacterEncoding("UTF-8");
+		HttpSession session = request.getSession();
+		MemberVO memberVo = (MemberVO) session.getAttribute("member");
 		List<String> fileNames = new ArrayList<String>();
-
+		int no = 0;
 		// TODO Auto-generated method stub
-		int no = dailyBoardVO.getNo();
+		if (request.getParameter("no") == null) {
+			no = dailyBoardDao.selectMaxNo() + 1;
+		} else {
+			no = Integer.parseInt(request.getParameter("no"));
+		}
+		log.info("** no: {}", no);
 		//File Information
 		//파일정보         
 		String sFileInfo = "";
 		//파일명을 받는다 - 일반 원본파일명         
 		String sFileName = request.getHeader("file-name");
+		if (sFileName == null || sFileName.isEmpty()) {
+            // 파일 이름이 없는 경우, 아무 것도 하지 않음
+            return;
+        }
+
 		//파일 확장자         
 		String filename_ext = sFileName.substring(sFileName.lastIndexOf(".") + 1);
 		//확장자를소문자로 변경         
@@ -200,26 +212,12 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 	}
 
 	@Override
-	public int updateDailyBoard(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public int updateDailyBoard(DailyBoardVO dailyBoardVo, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		int updCnt = dailyBoardDao.updateDailyBoardInfoRow(dailyBoardVo);
 
-		Map map = new HashMap();
+		updateImg(dailyBoardVo);
 
-		Enumeration enu = request.getParameterNames();
-
-		while (enu.hasMoreElements()) {
-			String key = (String)enu.nextElement();
-
-			String value = request.getParameter(key);
-
-			map.put(key, value);
-			log.info(key + ": " + value);
-		}
-
-		int updCnt = dailyBoardDao.updateDailyBoardInfoRow(dailyBoardVO);
-
-		updateImg(map);
-
-		return( Integer.parseInt(map.get("no").toString()) );
+		return dailyBoardVo.getNo();
 	}
 
 	@Override
@@ -229,34 +227,32 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 	}
 
 	@Override
-	public void updateImg(Map<String, Object> map) throws Exception {
+	public void updateImg(DailyBoardVO dailyBoardVo) throws Exception {
+//		log.info("*".repeat(90));
 		List<String> fileNames = new ArrayList<String>();
 		Map<String, Object> fileMap = new HashMap();
 
 		//HTML 파싱 및 조작을 위한 Jsoup 라이브러리 의존주입
-		Document doc = Jsoup.parse(map.get("content").toString());
-		log.info("doc: " + doc.html());
+		Document doc = Jsoup.parse(dailyBoardVo.getContent());
 		DailyBoardFilesInfoVo dailyBoardFilesInfoVo = new DailyBoardFilesInfoVo();
-		dailyBoardFilesInfoVo.setBoardNo(Integer.parseInt(map.get("no").toString()));
+		dailyBoardFilesInfoVo.setBoardNo(dailyBoardVo.getNo());
 
 		//img 태그 선택
 		Elements imgs = doc.select("img");
-//		log.info("imgs: " + imgs.html());
 		for(Element img : imgs) {
-			log.info("img: " + img);
 			String src = img.attr("src");
 			src = src.substring(src.lastIndexOf('/')+1);
-//			log.info("src: " + src);
+//			log.info("** src: {}", src);
 			fileNames.add(src);
 			dailyBoardFilesInfoVo.setFileName(src);
+			insCnt += dailyBoardDao.insertFileInfo(dailyBoardFilesInfoVo);
 		}
-
-		insCnt += dailyBoardDao.insertFileInfo(dailyBoardFilesInfoVo);
-		log.info("** 파일 등록: {}건 (누적)등록");
+//		log.info("** 파일 등록: {}건 (누적)등록", insCnt);
+//		log.info("*".repeat(90));
 	}
 
 	@Override
-	public void thumbnail(@RequestParam("no") int no, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void thumbnail(int no, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		//사진을 내려받기 위한 출력 스트림 통로 객체 생성
 		OutputStream os = response.getOutputStream();

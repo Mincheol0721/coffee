@@ -756,11 +756,6 @@ public class MemberServiceImpl implements MemberService {
 			memberVo = memberDao.selectMemberInfoRow(memberVo);
 			fileName = memberVo.getFileName();
 		}
-		log.info("*".repeat(90));
-		log.info("**		다운로드 메소드 호출");
-		log.info("** id: {}", id);
-		log.info("** fileName: {}", fileName);
-		log.info("*".repeat(90));
 
 		//사진을 내려받기 위한 출력스트림 통로 객체 생성
 		OutputStream out = response.getOutputStream();
