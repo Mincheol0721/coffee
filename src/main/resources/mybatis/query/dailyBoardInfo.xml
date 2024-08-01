@@ -136,4 +136,20 @@
         )
 	</insert>
 
+	<select id="selectDailyBoardFilesInfo" resultMap="dailyBoardFilesInfoRow">
+        SELECT  BOARD_NO
+            ,   FILE_NAME
+        FROM    DAILYBOARDFILES
+        <where>
+            <if test="boardNo not in {null, ''}">
+                BOARD_NO = #{boardNo}
+            </if>
+        </where>
+	</select>
+
+	<delete id="deleteDailyBoardFilesInfo">
+        DELETE FROM DAILYBOARDFILES
+        WHERE BOARD_NO = #{boardNo}
+	</delete>
+
 </mapper>

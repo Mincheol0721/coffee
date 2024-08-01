@@ -73,29 +73,13 @@
     					<c:when test="${not empty member}">
 							<!-- 로그인 시 화면-->
 							<ul class="dropdown-menu text-small">
+                                <li class="dropdown-item"><b><c:out value="${member.nickname}" /></b>님</li>
+				  				<li><hr class="dropdown-divider"></li>
 				  				<li><a class="dropdown-item" href="/member/memberDetail">마이페이지</a></li>
 				  				<li><a class="dropdown-item" href="/member/modForm">회원정보수정</a></li>
 				  				<li><hr class="dropdown-divider"></li>
 				  				<li>
 				  					<a class="dropdown-item" href="/member/logout">로그아웃</a>
-				  					<%--
-				  					<c:if test="${isOwnMember eq true}">
-				  						<a class="dropdown-item" href="/member/logout">로그아웃</a>
-				  					</c:if>
-				  					<c:if test="${isKakao eq true}">
-<!-- 				  						<a class="dropdown-item" href="https://kauth.kakao.com/oauth/logout?client_id=6f333d17c0737d247630d8be3aeead82&logout_redirect_uri=http://localhost:8090/member/kakaoLogout">로그아웃</a> -->
-										<a class="dropdown-item" href="/member/logout">로그아웃</a>
-				  					</c:if>
-				  					<c:if test="${isGoogle eq true}">
-<!-- 				  						<a class="dropdown-item" href="https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=http://localhost:8090/member/googleLogout">로그아웃</a> -->
-				  						<a class="dropdown-item" href="/member/logout">로그아웃</a>
-<!-- 				  						<a class="dropdown-item" href="https://mail.google.com/mail/u/0/?logout&hl=en">로그아웃</a> -->
-				  					</c:if>
-				  					<c:if test="${isNaver eq true}">
-<!-- 				  						<a class="dropdown-item" href="/member/naverLogout">로그아웃</a> -->
-										<a class="dropdown-item" href="/member/logout">로그아웃</a>
-				  					</c:if>
-				  					--%>
 			  					</li>
 							</ul>
     					</c:when>

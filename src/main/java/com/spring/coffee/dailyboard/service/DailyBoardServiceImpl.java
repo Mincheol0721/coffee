@@ -55,7 +55,9 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 	@Autowired
 	private MemberDaoImpl memberDao;
 
-	private int insCnt;
+	private int insCnt,
+				updCnt,
+				delCnt;
 
 	@Override
 	public Map<String, Object> selectDailyBoardList(Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -100,11 +102,12 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 	}
 
 	@Override
-	public void insertDailyBoard(DailyBoardVO dailyBoardVo, HttpServletRequest request, HttpServletResponse response) throws Exception {
-
+	public int insertDailyBoard(DailyBoardVO dailyBoardVo, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String absPath = uploadPath + "/dailyBoard/";
 		Map map = new HashMap();
 		int no = 0;
+
+		setBoardVoFileName(dailyBoardVo);
 
 		dailyBoardDao.insertDailyBoardInfoRow(dailyBoardVo);
 
@@ -114,83 +117,105 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 		dailyBoardVo = dailyBoardDao.selectDailyBoardInfoRow(dailyBoardVO);
 
 		updateImg(dailyBoardVo);
+
+		return no;
+	}
+
+	private void setBoardVoFileName(DailyBoardVO dailyBoardVo) {
+		//HTML 파싱 및 조작을 위한 Jsoup 라이브러리 의존주입
+		Document doc = Jsoup.parse(dailyBoardVo.getContent());
+		StringBuilder sb = new StringBuilder();
+
+		//img 태그 선택
+		Elements imgs = doc.select("img");
+		for(Element img : imgs) {
+			String src = img.attr("src");
+			src = src.substring(src.lastIndexOf('/')+1);
+//					log.info("** src: {}", src);
+			if (!src.trim().isEmpty() ) {
+				if(sb.length() > 0) {
+					sb.append(", ");
+				}
+				sb.append(src);
+			}
+		}
+		dailyBoardVo.setFileName(sb.toString());
 	}
 
 	@Override
-	public void uploadImg(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void uploadImg(Integer no, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		request.setCharacterEncoding("UTF-8");
-		HttpSession session = request.getSession();
-		MemberVO memberVo = (MemberVO) session.getAttribute("member");
-		List<String> fileNames = new ArrayList<String>();
-		int no = 0;
-		// TODO Auto-generated method stub
-		if (request.getParameter("no") == null) {
-			no = dailyBoardDao.selectMaxNo() + 1;
-		} else {
-			no = Integer.parseInt(request.getParameter("no"));
-		}
-		log.info("** no: {}", no);
-		//File Information
-		//파일정보         
-		String sFileInfo = "";
-		//파일명을 받는다 - 일반 원본파일명         
-		String sFileName = request.getHeader("file-name");
-		if (sFileName == null || sFileName.isEmpty()) {
-            // 파일 이름이 없는 경우, 아무 것도 하지 않음
-            return;
-        }
+	    HttpSession session = request.getSession();
+	    MemberVO memberVo = (MemberVO) session.getAttribute("member");
+	    List<String> fileNames = new ArrayList<String>();
 
-		//파일 확장자         
-		String filename_ext = sFileName.substring(sFileName.lastIndexOf(".") + 1);
-		//확장자를소문자로 변경         
-		filename_ext = filename_ext.toLowerCase();
-		//파일 기본경로
-		String dftFilePath = uploadPath + "/dailyBoard/";
-		//파일 기본경로 _ 상세경로         
-		String filePath = dftFilePath + no + "/";
-		File file = new File(filePath);
+	    if (no == null) {
+	        no = dailyBoardDao.selectMaxNo() + 1;
+	    }
 
-		if(!file.exists()) {
-			file.mkdirs();
-		}
+	    // 저장된 파일명을 가져와 해당 파일 명이 존재하지 않으면 삭제, 존재하면 유지하도록 내용 추가
+	    // TO DO
 
-		String fileName = "";
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-		String today= formatter.format(new java.util.Date());
-		fileName = today+UUID.randomUUID().toString() + sFileName.substring(sFileName.lastIndexOf("."));
-		String rlFileNm = filePath + fileName;
+	    // 파일 정보를 수집
+	    String sFileInfo = "";
+	    String sFileName = request.getHeader("file-name");
+	    if (sFileName == null || sFileName.isEmpty()) {
+	        // 파일 이름이 없는 경우, 아무 것도 하지 않음
+	        return;
+	    }
+	    log.info("** 받아온 파일 명: {}", sFileName);
+	    // 파일 확장자
+	    String filename_ext = sFileName.substring(sFileName.lastIndexOf(".") + 1).toLowerCase();
 
-		///////////////// 서버에 파일쓰기 /////////////////          
-		InputStream is = request.getInputStream();
-		OutputStream os = new FileOutputStream(rlFileNm);
-		int numRead;
-		byte b[] = new byte[Integer.parseInt(request.getHeader("file-size"))];
+	    // 파일 기본 경로
+	    String dftFilePath = uploadPath + "/dailyBoard/";
+	    String filePath = dftFilePath + no + "/";
+	    File fileDir = new File(filePath);
 
-		while((numRead = is.read(b,0,b.length)) != -1) {
-			os.write(b,0,numRead);
-		}
+	    // 새로운 파일명 생성
+	    String fileName = "";
+	    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+	    String today = formatter.format(new java.util.Date());
+	    fileName = today + UUID.randomUUID().toString() + sFileName.substring(sFileName.lastIndexOf("."));
+	    String rlFileNm = filePath + fileName;
 
-		if(is != null) {
-			is.close();
-		}
+	    if (!fileDir.exists()) {
+	        fileDir.mkdirs();
+	    } else {
+	        // 폴더 내 모든 파일 삭제
+	        File[] files = fileDir.listFiles();
+	        if (files != null) {
+	            for (File file : files) {
+	                if (!file.isDirectory()) {
+	                	String fileNm = file.getName().substring(0,8);
 
-		os.flush();
-		os.close();
+	                	if(!fileNm.equals(today.substring(0,8))) {
+	                		file.delete();
+	                	}
+	                }
+	            }
+	        }
+	    }
 
-		///////////////// 서버에 파일쓰기 /////////////////         
-		// 정보 출력         
-		sFileInfo += "&bNewLine=true";
-		// img 태그의 title 속성을 원본파일명으로 적용시켜주기 위함         
-		sFileInfo += "&sFileName="+ sFileName;
-		sFileInfo += "&sFileURL=/dailyboard/" + no + "/" + fileName;
+	    // 서버에 파일 쓰기
+	    try (InputStream is = request.getInputStream();
+	         OutputStream os = new FileOutputStream(rlFileNm)) {
+	        byte[] b = new byte[Integer.parseInt(request.getHeader("file-size"))];
+	        int numRead;
+	        while ((numRead = is.read(b, 0, b.length)) != -1) {
+	            os.write(b, 0, numRead);
+	        }
+	    }
 
-//		System.out.println("sfileInfo: " + sFileInfo);
+	    // 정보 출력
+	    sFileInfo += "&bNewLine=true";
+	    sFileInfo += "&sFileName=" + sFileName;
+	    sFileInfo += "&sFileURL=/dailyboard/" + no + "/" + fileName;
 
-		PrintWriter print = response.getWriter();
-
-		print.print(sFileInfo);
-		print.flush();
-		print.close();
+	    try (PrintWriter print = response.getWriter()) {
+	        print.print(sFileInfo);
+	        print.flush();
+	    }
 	}
 
 	@Override
@@ -214,7 +239,9 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 	@Override
 	public int updateDailyBoard(DailyBoardVO dailyBoardVo, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		int updCnt = dailyBoardDao.updateDailyBoardInfoRow(dailyBoardVo);
-
+		// 일상 게시판 테이블에 파일이름을 , 로 구분하여 값을 전달하기 위한 메소드
+		setBoardVoFileName(dailyBoardVo);
+		// 일상 게시판 파일 정보 테이블에 파일 정보를 전달하기 위한 메소드
 		updateImg(dailyBoardVo);
 
 		return dailyBoardVo.getNo();
@@ -237,12 +264,16 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 		DailyBoardFilesInfoVo dailyBoardFilesInfoVo = new DailyBoardFilesInfoVo();
 		dailyBoardFilesInfoVo.setBoardNo(dailyBoardVo.getNo());
 
+		List<DailyBoardFilesInfoVo> oldDataList = dailyBoardDao.selectFileInfo(dailyBoardFilesInfoVo);
+		log.info("** boardNo: {}", dailyBoardFilesInfoVo.getBoardNo());
+		if(oldDataList != null) {
+			delCnt += dailyBoardDao.deleteFileInfo(dailyBoardFilesInfoVo);
+		}
 		//img 태그 선택
 		Elements imgs = doc.select("img");
 		for(Element img : imgs) {
 			String src = img.attr("src");
 			src = src.substring(src.lastIndexOf('/')+1);
-//			log.info("** src: {}", src);
 			fileNames.add(src);
 			dailyBoardFilesInfoVo.setFileName(src);
 			insCnt += dailyBoardDao.insertFileInfo(dailyBoardFilesInfoVo);
@@ -259,6 +290,7 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 
 		//다운로드할 파일위치의 파일경로 생성
 		String imgPath = uploadPath + "/dailyboard/" + no;
+//		log.info("** 이미지 경로: {}", imgPath);
 
 		//이미지 파일을 접근해서 파일을 조작, 정보보기 등을 할 수 있는 파일 객체 생성
 		File imgs = new File(imgPath);
@@ -275,10 +307,24 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 		}
 		File img = new File(imgName);
 
-//		Thumbnails.of(imgName).size(220, 220).toOutputStream(os);
+		response.setHeader("Cache-Control", "no-cache");
+		response.addHeader("Content-disposition", "attachment; fileName=" + URLEncoder.encode(imgName, "UTF-8"));
 
-		byte[] b = new byte[10 * 1024];
-		os.write(b);
+		//사진을 입력하기 위한 입력스트림 통로 객체 생성
+		FileInputStream in = new FileInputStream(img);
 
+		//이미지 파일을 담아 출력할 바이트 배열 생성
+		byte[] buffer = new byte[10 * 1024];
+
+		while (true) {
+			int count = in.read(buffer);
+
+			if(count == -1) {
+				break;
+			}
+			os.write(buffer, 0, count);
+		}
+
+		os.close();
 	}
 }

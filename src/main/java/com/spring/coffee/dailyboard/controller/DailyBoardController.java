@@ -1,5 +1,6 @@
 package com.spring.coffee.dailyboard.controller;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,37 +71,29 @@ public class DailyBoardController {
 		ModelAndView mav = new ModelAndView();
 
 		mav.addObject("isBoard", true);
-		mav.addObject("center", viewPath + "boardForm2.jsp");
+		mav.addObject("center", viewPath + "boardForm.jsp");
 		mav.setViewName("main");
 
 		return mav;
 	}
 
 	@RequestMapping("insertDailyBoard")
-	public ModelAndView insertDailyBoard(@ModelAttribute DailyBoardVO dailyBoardVo, @RequestParam("file") MultipartFile[] files, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView insertDailyBoard(@ModelAttribute DailyBoardVO dailyBoardVo, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		request.setCharacterEncoding("UTF-8");
 
 		ModelAndView mav = new ModelAndView();
 
-		log.info("*".repeat(90));
-		log.info("**		게시글 정보 수집");
-		log.info("** 게시글 작성자: {}", dailyBoardVo.getId());
-		log.info("** 게시글 제목: {}", dailyBoardVo.getTitle());
-		log.info("** 게시글 내용: {}", dailyBoardVo.getContent());
-		log.info("** 첨부 파일명: {}", files[0].getOriginalFilename());
-		log.info("*".repeat(90));
+		int no = service.insertDailyBoard(dailyBoardVo, request, response);
 
-//		service.insertDailyBoard(dailyBoardVo, request, response);
-
-		mav.setViewName("redirect:/dailyBoard/dailyBoardForm");
+		mav.setViewName("redirect:/dailyBoard/dailyBoardDetail?no=" + no);
 
 		return mav;
 	}
 
 	@RequestMapping("seImgUploader")
-	public void seImgUploader(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		log.info("** controller filename: " + request.getHeader("file-name"));
-		service.uploadImg(request, response);
+	public void seImgUploader(@RequestParam(value = "no", required = false) Integer no, HttpServletRequest request, HttpServletResponse response) throws Exception {
+//		log.info("** controller filename: " + request.getHeader("file-name"));
+		service.uploadImg(no, request, response);
 	}
 
 	@RequestMapping("dailyBoardDetail")

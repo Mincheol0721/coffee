@@ -107,7 +107,6 @@
 						<tr class="boardArticles" onclick="location.href='${path}/dailyBoard/dailyBoardDetail?no=${vo.no}'">
 							<td class="boardNo">${index + ((list.currentPage-1) * 10)}</td>
 							<td class="boardImg">
-							    <c:out value="${vo.no }" />
 								<img src="${path}/dailyBoard/thumbnail?no=${vo.no}">
 							</td>
 							<td class="boardTitle">${vo.title}</td>

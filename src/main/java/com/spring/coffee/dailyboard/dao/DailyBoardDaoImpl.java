@@ -50,6 +50,10 @@ public class DailyBoardDaoImpl {
 		return sqlSession.selectOne("dailyBoard.selectDailyBoardCountInfo", countMap);
 	}
 
+	public List<DailyBoardFilesInfoVo> selectFileInfo(DailyBoardFilesInfoVo filesInfoVo) {
+		return sqlSession.selectList("dailyBoard.selectDailyBoardFilesInfo", filesInfoVo);
+	}
+
 	public int insertFileInfo(DailyBoardFilesInfoVo filesInfoVo) {
 		return sqlSession.insert("dailyBoard.insertDailyBoardFilesInfo", filesInfoVo);
 	}
@@ -64,5 +68,9 @@ public class DailyBoardDaoImpl {
 
 	public int selectMaxNo() {
 		return sqlSession.selectOne("dailyBoard.selectMaxNoInfo");
+	}
+
+	public int deleteFileInfo(DailyBoardFilesInfoVo dailyBoardFilesInfoVo) {
+		return sqlSession.delete("dailyBoard.deleteDailyBoardFilesInfo", dailyBoardFilesInfoVo);
 	}
 }

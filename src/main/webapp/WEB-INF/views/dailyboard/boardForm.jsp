@@ -43,16 +43,18 @@
 		<h1>게시글 작성</h1>
 		<hr style="width: 80%; margin: 1.2em auto;">
 		<form id="frm" action="/dailyBoard/insertDailyBoard" method="post" enctype="multipart/form-data">
-			<input type="hidden" name="id" value="<%=member.getId()%>">
-			<input type="text" id="title" name="title" style="width: 80%;" placeholder="제목을 입력해주세요.">
-			<hr style="width: 80%; margin: 1.2em auto;">
-			<div id="smarteditor">
-				<textarea name="content" id="content" placeholder="Insert the contents." rows="20" cols="50" style="overflow: scroll; width: 100%;">
-				</textarea>
-			</div>
-			<div id="btn">
-				<input type="submit" value="글 작성" id="submit"  class="bn59" />
-			</div>
+            <div id="img_upload">
+				<input type="hidden" name="id" value="<%=member.getId()%>">
+				<input type="text" id="title" name="title" style="width: 80%;" placeholder="제목을 입력해주세요.">
+				<hr style="width: 80%; margin: 1.2em auto;">
+				<div id="smarteditor">
+					<textarea name="content" id="content" placeholder="Insert the contents." rows="20" cols="50" style="overflow: scroll; width: 100%;">
+					</textarea>
+				</div>
+				<div id="btn">
+					<input type="submit" value="글 작성" id="submit"  class="bn59" />
+				</div>
+            </div>
 		</form>
 
 		<script>
