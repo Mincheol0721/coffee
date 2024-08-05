@@ -1,6 +1,8 @@
 package com.spring.coffee.member.controller;
 
 import java.net.URLEncoder;
+import java.net.http.HttpRequest;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,21 +58,41 @@ public class MemberController {
 	public ModelAndView login(@ModelAttribute MemberVO memberVo, RedirectAttributes rAttr, HttpServletRequest request) throws Exception {
 		ModelAndView mav = new ModelAndView();
 		member = memberService.login(memberVo);
+		HttpSession session = request.getSession();
 
 		//id와 비밀번호로 조회 해온 정보가 존재 시 로그인 처리
 		if(member != null) {
-			HttpSession session = request.getSession();
-			session.setAttribute("member", member);
-			session.setAttribute("isLogOn", true);
-			session.setAttribute("isOwnMember", true);
+			if(member.getDelFlg() == 1 && member.getDelDtm() != null && member.getDelDtm().isAfter(LocalDateTime.now().minusDays(90))) {
+				log.info("** 복구 확인 및 작업 진행");
+				mav.addObject("result", "recovery");
+				// member값을 mav에 담아 전달하기 위해 redirect가 아닌 직접 view명을 전달
+				mav.addObject("recovery", member);
+				mav.addObject("center", viewPath + "loginForm.jsp");
+				mav.setViewName("main");
 
-			mav.setViewName("redirect:/main");
+			} else {
+				session.setAttribute("member", member);
+				session.setAttribute("isLogOn", true);
+				session.setAttribute("isOwnMember", true);
+
+				mav.setViewName("redirect:/main");
+			}
 		//id 비밀번호로 조회한 정보가 존재하지 않을경우
 		} else {
 			rAttr.addFlashAttribute("result", "loginFailed");
 			mav.setViewName("redirect:/member/loginForm");
 		}
+		memberService.updateLoginInfo(member);
 		return mav;
+	}
+
+	@RequestMapping("/recoveryMemberInfo")
+	public void recoveryMemberInfo(@RequestParam("id") String id, @RequestParam("password") String password, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		MemberVO memberVo = new MemberVO();
+		memberVo.setId(id);
+		memberVo.setPassword(password.getBytes());
+
+		memberService.recoveryMemberInfo(memberVo);
 	}
 
 	@RequestMapping(value="kakaoLogin", produces = "application/json;charset=UTF-8", method=RequestMethod.GET)

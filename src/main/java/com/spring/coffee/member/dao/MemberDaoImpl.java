@@ -43,7 +43,7 @@ public class MemberDaoImpl {
 	}
 
 	public int deleteMemberInfoRow(MemberVO memberVo) {
-		return sqlSession.delete("member.deleteMemberInfo", memberVo);
+		return sqlSession.update("member.deleteMemberInfo", memberVo);
 	}
 
 	public int idValidate(String id) {
@@ -56,6 +56,14 @@ public class MemberDaoImpl {
 
 	public int updatePasswordInfo(MemberVO memberVo) {
 		return sqlSession.update("member.updatePasswordInfo", memberVo);
+	}
+
+	public void recoveryMemberInfo(MemberVO memberVo) {
+		sqlSession.update("member.recoveryMemberInfo", memberVo);
+	}
+
+	public void updateLoginInfo(MemberVO memberVo) {
+		sqlSession.update("member.updateLoginInfo", memberVo);
 	}
 
 }

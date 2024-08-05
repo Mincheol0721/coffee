@@ -60,14 +60,14 @@
 	</div>
 	<script type="text/javascript">
 		function delMember() {
-			confirm('계정정보를 삭제하시겠습니까?');
+			confirm('계정정보를 삭제하시겠습니까? \n삭제된 계정은 90일 내에 복구가 가능합니다.');
 			$.ajax({
 				url: '/member/delMember',
 				type: 'POST',
 				dataType: 'text',
 				data: '${vo.id}',
 				success: function(data) {
-					alert('계정이 삭제되었습니다.');
+					alert('계정 삭제처리가 완료되었습니다. \n계정 복구를 원하실 경우, 90내에 로그인 시도 시 복구됩니다.');
 					location.href='/main';
 				}
 			});

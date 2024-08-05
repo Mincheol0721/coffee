@@ -45,10 +45,10 @@
 		<form id="frm" action="/dailyBoard/insertDailyBoard" method="post" enctype="multipart/form-data">
             <div id="img_upload">
 				<input type="hidden" name="id" value="<%=member.getId()%>">
-				<input type="text" id="title" name="title" style="width: 80%;" placeholder="제목을 입력해주세요.">
+				<input type="text" id="title" name="title" style="width: 80%;" placeholder="제목을 입력해주세요." required="required">
 				<hr style="width: 80%; margin: 1.2em auto;">
 				<div id="smarteditor">
-					<textarea name="content" id="content" placeholder="Insert the contents." rows="20" cols="50" style="overflow: scroll; width: 100%;">
+					<textarea name="content" id="content" placeholder="Insert the contents." rows="20" cols="50" style="overflow: scroll; width: 100%;" required="required">
 					</textarea>
 				</div>
 				<div id="btn">

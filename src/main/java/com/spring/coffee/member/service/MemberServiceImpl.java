@@ -791,7 +791,11 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public int deleteMember(MemberVO memberVo) throws Exception {
-		String id = memberVo.getId();
+
+		return memberDao.deleteMemberInfoRow(memberVo);
+	}
+
+	private void deleteMemberFiles(String id) throws IOException {
 		//사진이 저장된 경로를 찾아가기 위해 경로 저장
 		String imgPath = uploadPath + "/member/";
 		//다운로드할 파일의 경로 저장
@@ -820,7 +824,16 @@ public class MemberServiceImpl implements MemberService {
                 return FileVisitResult.CONTINUE;
             }
 		});
-		return memberDao.deleteMemberInfoRow(memberVo);
+	}
+
+	@Override
+	public void recoveryMemberInfo(MemberVO memberVo) throws Exception {
+		memberDao.recoveryMemberInfo(memberVo);
+	}
+
+	@Override
+	public void updateLoginInfo(MemberVO memberVo) throws Exception {
+		memberDao.updateLoginInfo(memberVo);
 	}
 
 }
