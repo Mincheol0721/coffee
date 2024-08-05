@@ -178,29 +178,32 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 	    String today = formatter.format(new java.util.Date());
 	    fileName = today + UUID.randomUUID().toString() + sFileName.substring(sFileName.lastIndexOf("."));
 	    String rlFileNm = filePath + fileName;
+	    File destFile = new File(filePath, fileName);
 
 	    if (!fileDir.exists()) {
 	        fileDir.mkdirs();
-	    } else {
-	        // 폴더 내 모든 파일 삭제
-	        File[] files = fileDir.listFiles();
-	        if (files != null) {
-	            for (File file : files) {
-	                if (!file.isDirectory()) {
-	                	String fileNm = file.getName().substring(0,8);
-
-	                	if(!fileNm.equals(today.substring(0,8))) {
-	                		file.delete();
-	                	}
-	                }
-	            }
-	        }
 	    }
+//	    else {
+//	        // 폴더 내 모든 파일 삭제
+//	        File[] files = fileDir.listFiles();
+//	        if (files != null) {
+//	            for (File file : files) {
+//	                if (!file.isDirectory()) {
+//	                	String fileNm = file.getName().substring(0,8);
+//
+//	                	if(!fileNm.equals(today.substring(0,8))) {
+//	                		file.delete();
+//	                	}
+//	                }
+//	            }
+//	        }
+//		}
 
 	    // 서버에 파일 쓰기
 	    try (InputStream is = request.getInputStream();
-	         OutputStream os = new FileOutputStream(rlFileNm)) {
-	        byte[] b = new byte[Integer.parseInt(request.getHeader("file-size"))];
+	        OutputStream os = new FileOutputStream(rlFileNm)) {
+//	    	byte[] b = new byte[Integer.parseInt(request.getHeader("file-size"))];
+	    	byte[] b = new byte[4096];
 	        int numRead;
 	        while ((numRead = is.read(b, 0, b.length)) != -1) {
 	            os.write(b, 0, numRead);
@@ -211,6 +214,8 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 	    sFileInfo += "&bNewLine=true";
 	    sFileInfo += "&sFileName=" + sFileName;
 	    sFileInfo += "&sFileURL=/dailyboard/" + no + "/" + fileName;
+
+	    log.info("sFileInfo : {}", sFileInfo);
 
 	    try (PrintWriter print = response.getWriter()) {
 	        print.print(sFileInfo);

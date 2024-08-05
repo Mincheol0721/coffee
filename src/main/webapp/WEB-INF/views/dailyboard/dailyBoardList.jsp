@@ -44,6 +44,10 @@
 				cursor: auto;
 				color: grey;
 			}
+			.boardImg img{
+                height: 45px;
+                object-fit: scale-down;
+			}
 		</style>
 	</head>
 	<body class="is-preload">
@@ -83,7 +87,7 @@
 	    		</form>
 			</div>
 			<br>
-			<table class="table table-striped" style="margin: 0 auto;">
+			<table class="table table-striped" style="margin: 0 auto; vertical-align: middle;">
 				<thead>
 					<tr style="text-align: center; background-color: darkgray; ">
 						<th style="width: 7%;">글번호</th>

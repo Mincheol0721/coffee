@@ -26,4 +26,6 @@ public interface MemberService {
 	ModelAndView updateMemberInfo(MemberVO memberVo, MultipartFile file, MultipartHttpServletRequest request, RedirectAttributes rAttr) throws Exception;
 	void download(HttpServletRequest request, HttpServletResponse response) throws Exception;
 	int deleteMember(MemberVO memberVo) throws Exception;
+	void recoveryMemberInfo(MemberVO memberVo) throws Exception;
+	void updateLoginInfo(MemberVO memberVo) throws Exception;
 }

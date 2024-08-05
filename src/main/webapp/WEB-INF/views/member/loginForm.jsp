@@ -3,7 +3,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,6 +19,27 @@
 					alert('회원 정보가 틀립니다. 다시 입력해주세요.');
 				});
 			</script>
+		</c:when>
+		<c:when test="${result eq 'recovery'}">
+<%--             <c:set var="member" value="${recovery}" /> --%>
+            <script type="text/javascript">
+                $(function() {
+                	var id = '${recovery.id}';
+                	var password = '${recovery.password}';
+                	console.log(id);
+                    if(confirm('삭제 요청하신 계정입니다. \n계정을 복구하시겠습니까?')) {
+                    	$.ajax({
+                    		url: '/member/recoveryMemberInfo',
+                    		type: 'POST',
+                    		data: {id: id, password: password},
+                    		success: function(data) {
+                    		    location.href = '/member/loginForm'
+                    		}
+                    	});
+                    	alert('계정 복구가 완료되었습니다. \n다시 로그인을 시도해주세요.');
+                    }
+                });
+            </script>
 		</c:when>
 	</c:choose>
 </head>

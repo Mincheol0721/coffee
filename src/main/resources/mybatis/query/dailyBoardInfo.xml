@@ -116,8 +116,7 @@
 	</select>
 
 	<select id="selectMaxNoInfo" resultType="int">
-        SELECT  MAX(NO)
-        FROM    DAILYBOARD
+        SELECT  IDENT_CURRENT('DAILYBOARD')
 	</select>
 
 	<update id="updateReadCountInfo">

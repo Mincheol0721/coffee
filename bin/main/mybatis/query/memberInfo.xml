@@ -5,20 +5,23 @@
 
 <mapper namespace="member">
     <resultMap id="memberInfoRow" type="memberInfo">
-        <id     property="id"           column="ID"           /> <!-- 유저 ID -->
-		<result property="socialId"     column="SOCIAL_ID"    /> <!-- SNS ID -->
-		<result property="password"     column="PASSWORD"     /> <!-- 비밀번호 -->
-		<result property="name"         column="NAME"         /> <!-- 유저명 -->
-		<result property="ssn"          column="SSN"          /> <!-- 유저 주민등록번호 -->
-		<result property="nickname"     column="NICKNAME"     /> <!-- 유저 닉네임 -->
-		<result property="email"        column="EMAIL"        /> <!-- 유저 이메일 -->
-		<result property="mobile"       column="MOBILE"       /> <!-- 유저 전화번호 -->
-		<result property="regDate"      column="REG_DATE"     /> <!-- 유저 등록일 -->
-		<result property="zipcode"      column="ZIPCODE"      /> <!-- 우편번호 -->
-		<result property="roadAddr"     column="ROAD_ADDR"    /> <!-- 도로명주소 -->
-		<result property="detailAddr"   column="DETAIL_ADDR"  /> <!-- 상세주소 -->
-		<result property="jibunAddr"    column="JIBUN_ADDR"   /> <!-- 지번주소 -->
-		<result property="fileName"     column="FILE_NAME"    /> <!-- 파일명 -->
+        <id     property="id"             column="ID"               /> <!-- 유저 ID -->
+		<result property="socialId"       column="SOCIAL_ID"        /> <!-- SNS ID -->
+		<result property="password"       column="PASSWORD"         /> <!-- 비밀번호 -->
+		<result property="name"           column="NAME"             /> <!-- 유저명 -->
+		<result property="ssn"            column="SSN"              /> <!-- 유저 주민등록번호 -->
+		<result property="nickname"       column="NICKNAME"         /> <!-- 유저 닉네임 -->
+		<result property="email"          column="EMAIL"            /> <!-- 유저 이메일 -->
+		<result property="mobile"         column="MOBILE"           /> <!-- 유저 전화번호 -->
+		<result property="regDate"        column="REG_DATE"         /> <!-- 유저 등록일 -->
+		<result property="zipcode"        column="ZIPCODE"          /> <!-- 우편번호 -->
+		<result property="roadAddr"       column="ROAD_ADDR"        /> <!-- 도로명주소 -->
+		<result property="detailAddr"     column="DETAIL_ADDR"      /> <!-- 상세주소 -->
+		<result property="jibunAddr"      column="JIBUN_ADDR"       /> <!-- 지번주소 -->
+		<result property="fileName"       column="FILE_NAME"        /> <!-- 파일명 -->
+		<result property="delFlg"         column="DEL_FLG"          /> <!-- 파일명 -->
+		<result property="delDtm"         column="DEL_DTM"          /> <!-- 파일명 -->
+		<result property="rcntLoginDtm"   column="RCNT_LOGIN_DTM"   />
     </resultMap>
 
 	<select id="selectMemberInfo" resultMap="memberInfoRow">
@@ -35,6 +38,8 @@
 			,   DETAIL_ADDR
 			,   JIBUN_ADDR
 			,   FILE_NAME
+			,   DEL_FLG
+			,   DEL_DTM
        FROM     MEMBER
 	   <where>
 	        <if test="id not in {null, ''}">
@@ -45,6 +50,9 @@
 	        </if>
 	        <if test="socialId not in {null, ''}">
                 AND SOCIAL_ID = #{socialId}
+	        </if>
+	        <if test="delDtm not in {null, ''}">
+                AND DEL_DTM > DATEADD(DAY, -90, GETDATE());
 	        </if>
         </where>
 	</select>
@@ -103,8 +111,10 @@
 		</where>
 	</update>
 
-	<delete id="deleteMemberInfo">
-	   DELETE  FROM    MEMBER
+	<update id="deleteMemberInfo">
+	   UPDATE  MEMBER
+	   SET     DEL_FLG = 1
+	       ,   DEL_DTM = GETDATE()
 	   <where>
 	       <if test="id not in {null, ''}">
 	           AND ID = #{id}
@@ -116,18 +126,18 @@
 	           AND PASSWORD = HASHBYTES('SHA2_256', #{password})
 	       </if>
 	   </where>
-	</delete>
+	</update>
 
     <select id="idValidate" resultType="int">
         SELECT  COUNT(*)
         FROM    MEMBER
-        WHERE ID = #{id}
+        WHERE   ID = #{id}
     </select>
 
     <select id="nickValidate" resultType="int">
         SELECT  COUNT(*)
         FROM    MEMBER
-        WHERE NICKNAME = #{nickname}
+        WHERE   NICKNAME = #{nickname}
     </select>
 
     <update id="updatePasswordInfo">
@@ -138,6 +148,22 @@
                 AND ID = #{id}
             </if>
         </where>
+    </update>
+
+    <update id="recoveryMemberInfo">
+        UPDATE  MEMBER
+        SET     DEL_FLG = 0
+            ,   DEL_DTM = null
+        WHERE   ID = #{id}
+        AND     DEL_FLG = 1
+		AND     DEL_DTM IS NOT NULL
+		AND     DEL_DTM > DATEADD(DAY, -90, GETDATE());
+    </update>
+
+    <update id="updateLoginInfo">
+        UPDATE  MEMBER
+        SET     RCNT_LOGIN_DTM = GETDATE()
+        WHERE   ID = #{id}
     </update>
 
 </mapper>
