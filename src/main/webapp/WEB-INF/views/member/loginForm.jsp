@@ -44,9 +44,13 @@
 	</c:choose>
 </head>
 <body>
+    <c:set var="temp" value='<%=request.getParameter("temp")%>' />
 	<div class="form-container">
 		<p class="title">로그인</p>
 		<form class="form" action="/member/login" method="post">
+			<c:if test="${temp}">
+	            <input type="hidden" id="temp" name="temp" value="true">
+			</c:if>
 			<div class="input-group">
 				<label for="username">아이디</label>
 				<input type="text"	name="id" id="id" placeholder="">
@@ -55,7 +59,7 @@
 				<label for="password">비밀번호</label>
 				<input type="password" name="password" id="password" placeholder="">
 				<div class="forgot">
-					<a rel="noopener noreferrer" href="#">비밀번호를 잊으셨나요?</a>
+					<a rel="noopener noreferrer" href="/member/pwCertificationForm">비밀번호를 잊으셨나요?</a>
 				</div>
 			</div>
 			<button class="sign" type="submit">로그인</button>

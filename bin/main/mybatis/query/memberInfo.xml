@@ -166,4 +166,12 @@
         WHERE   ID = #{id}
     </update>
 
+    <select id="selectMemberIdAndEmail" resultMap="memberInfoRow">
+        SELECT  ID
+            ,   EMAIL
+        FROM    MEMBER
+        WHERE   ID = #{id}
+        AND     EMAIL = #{email}
+    </select>
+
 </mapper>

@@ -59,6 +59,12 @@ dependencies {
     implementation "org.springframework:spring-aspects:${springVersion}"
     testImplementation "org.springframework:spring-test:${springVersion}"
 
+    // mail
+    //implementation 'javax.mail:mail:1.4.7'
+    implementation group: 'org.springframework.boot:spring-boot-starter-mail:3.0.5'
+    implementation 'org.springframework:spring-context-support:${springVersion}'
+
+
     // Spring boot
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-aop'

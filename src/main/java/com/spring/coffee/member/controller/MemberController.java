@@ -1,11 +1,12 @@
 package com.spring.coffee.member.controller;
 
-import java.net.URLEncoder;
-import java.net.http.HttpRequest;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.spring.coffee.common.util.MailSendUtil;
 import com.spring.coffee.member.dao.MemberDaoImpl;
 import com.spring.coffee.member.service.MemberServiceImpl;
 import com.spring.coffee.member.vo.MemberVO;
@@ -55,10 +57,12 @@ public class MemberController {
 	}
 
 	@RequestMapping("login")
-	public ModelAndView login(@ModelAttribute MemberVO memberVo, RedirectAttributes rAttr, HttpServletRequest request) throws Exception {
+	public ModelAndView login(@ModelAttribute MemberVO memberVo, @RequestParam(value = "temp", required = false) String temp, RedirectAttributes rAttr, HttpServletRequest request) throws Exception {
 		ModelAndView mav = new ModelAndView();
 		member = memberService.login(memberVo);
 		HttpSession session = request.getSession();
+//		String temp = request.getParameter("temp");
+		log.info("** temp: {}", temp);
 
 		//id와 비밀번호로 조회 해온 정보가 존재 시 로그인 처리
 		if(member != null) {
@@ -75,6 +79,7 @@ public class MemberController {
 				session.setAttribute("isLogOn", true);
 				session.setAttribute("isOwnMember", true);
 
+				memberService.updateLoginInfo(member);
 				mav.setViewName("redirect:/main");
 			}
 		//id 비밀번호로 조회한 정보가 존재하지 않을경우
@@ -82,11 +87,43 @@ public class MemberController {
 			rAttr.addFlashAttribute("result", "loginFailed");
 			mav.setViewName("redirect:/member/loginForm");
 		}
-		memberService.updateLoginInfo(member);
 		return mav;
 	}
 
-	@RequestMapping("/recoveryMemberInfo")
+	@RequestMapping("pwCertificationForm")
+	public ModelAndView pwCertificationForm() throws Exception {
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("center", viewPath + "pwCertificationForm.jsp");
+		mav.setViewName("main");
+		return mav;
+	}
+
+	@RequestMapping("emailCertification")
+	public ResponseEntity<Map<String, String>> emailCertification(@RequestParam("id") String id, @RequestParam("email") String email, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		log.info("*".repeat(90));
+		log.info("email To: {}", email);
+		log.info("id : {}", id);
+		log.info("*".repeat(90));
+
+		MemberVO memberVo = memberService.findMemberPassword(id, email);
+		Map<String, String> res = new HashMap<String, String>();
+		if (memberVo == null) {
+			res.put("msg", "failed");
+			return ResponseEntity.ok(res);
+		} else {
+			res.put("msg", "success");
+			MailSendUtil mail = new MailSendUtil();
+			String content = "비밀번호를 찾기 위한 본인인증 서비스입니다.\r\n아래 임시 비밀번호로 접속하여 비밀번호 변경을 진행해주세요.\r\n"
+					+ "임시 비밀번호: ";
+			String tempPassword = mail.emailSending("alscjf0969@naver.com", email, content);
+			memberService.updateTempPassword(id, tempPassword);
+			res.put("tempPw", "true");
+
+			return ResponseEntity.ok(res);
+		}
+	}
+
+	@RequestMapping("recoveryMemberInfo")
 	public void recoveryMemberInfo(@RequestParam("id") String id, @RequestParam("password") String password, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		MemberVO memberVo = new MemberVO();
 		memberVo.setId(id);

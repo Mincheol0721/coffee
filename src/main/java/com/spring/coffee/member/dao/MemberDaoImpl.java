@@ -55,6 +55,8 @@ public class MemberDaoImpl {
 	}
 
 	public int updatePasswordInfo(MemberVO memberVo) {
+		log.info("** id: {}", memberVo.getId());
+		log.info("** pw: {}", memberVo.getPassword());
 		return sqlSession.update("member.updatePasswordInfo", memberVo);
 	}
 
@@ -64,6 +66,10 @@ public class MemberDaoImpl {
 
 	public void updateLoginInfo(MemberVO memberVo) {
 		sqlSession.update("member.updateLoginInfo", memberVo);
+	}
+
+	public MemberVO findMemberPassword(MemberVO memberVo) {
+		return sqlSession.selectOne("member.selectMemberIdAndEmail", memberVo);
 	}
 
 }

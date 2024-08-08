@@ -28,4 +28,6 @@ public interface MemberService {
 	int deleteMember(MemberVO memberVo) throws Exception;
 	void recoveryMemberInfo(MemberVO memberVo) throws Exception;
 	void updateLoginInfo(MemberVO memberVo) throws Exception;
+	MemberVO findMemberPassword(String id, String email) throws Exception;
+	void updateTempPassword(String id, String randomPassword) throws Exception;
 }
