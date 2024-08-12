@@ -183,27 +183,12 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 	    if (!fileDir.exists()) {
 	        fileDir.mkdirs();
 	    }
-//	    else {
-//	        // 폴더 내 모든 파일 삭제
-//	        File[] files = fileDir.listFiles();
-//	        if (files != null) {
-//	            for (File file : files) {
-//	                if (!file.isDirectory()) {
-//	                	String fileNm = file.getName().substring(0,8);
-//
-//	                	if(!fileNm.equals(today.substring(0,8))) {
-//	                		file.delete();
-//	                	}
-//	                }
-//	            }
-//	        }
-//		}
 
 	    // 서버에 파일 쓰기
 	    try (InputStream is = request.getInputStream();
 	        OutputStream os = new FileOutputStream(rlFileNm)) {
-//	    	byte[] b = new byte[Integer.parseInt(request.getHeader("file-size"))];
-	    	byte[] b = new byte[4096];
+	    	byte[] b = new byte[Integer.parseInt(request.getHeader("file-size"))];
+//	    	byte[] b = new byte[4096];
 	        int numRead;
 	        while ((numRead = is.read(b, 0, b.length)) != -1) {
 	            os.write(b, 0, numRead);
@@ -289,6 +274,7 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 
 	@Override
 	public void thumbnail(int no, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		response.setContentType("image/jpeg");
 
 		//사진을 내려받기 위한 출력 스트림 통로 객체 생성
 		OutputStream os = response.getOutputStream();

@@ -117,6 +117,11 @@
 
 	<select id="selectMaxNoInfo" resultType="int">
         SELECT  IDENT_CURRENT('DAILYBOARD')
+        <where>
+            <if test="id not in {null, ''}">
+                AND WHERE ID = #{id}
+            </if>
+        </where>
 	</select>
 
 	<update id="updateReadCountInfo">

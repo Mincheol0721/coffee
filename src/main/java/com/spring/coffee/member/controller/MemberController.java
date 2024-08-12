@@ -80,7 +80,7 @@ public class MemberController {
 				session.setAttribute("isOwnMember", true);
 				memberService.updateLoginInfo(member);
 
-				if (temp.equals("true")) {
+				if (temp != null && temp.equals("true")) {
 					mav.setViewName("redirect:/member/modPasswordForm");
 				} else {
 					mav.setViewName("redirect:/main");
