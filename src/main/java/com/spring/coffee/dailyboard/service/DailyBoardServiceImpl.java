@@ -41,7 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DailyBoardServiceImpl implements DailyBoardService {
 
-	private final static String viewPath = "/WEB-INF/views/dailyboard/";
+	private final static String viewPath = "/WEB-INF/views/dailyBoard/";
 
 	@Value("${upload.directory}")
 	private String uploadPath;
@@ -147,7 +147,6 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 		request.setCharacterEncoding("UTF-8");
 	    HttpSession session = request.getSession();
 	    MemberVO memberVo = (MemberVO) session.getAttribute("member");
-	    List<String> fileNames = new ArrayList<String>();
 
 	    if (no == null) {
 	        no = dailyBoardDao.selectMaxNo() + 1;
@@ -171,6 +170,10 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 	    String dftFilePath = uploadPath + "/dailyBoard/";
 	    String filePath = dftFilePath + no + "/";
 	    File fileDir = new File(filePath);
+	    // 파일 기본 경로가 존재하지 않을 경우 기본경로 생성
+	    if (!fileDir.exists()) {
+	    	fileDir.mkdirs();
+	    }
 
 	    // 새로운 파일명 생성
 	    String fileName = "";
@@ -178,22 +181,37 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 	    String today = formatter.format(new java.util.Date());
 	    fileName = today + UUID.randomUUID().toString() + sFileName.substring(sFileName.lastIndexOf("."));
 	    String rlFileNm = filePath + fileName;
+	    log.info("** 생성된 랜덤 이미지명: {}", rlFileNm);
+	    log.info("** 받아온 이미지 사이즈: {}", request.getHeader("file-size"));
+	    long fileSize = Long.valueOf(request.getHeader("file-size"));
+	    log.info("** File size: {}", new File(rlFileNm).length());
 	    File destFile = new File(filePath, fileName);
 
-	    if (!fileDir.exists()) {
-	        fileDir.mkdirs();
-	    }
-
-	    // 서버에 파일 쓰기
+	    // 서버에 파일 쓰기 =====================================================================
 	    try (InputStream is = request.getInputStream();
 	        OutputStream os = new FileOutputStream(rlFileNm)) {
-	    	byte[] b = new byte[Integer.parseInt(request.getHeader("file-size"))];
-//	    	byte[] b = new byte[4096];
+//	    	byte[] b = new byte[Integer.parseInt(request.getHeader("file-size"))];
+	    	byte[] b = new byte[10 * 1024];
 	        int numRead;
-	        while ((numRead = is.read(b, 0, b.length)) != -1) {
+	        long bytesReadTotal = 0;
+	        log.info("** 읽어오는 파일 크기가 같은가?: {}", (numRead = is.read(b)));
+	        log.info("** numRead 값: {}", numRead);
+	        log.info("** is.read(b) 값: {}", is.read(b));
+	        while ((numRead = is.read(b)) != -1) {
 	            os.write(b, 0, numRead);
+	            bytesReadTotal += numRead;
 	        }
+
+	        if (bytesReadTotal != fileSize) {
+	            log.error("File size mismatch. Expected: {}, Actual: {}", fileSize, bytesReadTotal);
+	        }
+
+	        os.flush();
+	    } catch (Exception e) {
+			// TODO: handle exception
+	    	log.error("Error writing file to server: {}", e.getMessage(), e);
 	    }
+	    // 서버에 파일 쓰기 =====================================================================
 
 	    // 정보 출력
 	    sFileInfo += "&bNewLine=true";
@@ -206,6 +224,7 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 	        print.print(sFileInfo);
 	        print.flush();
 	    }
+
 	}
 
 	@Override
@@ -274,13 +293,11 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 
 	@Override
 	public void thumbnail(int no, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		response.setContentType("image/jpeg");
-
 		//사진을 내려받기 위한 출력 스트림 통로 객체 생성
 		OutputStream os = response.getOutputStream();
 
 		//다운로드할 파일위치의 파일경로 생성
-		String imgPath = uploadPath + "/dailyboard/" + no;
+		String imgPath = uploadPath + "/dailyBoard/" + no;
 //		log.info("** 이미지 경로: {}", imgPath);
 
 		//이미지 파일을 접근해서 파일을 조작, 정보보기 등을 할 수 있는 파일 객체 생성

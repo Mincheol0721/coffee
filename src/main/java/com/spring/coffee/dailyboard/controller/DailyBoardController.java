@@ -142,7 +142,8 @@ public class DailyBoardController {
 	}
 
 	@RequestMapping("delDailyBoard")
-	public ModelAndView delDailyBoard(@RequestParam("no") int no, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView delDailyBoard(@RequestParam("no") int no, @RequestParam("tempFile") MultipartFile file, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		log.info("** 컨트롤러에서 받아온 파일 사이즈", file.getSize());
 		service.delDailyBoard(no);
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("redirect:/dailyBoard/dailyBoardList");
