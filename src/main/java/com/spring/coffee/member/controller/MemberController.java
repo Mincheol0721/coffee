@@ -66,7 +66,7 @@ public class MemberController {
 
 		//id와 비밀번호로 조회 해온 정보가 존재 시 로그인 처리
 		if(member != null) {
-			if(member.getDelFlg() == 1 && member.getDelDtm() != null && member.getDelDtm().isAfter(LocalDateTime.now().minusDays(90))) {
+			if (member.getDelFlg() == 1 && member.getDelDtm() != null && member.getDelDtm().isAfter(LocalDateTime.now().minusDays(90))) {
 				log.info("** 복구 확인 및 작업 진행");
 				mav.addObject("result", "recovery");
 				// member값을 mav에 담아 전달하기 위해 redirect가 아닌 직접 view명을 전달
@@ -78,9 +78,14 @@ public class MemberController {
 				session.setAttribute("member", member);
 				session.setAttribute("isLogOn", true);
 				session.setAttribute("isOwnMember", true);
-
 				memberService.updateLoginInfo(member);
-				mav.setViewName("redirect:/main");
+
+				if (temp.equals("true")) {
+					mav.setViewName("redirect:/member/modPasswordForm");
+				} else {
+					mav.setViewName("redirect:/main");
+				}
+
 			}
 		//id 비밀번호로 조회한 정보가 존재하지 않을경우
 		} else {

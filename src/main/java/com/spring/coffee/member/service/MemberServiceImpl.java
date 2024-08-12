@@ -794,7 +794,6 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public int deleteMember(MemberVO memberVo) throws Exception {
-
 		return memberDao.deleteMemberInfoRow(memberVo);
 	}
 
