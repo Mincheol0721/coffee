@@ -182,6 +182,7 @@ public class MemberServiceImpl implements MemberService {
 			session.setAttribute("member", member);
 			session.setAttribute("isKakao", true);
 
+			updateLoginInfo(member);
 			mav.setViewName("redirect:/main");
 		} else {
 //			System.out.println("kakao 아이디 미존재");
@@ -340,6 +341,7 @@ public class MemberServiceImpl implements MemberService {
 			session.setAttribute("member", member);
 			session.setAttribute("isGoogle", true);
 
+			updateLoginInfo(member);
 			mav.setViewName("redirect:/main");
 		} else {
 			//System.out.println("Google 아이디 미존재");
@@ -504,6 +506,7 @@ public class MemberServiceImpl implements MemberService {
 			session.setAttribute("member", member);
 			session.setAttribute("isNaver", true);
 
+			updateLoginInfo(member);
 			mav.setViewName("redirect:/main");
 		} else {
 			//System.out.println("Naver 아이디 미존재");
@@ -791,7 +794,10 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public int deleteMember(MemberVO memberVo) throws Exception {
-		String id = memberVo.getId();
+		return memberDao.deleteMemberInfoRow(memberVo);
+	}
+
+	private void deleteMemberFiles(String id) throws IOException {
 		//사진이 저장된 경로를 찾아가기 위해 경로 저장
 		String imgPath = uploadPath + "/member/";
 		//다운로드할 파일의 경로 저장
@@ -820,7 +826,32 @@ public class MemberServiceImpl implements MemberService {
                 return FileVisitResult.CONTINUE;
             }
 		});
-		return memberDao.deleteMemberInfoRow(memberVo);
+	}
+
+	@Override
+	public void recoveryMemberInfo(MemberVO memberVo) throws Exception {
+		memberDao.recoveryMemberInfo(memberVo);
+	}
+
+	@Override
+	public void updateLoginInfo(MemberVO memberVo) throws Exception {
+		memberDao.updateLoginInfo(memberVo);
+	}
+
+	@Override
+	public MemberVO findMemberPassword(String id, String email) throws Exception {
+		MemberVO member = new MemberVO();
+		member.setId(id);
+		member.setEmail(email);
+		return memberDao.findMemberPassword(member);
+	}
+
+	@Override
+	public void updateTempPassword(String id, String randomPassword) throws Exception {
+		MemberVO memberVo = new MemberVO();
+		memberVo.setId(id);
+		memberVo.setPassword(randomPassword.getBytes());
+		memberDao.updatePasswordInfo(memberVo);
 	}
 
 }

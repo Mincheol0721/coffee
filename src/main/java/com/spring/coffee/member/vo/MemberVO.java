@@ -59,4 +59,10 @@ public class MemberVO {
 
 	// 파일명
 	private String fileName;
+
+	// 삭제여부
+	private int delFlg;
+
+	// 삭제 일자
+	private LocalDateTime delDtm;
 }

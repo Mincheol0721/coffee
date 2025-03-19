@@ -1,12 +1,22 @@
 package com.spring.coffee.dailyboard.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -70,37 +80,44 @@ public class DailyBoardController {
 		ModelAndView mav = new ModelAndView();
 
 		mav.addObject("isBoard", true);
-		mav.addObject("center", viewPath + "boardForm2.jsp");
+		mav.addObject("center", viewPath + "boardForm.jsp");
 		mav.setViewName("main");
 
 		return mav;
 	}
 
 	@RequestMapping("insertDailyBoard")
-	public ModelAndView insertDailyBoard(@ModelAttribute DailyBoardVO dailyBoardVo, @RequestParam("file") MultipartFile[] files, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView insertDailyBoard(@ModelAttribute DailyBoardVO dailyBoardVo,
+			@RequestParam("files") MultipartFile[] files, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		request.setCharacterEncoding("UTF-8");
 
 		ModelAndView mav = new ModelAndView();
+		
+		for (MultipartFile file : files) {			
+			log.info("** file name: {}", file.getOriginalFilename());
+			log.info("** file size: {}", file.getSize());
+			log.info("** content type: {}", file.getContentType());
+		}
+		
+		log.info("** title: {}", dailyBoardVo.getTitle());
+		log.info("** content: {}", dailyBoardVo.getContent());
+		
+		int no = service.insertDailyBoard(dailyBoardVo, files, request, response);
+//		int no = service.insertDailyBoard(files, request, response);
+		
+		service.uploadImg(no, files, request, response);
 
-		log.info("*".repeat(90));
-		log.info("**		게시글 정보 수집");
-		log.info("** 게시글 작성자: {}", dailyBoardVo.getId());
-		log.info("** 게시글 제목: {}", dailyBoardVo.getTitle());
-		log.info("** 게시글 내용: {}", dailyBoardVo.getContent());
-		log.info("** 첨부 파일명: {}", files[0].getOriginalFilename());
-		log.info("*".repeat(90));
-
-//		service.insertDailyBoard(dailyBoardVo, request, response);
-
-		mav.setViewName("redirect:/dailyBoard/dailyBoardForm");
+		mav.setViewName("redirect:/dailyBoard/dailyBoardDetail?no=" + no);
+//		mav.setViewName("redirect:/dailyBoard/dailyBoardList");
 
 		return mav;
 	}
 
 	@RequestMapping("seImgUploader")
-	public void seImgUploader(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		log.info("** controller filename: " + request.getHeader("file-name"));
-		service.uploadImg(request, response);
+	public void seImgUploader(@RequestParam(value = "no", required = false) Integer no, HttpServletRequest request, HttpServletResponse response) throws Exception {
+//		log.info("** controller filename: " + request.getHeader("file-name"));
+		log.info("** D.BoardController content type: {}", request.getHeader(""));
+		service.uploadImg(no, request, response);
 	}
 
 	@RequestMapping("dailyBoardDetail")
@@ -149,7 +166,8 @@ public class DailyBoardController {
 	}
 
 	@RequestMapping("delDailyBoard")
-	public ModelAndView delDailyBoard(@RequestParam("no") int no, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView delDailyBoard(@RequestParam("no") int no, @RequestParam("tempFile") MultipartFile file, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		log.info("** 컨트롤러에서 받아온 파일 사이즈", file.getSize());
 		service.delDailyBoard(no);
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("redirect:/dailyBoard/dailyBoardList");
@@ -160,5 +178,5 @@ public class DailyBoardController {
 	public void thumbnail(@RequestParam("no") int no, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		service.thumbnail(no, request, response);
 	}
-
+	
 }

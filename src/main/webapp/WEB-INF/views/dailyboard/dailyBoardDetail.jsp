@@ -148,7 +148,7 @@
 	<body>
 		<div id="whole">
 			<div id="title">
-				<h1 style="font-size: 80px; font-weight: bold; margin-bottom: 20px;">${vo.title}</h1>
+				<h1 style="font-size: 30px; font-weight: bold; margin-bottom: 20px;">${vo.title}</h1>
 				<span style="padding-left: 10px;">
 <%-- 				    <c:out value="owner ID : ${owner.id}" /> --%>
 					<img src="/board/download?id=${owner.id}" width="50px" height="50px" style="border-radius: 60%; object-fit: cover; border: 1px solid lightgray;">

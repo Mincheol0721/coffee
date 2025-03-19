@@ -34,6 +34,9 @@
 	var welDropAreaUL = $Element(elDropAreaUL);
 	var fnUploadImage = null;
 
+	const params = new URLSearchParams(window.location.search);
+    const no = params.get("no");
+
 	//File API 지원 여부로 결정
 	function checkDragAndDropAPI(){
 		try{
@@ -333,8 +336,10 @@
     function html5Upload() {
     	var tempFile,
     		sUploadURL;
-        console.log(boardNo);
     	sUploadURL= '/dailyBoard/seImgUploader'; 	//upload URL
+    	if (no != null) {
+            sUploadURL += '?no=' + no;
+        }
 //    	sUploadURL= 'file_uploader_html5.php'; 	//upload URL
 
     	//파일을 하나씩 보내고, 결과를 받음.
@@ -343,7 +348,7 @@
     		try{
 	    		if(!!tempFile){
 	    			//Ajax통신하는 부분. 파일과 업로더할 url을 전달한다.
-	    			callAjaxForHTML5(tempFile,sUploadURL, boardNo).done(
+	    			callAjaxForHTML5(tempFile,sUploadURL).done(
 
 					);
 	    			k += 1;

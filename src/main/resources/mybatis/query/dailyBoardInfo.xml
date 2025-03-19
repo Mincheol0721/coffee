@@ -5,13 +5,12 @@
 
 <mapper namespace="dailyBoard">
     <resultMap id="dailyBoardInfoRow" type="dailyBoardInfo">
-        <id     property="no"             column="NO" /> <!-- 글번호 -->
-		<result property="title"          column="TITLE" /> <!-- 글제목 -->
-		<result property="content"        column="CONTENT" /> <!-- 글내용 -->
-		<result property="id"             column="ID" /> <!-- 작성자 -->
+        <id     property="no"             column="NO"         /> <!-- 글번호 -->
+		<result property="title"          column="TITLE"      /> <!-- 글제목 -->
+		<result property="content"        column="CONTENT"    /> <!-- 글내용 -->
+		<result property="id"             column="ID"         /> <!-- 작성자 -->
 		<result property="writeDate"      column="WRITE_DATE" /> <!-- 작성일 -->
 		<result property="readCount"      column="READ_COUNT" /> <!-- 조회수 -->
-		<result property="fileName"       column="FILE_NAME" /> <!-- 파일명 -->
     </resultMap>
     <resultMap id="dailyBoardFilesInfoRow" type="dailyBoardFilesInfo">
         <result property="boardNo"  column="BOARD_NO"   />
@@ -21,17 +20,21 @@
 	<select id="selectDailyBoardInfoList" parameterType="java.util.Map" resultMap="dailyBoardInfoRow">
         SELECT * FROM (
 	        SELECT
-				ROW_NUMBER() OVER (ORDER BY d.NO DESC) AS rn,
-				d.NO,
-				d.TITLE,
-				d.CONTENT,
-				m.NICKNAME,
-				d.WRITE_DATE,
-				d.READ_COUNT,
-				d.FILE_NAME
-			FROM   DAILYBOARD d
-			JOIN   MEMBER m
-			ON     d.ID = m.ID
+		        ROW_NUMBER() OVER (ORDER BY d.NO DESC) AS rn,
+		            d.NO
+		        ,   d.TITLE
+		        ,   d.CONTENT
+		        ,   m.NICKNAME
+		        ,   d.WRITE_DATE
+		        ,   d.READ_COUNT
+		        ,   f.FILE_NAME
+		    FROM    DAILYBOARD d
+		    LEFT OUTER JOIN   
+		            MEMBER m
+		    ON      d.ID = m.ID
+		    LEFT OUTER JOIN 
+		            DAILYBOARDFILES f
+		    ON      d.NO = f.BOARD_NO
 	        <where>
                 <if test="keyword not in {null, ''}">
                     <choose>
@@ -50,17 +53,31 @@
 
 	<select id="selectDailyBoardInfoRow" resultMap="dailyBoardInfoRow">
         SELECT  d.NO
-            ,   d.TITLE
-            ,   d.CONTENT
-            ,   d.ID
-            ,   m.NICKNAME
-            ,   d.WRITE_DATE
-            ,   d.READ_COUNT
-            ,   d.FILE_NAME
-        FROM    DAILYBOARD d
-        JOIN    MEMBER m
-        ON      d.ID = m.ID
-        WHERE   NO = #{no}
+		    ,   d.TITLE
+		    ,   d.CONTENT
+		    ,   d.ID
+		    ,   m.NICKNAME
+		    ,   d.WRITE_DATE
+		    ,   d.READ_COUNT
+		    ,   STRING_AGG(f.FILE_NAME, ', ') AS FILE_NAME
+		FROM    DAILYBOARD d
+		INNER JOIN
+		        MEMBER m
+		ON      d.ID = m.ID
+		LEFT JOIN
+		        DAILYBOARDFILES  f
+		ON      d.NO = f.BOARD_NO
+		WHERE d.NO = #{no}
+		GROUP BY
+		        d.NO
+		    ,   d.TITLE
+		    ,   d.CONTENT
+		    ,   d.ID
+		    ,   m.NICKNAME
+		    ,   d.WRITE_DATE
+		    ,   d.READ_COUNT
+		ORDER BY
+		        d.NO DESC
 	</select>
 
 	<insert id="insertDailyBoardInfo">
@@ -68,12 +85,10 @@
                 TITLE
             ,   CONTENT
             ,   ID
-            ,   FILE_NAME
 	   ) VALUES (
                 #{title}
             ,   #{content}
             ,   #{id}
-            ,   #{fileName}
 	   )
 	</insert>
 
@@ -116,8 +131,12 @@
 	</select>
 
 	<select id="selectMaxNoInfo" resultType="int">
-        SELECT  MAX(NO)
-        FROM    DAILYBOARD
+        SELECT  IDENT_CURRENT('DAILYBOARD')
+        <where>
+            <if test="id not in {null, ''}">
+                AND WHERE ID = #{id}
+            </if>
+        </where>
 	</select>
 
 	<update id="updateReadCountInfo">
@@ -135,5 +154,21 @@
             ,   #{fileName}
         )
 	</insert>
+
+	<select id="selectDailyBoardFilesInfo" resultMap="dailyBoardFilesInfoRow">
+        SELECT  BOARD_NO
+            ,   FILE_NAME
+        FROM    DAILYBOARDFILES
+        <where>
+            <if test="boardNo not in {null, ''}">
+                BOARD_NO = #{boardNo}
+            </if>
+        </where>
+	</select>
+
+	<delete id="deleteDailyBoardFilesInfo">
+        DELETE FROM DAILYBOARDFILES
+        WHERE BOARD_NO = #{boardNo}
+	</delete>
 
 </mapper>

@@ -3,7 +3,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,12 +20,37 @@
 				});
 			</script>
 		</c:when>
+		<c:when test="${result eq 'recovery'}">
+<%--             <c:set var="member" value="${recovery}" /> --%>
+            <script type="text/javascript">
+                $(function() {
+                	var id = '${recovery.id}';
+                	var password = '${recovery.password}';
+                	console.log(id);
+                    if(confirm('삭제 요청하신 계정입니다. \n계정을 복구하시겠습니까?')) {
+                    	$.ajax({
+                    		url: '/member/recoveryMemberInfo',
+                    		type: 'POST',
+                    		data: {id: id, password: password},
+                    		success: function(data) {
+                    		    location.href = '/member/loginForm'
+                    		}
+                    	});
+                    	alert('계정 복구가 완료되었습니다. \n다시 로그인을 시도해주세요.');
+                    }
+                });
+            </script>
+		</c:when>
 	</c:choose>
 </head>
 <body>
+    <c:set var="temp" value='<%=request.getParameter("temp")%>' />
 	<div class="form-container">
 		<p class="title">로그인</p>
 		<form class="form" action="/member/login" method="post">
+			<c:if test="${temp}">
+	            <input type="hidden" id="temp" name="temp" value="true">
+			</c:if>
 			<div class="input-group">
 				<label for="username">아이디</label>
 				<input type="text"	name="id" id="id" placeholder="">
@@ -35,7 +59,7 @@
 				<label for="password">비밀번호</label>
 				<input type="password" name="password" id="password" placeholder="">
 				<div class="forgot">
-					<a rel="noopener noreferrer" href="#">비밀번호를 잊으셨나요?</a>
+					<a rel="noopener noreferrer" href="/member/pwCertificationForm">비밀번호를 잊으셨나요?</a>
 				</div>
 			</div>
 			<button class="sign" type="submit">로그인</button>

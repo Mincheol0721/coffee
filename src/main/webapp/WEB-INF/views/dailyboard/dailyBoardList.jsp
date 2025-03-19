@@ -44,6 +44,10 @@
 				cursor: auto;
 				color: grey;
 			}
+			.boardImg img{
+                height: 45px;
+                object-fit: scale-down;
+			}
 		</style>
 	</head>
 	<body class="is-preload">
@@ -83,7 +87,7 @@
 	    		</form>
 			</div>
 			<br>
-			<table class="table table-striped" style="margin: 0 auto;">
+			<table class="table table-striped" style="margin: 0 auto; vertical-align: middle;">
 				<thead>
 					<tr style="text-align: center; background-color: darkgray; ">
 						<th style="width: 7%;">글번호</th>
@@ -107,8 +111,8 @@
 						<tr class="boardArticles" onclick="location.href='${path}/dailyBoard/dailyBoardDetail?no=${vo.no}'">
 							<td class="boardNo">${index + ((list.currentPage-1) * 10)}</td>
 							<td class="boardImg">
-							    <c:out value="${vo.no }" />
-								<img src="${path}/dailyBoard/thumbnail?no=${vo.no}">
+								<img src="${path}/dailyBoard/thumbnail?no=${vo.no}" alt="Image" title="Image"
+								     onerror="this.onerror=null; this.src='/images/logo.png'; this.title='이미지 불러오기 실패';">
 							</td>
 							<td class="boardTitle">${vo.title}</td>
 							<td class="boardUser">${vo.nickname}</td>

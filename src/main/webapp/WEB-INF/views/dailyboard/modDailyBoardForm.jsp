@@ -20,9 +20,9 @@
 	</head>
 	<body style="text-align: center;">
         <h1>게시글 수정</h1>
-        <form id="frm" action="/coffee/dailyboard/modDailyBoard" method="post" enctype="multipart/form-data">
+        <form id="frm" action="/dailyBoard/updateDailyBoard" method="post" enctype="multipart/form-data">
             <input type="hidden" name="no" value="${vo.no}">
-            <input type="hidden" name="nickname" value="<%=member.getNickname()%>">
+            <input type="hidden" name="id" value="<%=member.getId()%>">
             <input type="text" id="title" name="title" style="width: 80%;" value="${vo.title}">
             <hr>
             <div id="smarteditor">
@@ -41,7 +41,7 @@
                 nhn.husky.EZCreator.createInIFrame({
                     oAppRef: oEditors,
                     elPlaceHolder: "content",
-                    sSkinURI: "/SE2/SmartEditor2Skin.html",
+                    sSkinURI: "/SE2/SmartEditor2Skin.html?no=" + ${vo.no},
                     fCreator: "createSEditor2",
                     htParams: {
                         bUseToolbar: true,

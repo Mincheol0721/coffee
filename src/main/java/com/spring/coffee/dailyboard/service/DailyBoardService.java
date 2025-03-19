@@ -2,6 +2,8 @@ package com.spring.coffee.dailyboard.service;
 
 import java.util.Map;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.spring.coffee.dailyboard.vo.DailyBoardVO;
 import com.spring.coffee.member.vo.MemberVO;
 
@@ -10,8 +12,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public interface DailyBoardService {
 	Map<String, Object> selectDailyBoardList(Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception;
-	void insertDailyBoard(DailyBoardVO dailyBoardVo, HttpServletRequest request, HttpServletResponse response) throws Exception;
-	void uploadImg(HttpServletRequest request, HttpServletResponse response) throws Exception;
+	int insertDailyBoard(DailyBoardVO dailyBoardVo, MultipartFile[] files, HttpServletRequest request, HttpServletResponse response) throws Exception;
+	void uploadImg(Integer no, MultipartFile[] files, HttpServletRequest request, HttpServletResponse response) throws Exception;
+	void uploadImg(Integer no, HttpServletRequest request, HttpServletResponse response) throws Exception;
 	DailyBoardVO selectDailyBoardDetail(int no, HttpServletRequest request) throws Exception;
 	MemberVO selectMemberDetail(String nickname);
 	void updateReadCount(int no) throws Exception;
@@ -19,4 +22,6 @@ public interface DailyBoardService {
 	void delDailyBoard(int no) throws Exception;
 	void updateImg(DailyBoardVO dailyBoardVo) throws Exception;
 	void thumbnail(int no, HttpServletRequest request, HttpServletResponse response) throws Exception;
+
+//	int insertDailyBoard(MultipartFile[] files, HttpServletRequest request, HttpServletResponse response) throws Exception;
 }

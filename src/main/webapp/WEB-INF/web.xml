@@ -36,6 +36,16 @@
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 
+	<!-- 파일 업로드 서블릿 -->
+	<servlet>
+        <servlet-name>FileUploadServlet</servlet-name>
+        <servlet-class>com.spring.coffee.common.util.ImgUploadUtil</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FileUploadServlet</servlet-name>
+        <url-pattern>/uploads</url-pattern>
+    </servlet-mapping>
+
 	<filter>
 		<filter-name>encodingFilter</filter-name>
 		<filter-class>org.springframework.web.filter.CharacterEncodingFilter

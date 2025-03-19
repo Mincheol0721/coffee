@@ -32,7 +32,4 @@ public class DailyBoardVO {
 
 	// 조회수
 	private int readCount;
-
-	// 파일명
-	private String fileName;
 }
