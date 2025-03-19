@@ -1,5 +1,6 @@
 package com.spring.coffee.dailyboard.service;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.spring.coffee.dailyboard.dao.DailyBoardDaoImpl;
 import com.spring.coffee.dailyboard.vo.DailyBoardFilesInfoVo;
@@ -102,24 +104,111 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 	}
 
 	@Override
-	public int insertDailyBoard(DailyBoardVO dailyBoardVo, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		String absPath = uploadPath + "/dailyBoard/";
-		Map map = new HashMap();
-		int no = 0;
+	public int insertDailyBoard(MultipartFile[] files, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.setCharacterEncoding("UTF-8");
 
-		setBoardVoFileName(dailyBoardVo);
+		// request의 파라미터들을 꺼내와 Enumeration 배열에 저장 후 배열 반환
+		Enumeration<String> enu = request.getParameterNames();
+		// Enumeration 배열에서 key와 value를 가져와 저장할 Map 생성
+		Map<String, String> map = new HashMap<>();
+		// insert를 위해 dailyBoardVo 객체 초기화
+		dailyBoardVO = new DailyBoardVO();
+		// Enumeration 배열의 요소들이 존재하는 동안 반복
+		while(enu.hasMoreElements()) {
+			// Enumeration 배열의 요소(request에서 받아온 form요소 하위 요소들의 name속성)
+			String key = (String)enu.nextElement();
+			// form요소 하위 요소들의 해당 name속성의 값
+			String value = request.getParameter(key);
+//			log.info("** name 속성: {} / 속성 값: {}", key, value);
+			// 각 name속성 및 해당 속성 값을 가져와 map에 저장
+			map.put(key, value);
+		}
 
-		dailyBoardDao.insertDailyBoardInfoRow(dailyBoardVo);
+		// 파일명을 저장하기 위한 문자열
+		String fileName = "";
+		// MultipartFile 배열에서 파일 이름만 따로 추출하여 저장할 ArrayList 생성
+		List<String> fileNames = new ArrayList<>();
+		// MultipartFile 배열만큼 반복
+		for (MultipartFile file : files) {
+			// 업로드 할 파일들의 이름을 뽑아 저장
+			String orginFileNm = file.getOriginalFilename();
 
-//		log.info("newBoardNo: " + no);
-		no = dailyBoardDao.selectDailyBoardCountInfo(dailyBoardVo.getId());
-		dailyBoardVO.setNo(no);
-		dailyBoardVo = dailyBoardDao.selectDailyBoardInfoRow(dailyBoardVO);
+			// 파일 확장자 저장
+			String fileName_ext = orginFileNm.substring(orginFileNm.lastIndexOf(".")).toLowerCase();
+//			log.info("** 파일 확장자: {}", fileName_ext);
+			// 파일명을 yyyyMMddHHmmss+랜덤문자열.확장자로 지정
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+			String today = formatter.format(new java.util.Date());
+			fileName = today + UUID.randomUUID().toString() + fileName_ext;
+//			log.info("** 랜덤 파일명: {}", fileName);
 
-		updateImg(dailyBoardVo);
+			// 저장한 파일들의 이름을 ArrayList에 다시 저장
+			fileNames.add(fileName);
+		}
+		// map에서 각 key에 해당하는 value들을 가져와 daliyBoardVo객체에 저장
+		dailyBoardVO.setTitle(map.get("title"));
+		dailyBoardVO.setContent(map.get("content"));
+		dailyBoardVO.setId(map.get("id"));
+		// 파일들의 이름이 저장된 ArrayList를 String화 하여 dailyBoardVo객체에 저장
+		dailyBoardVO.setFileName(fileNames.toString().replace("[", "").replace("]", ""));
+//		log.info("** VO title: {} / VO content: {} / VO id: {}", dailyBoardVO.getTitle(), dailyBoardVO.getContent(), dailyBoardVO.getId());
+//		log.info("** VO fileName: {}", dailyBoardVO.getFileName());
 
-		return no;
+		// DB에 VO 객체 저장
+		insCnt = dailyBoardDao.insertDailyBoardInfoRow(dailyBoardVO);
+		// 저장 후 DB에서 VO에 저장한 ID로 작성된 글의 가장 최신 글번호 가져오기
+		int boardNo = dailyBoardDao.selectDailyBoardCountInfo(dailyBoardVO.getId());
+
+		// 글번호를 폴더로 하는 경로 문자열로 저장
+		String noDir = uploadPath + "/" + boardNo;
+		// 글번호를 폴더로 하는 경로가 없을 경우 폴더 생성
+		File boardDir = new File(noDir);
+		boardDir.mkdirs();
+
+		int i = 0;
+		// 파일 개수만큼 반복
+		for (MultipartFile file : files) {
+			// 랜덤으로 생성한 파일명 가져오기
+			fileName = fileNames.get(i++);
+			// 글번호 경로 + 랜덤파일명
+			String filePath = noDir + "/" + fileName;
+			// filePath를 경로로 하는 파일 생성
+			File dest = new File(filePath);
+
+			// dest 파일로 해당 파일 이관
+			file.transferTo(dest);
+		}
+
+		return boardNo;
 	}
+		/*
+	 * public int insertDailyBoard(DailyBoardVO dailyBoardVo, MultipartFile[] files,
+	 * HttpServletRequest request, HttpServletResponse response) throws Exception {
+	 * String absPath = uploadPath + "/dailyBoard/"; Map map = new HashMap(); int no
+	 * = 0; String filePath = absPath + "/temp+" + dailyBoardVo.getId() + "/";
+	 *
+	 * for (MultipartFile file : files) { log.info("**files : {}",
+	 * file.getOriginalFilename()); String filename = file.getOriginalFilename();
+	 * String filename_ext =
+	 * filename.substring(filename.indexOf('.')).toLowerCase(); // 파일명을
+	 * yyyyMMddHHmmss+랜덤문자열.확장자로 지정 SimpleDateFormat formatter = new
+	 * SimpleDateFormat("yyyyMMddHHmmss"); String today = formatter.format(new
+	 * java.util.Date()); filename = today + UUID.randomUUID().toString() +
+	 * filename_ext; String rlFileNm = filePath + filename; }
+	 *
+	 * setBoardVoFileName(dailyBoardVo);
+	 *
+	 * dailyBoardDao.insertDailyBoardInfoRow(dailyBoardVo);
+	 *
+	 * // log.info("newBoardNo: " + no); no =
+	 * dailyBoardDao.selectDailyBoardCountInfo(dailyBoardVo.getId());
+	 * dailyBoardVO.setNo(no); dailyBoardVo =
+	 * dailyBoardDao.selectDailyBoardInfoRow(dailyBoardVO);
+	 *
+	 * updateImg(dailyBoardVo);
+	 *
+	 * return no; }
+	 */
 
 	private void setBoardVoFileName(DailyBoardVO dailyBoardVo) {
 		//HTML 파싱 및 조작을 위한 Jsoup 라이브러리 의존주입
@@ -144,17 +233,6 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 
 	@Override
 	public void uploadImg(Integer no, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		request.setCharacterEncoding("UTF-8");
-	    HttpSession session = request.getSession();
-	    MemberVO memberVo = (MemberVO) session.getAttribute("member");
-
-	    if (no == null) {
-	        no = dailyBoardDao.selectMaxNo() + 1;
-	    }
-
-	    // 저장된 파일명을 가져와 해당 파일 명이 존재하지 않으면 삭제, 존재하면 유지하도록 내용 추가
-	    // TO DO
-
 	    // 파일 정보를 수집
 	    String sFileInfo = "";
 	    String sFileName = request.getHeader("file-name");
@@ -163,11 +241,12 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 	        return;
 	    }
 	    log.info("** 받아온 파일 명: {}", sFileName);
-	    // 파일 확장자
-	    String filename_ext = sFileName.substring(sFileName.lastIndexOf(".") + 1).toLowerCase();
+	    // .을 포함한 파일 확장자 (.png, .jpg, s...)
+	    String filename_ext = sFileName.substring(sFileName.lastIndexOf(".")).toLowerCase();
 
 	    // 파일 기본 경로
-	    String dftFilePath = uploadPath + "/dailyBoard/";
+	    String dftFilePath = uploadPath + "/dailyBoard/temp";
+	    // 파일 기본 경로 + 상세 경로
 	    String filePath = dftFilePath + no + "/";
 	    File fileDir = new File(filePath);
 	    // 파일 기본 경로가 존재하지 않을 경우 기본경로 생성
@@ -177,39 +256,31 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 
 	    // 새로운 파일명 생성
 	    String fileName = "";
+	    // 파일명을 yyyyMMddHHmmss+랜덤문자열.확장자로 지정
 	    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
 	    String today = formatter.format(new java.util.Date());
-	    fileName = today + UUID.randomUUID().toString() + sFileName.substring(sFileName.lastIndexOf("."));
+	    fileName = today + UUID.randomUUID().toString() + filename_ext;
 	    String rlFileNm = filePath + fileName;
-	    log.info("** 생성된 랜덤 이미지명: {}", rlFileNm);
-	    log.info("** 받아온 이미지 사이즈: {}", request.getHeader("file-size"));
-	    long fileSize = Long.valueOf(request.getHeader("file-size"));
-	    log.info("** File size: {}", new File(rlFileNm).length());
-	    File destFile = new File(filePath, fileName);
 
 	    // 서버에 파일 쓰기 =====================================================================
 	    try (InputStream is = request.getInputStream();
-	        OutputStream os = new FileOutputStream(rlFileNm)) {
+	        OutputStream os = new BufferedOutputStream(new FileOutputStream(rlFileNm))) {
 //	    	byte[] b = new byte[Integer.parseInt(request.getHeader("file-size"))];
 	    	byte[] b = new byte[10 * 1024];
+	    	log.info("** request에서 받아온 파일 사이즈: {}", request.getHeader("file-size"));
+	    	log.info("** is.available: {}", is.available());
+	    	log.info("** 생성된 byte배열 크기: {}", b.length);
 	        int numRead;
-	        long bytesReadTotal = 0;
-	        log.info("** 읽어오는 파일 크기가 같은가?: {}", (numRead = is.read(b)));
-	        log.info("** numRead 값: {}", numRead);
-	        log.info("** is.read(b) 값: {}", is.read(b));
+	        long totalBytesRead = 0;
 	        while ((numRead = is.read(b)) != -1) {
 	            os.write(b, 0, numRead);
-	            bytesReadTotal += numRead;
+	            totalBytesRead += numRead;
 	        }
 
-	        if (bytesReadTotal != fileSize) {
-	            log.error("File size mismatch. Expected: {}, Actual: {}", fileSize, bytesReadTotal);
-	        }
-
-	        os.flush();
+	        log.info("** 파일 저장 완료: {}byte 읽어들임", totalBytesRead);
 	    } catch (Exception e) {
 			// TODO: handle exception
-	    	log.error("Error writing file to server: {}", e.getMessage(), e);
+	    	log.error("** Error writing file to server: {}", e.getMessage(), e);
 	    }
 	    // 서버에 파일 쓰기 =====================================================================
 
@@ -218,7 +289,7 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 	    sFileInfo += "&sFileName=" + sFileName;
 	    sFileInfo += "&sFileURL=/dailyboard/" + no + "/" + fileName;
 
-	    log.info("sFileInfo : {}", sFileInfo);
+	    log.info("** sFileInfo : {}", sFileInfo);
 
 	    try (PrintWriter print = response.getWriter()) {
 	        print.print(sFileInfo);
@@ -266,7 +337,6 @@ public class DailyBoardServiceImpl implements DailyBoardService {
 	public void updateImg(DailyBoardVO dailyBoardVo) throws Exception {
 //		log.info("*".repeat(90));
 		List<String> fileNames = new ArrayList<String>();
-		Map<String, Object> fileMap = new HashMap();
 
 		//HTML 파싱 및 조작을 위한 Jsoup 라이브러리 의존주입
 		Document doc = Jsoup.parse(dailyBoardVo.getContent());

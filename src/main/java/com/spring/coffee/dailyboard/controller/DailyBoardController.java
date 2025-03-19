@@ -1,13 +1,20 @@
 package com.spring.coffee.dailyboard.controller;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -78,14 +85,17 @@ public class DailyBoardController {
 	}
 
 	@RequestMapping("insertDailyBoard")
-	public ModelAndView insertDailyBoard(@ModelAttribute DailyBoardVO dailyBoardVo, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView insertDailyBoard(/* @ModelAttribute DailyBoardVO dailyBoardVo, */
+			@RequestParam("files") MultipartFile[] files, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		request.setCharacterEncoding("UTF-8");
 
 		ModelAndView mav = new ModelAndView();
 
-		int no = service.insertDailyBoard(dailyBoardVo, request, response);
+//		int no = service.insertDailyBoard(dailyBoardVo, files, request, response);
+		int no = service.insertDailyBoard(files, request, response);
 
-		mav.setViewName("redirect:/dailyBoard/dailyBoardDetail?no=" + no);
+//		mav.setViewName("redirect:/dailyBoard/dailyBoardDetail?no=" + no);
+//		mav.setViewName("redirect:/dailyBoard/dailyBoardList");
 
 		return mav;
 	}
@@ -93,6 +103,7 @@ public class DailyBoardController {
 	@RequestMapping("seImgUploader")
 	public void seImgUploader(@RequestParam(value = "no", required = false) Integer no, HttpServletRequest request, HttpServletResponse response) throws Exception {
 //		log.info("** controller filename: " + request.getHeader("file-name"));
+		log.info("** D.BoardController content type: {}", request.getHeader(""));
 		service.uploadImg(no, request, response);
 	}
 

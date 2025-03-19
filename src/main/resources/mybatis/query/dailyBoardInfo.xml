@@ -5,13 +5,13 @@
 
 <mapper namespace="dailyBoard">
     <resultMap id="dailyBoardInfoRow" type="dailyBoardInfo">
-        <id     property="no"             column="NO" /> <!-- 글번호 -->
-		<result property="title"          column="TITLE" /> <!-- 글제목 -->
-		<result property="content"        column="CONTENT" /> <!-- 글내용 -->
-		<result property="id"             column="ID" /> <!-- 작성자 -->
+        <id     property="no"             column="NO"         /> <!-- 글번호 -->
+		<result property="title"          column="TITLE"      /> <!-- 글제목 -->
+		<result property="content"        column="CONTENT"    /> <!-- 글내용 -->
+		<result property="id"             column="ID"         /> <!-- 작성자 -->
 		<result property="writeDate"      column="WRITE_DATE" /> <!-- 작성일 -->
 		<result property="readCount"      column="READ_COUNT" /> <!-- 조회수 -->
-		<result property="fileName"       column="FILE_NAME" /> <!-- 파일명 -->
+		<result property="fileName"       column="FILE_NAME"  /> <!-- 파일명 -->
     </resultMap>
     <resultMap id="dailyBoardFilesInfoRow" type="dailyBoardFilesInfo">
         <result property="boardNo"  column="BOARD_NO"   />
@@ -50,17 +50,31 @@
 
 	<select id="selectDailyBoardInfoRow" resultMap="dailyBoardInfoRow">
         SELECT  d.NO
-            ,   d.TITLE
-            ,   d.CONTENT
-            ,   d.ID
-            ,   m.NICKNAME
-            ,   d.WRITE_DATE
-            ,   d.READ_COUNT
-            ,   d.FILE_NAME
-        FROM    DAILYBOARD d
-        JOIN    MEMBER m
-        ON      d.ID = m.ID
-        WHERE   NO = #{no}
+		    ,   d.TITLE
+		    ,   d.CONTENT
+		    ,   d.ID
+		    ,   m.NICKNAME
+		    ,   d.WRITE_DATE
+		    ,   d.READ_COUNT
+		    ,   STRING_AGG(f.FILE_NAME, ', ') AS FILE_NAME
+		FROM    DAILYBOARD d
+		INNER JOIN
+		        MEMBER m
+		ON      d.ID = m.ID
+		LEFT JOIN
+		        DAILYBOARDFILES  f
+		ON      d.NO = f.BOARD_NO
+		WHERE d.NO = #{no}
+		GROUP BY
+		        d.NO
+		    ,   d.TITLE
+		    ,   d.CONTENT
+		    ,   d.ID
+		    ,   m.NICKNAME
+		    ,   d.WRITE_DATE
+		    ,   d.READ_COUNT
+		ORDER BY
+		        d.NO DESC
 	</select>
 
 	<insert id="insertDailyBoardInfo">

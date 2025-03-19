@@ -4,12 +4,23 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.spring.coffee.member.dao.MemberDaoImpl;
 import com.spring.coffee.member.vo.MemberVO;
@@ -39,10 +50,10 @@ public class BoardUtil {
 		//사진이 저장된 경로를 찾아가기 위해 경로 저장
 		String imgPath = uploadPath + "/member/";
 		//다운로드할 파일의 경로 저장
-		String filePath = imgPath + "/" + id + "/" + fileName;
+		String uploadPath = imgPath + "/" + id + "/" + fileName;
 
 		//이미지 파일을 조작할 수 있는 파일객체 생성
-		File image = new File(filePath);
+		File image = new File(uploadPath);
 
 		response.setHeader("Cache-Control", "no-cache");
 		response.addHeader("Content-disposition", "attachment; fileName=" + URLEncoder.encode(fileName, "UTF-8"));
@@ -66,4 +77,44 @@ public class BoardUtil {
 		out.close();
 	}
 
+	@PostMapping("imgUpload")
+	public ResponseEntity<?> uploadFile(@RequestParam("files") MultipartFile[] files) {
+		List<String> filePaths = new ArrayList<String>();
+		List<String> fileNames = new ArrayList<String>();
+		try {
+			// 파일 기본 경로
+		    String dftFilePath = uploadPath + "/dailyBoard/temp";
+		    Path uploadDir = Path.of(dftFilePath);
+		    if (!Files.exists(uploadDir)) {
+		    	Files.createDirectories(uploadDir);
+		    }
+
+		    // 파일 저장
+            for (MultipartFile file : files) {
+            	System.err.println("** file name : " + file.getOriginalFilename());
+                if (!file.isEmpty()) {
+                	String fileName = FilenameUtils.getName(file.getOriginalFilename());
+                	String today = new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
+                	String filename_ext = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+                	fileName = today + UUID.randomUUID().toString() + filename_ext;
+        		    Path filePath = uploadDir.resolve(fileName);
+                    Files.copy(file.getInputStream(), filePath);
+
+                    // 파일 URL 생성
+                    String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                            .path(uploadDir + "\\")
+                            .path(fileName)
+                            .toUriString();
+                    filePaths.add(fileDownloadUri);
+                    fileNames.add(fileName);
+                    System.err.println("** filePath: " + fileDownloadUri);
+                    System.err.println("** after file name: " + fileName);
+                }
+            }
+
+            return ResponseEntity.ok("{\"filePaths\": \"" + filePaths.toString() + "\"}");
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body("파일 업로드 중 오류 발생");
+		}
+	}
 }
