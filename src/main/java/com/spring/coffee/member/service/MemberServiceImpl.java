@@ -759,13 +759,18 @@ public class MemberServiceImpl implements MemberService {
 			memberVo = memberDao.selectMemberInfoRow(memberVo);
 			fileName = memberVo.getFileName();
 		}
-
+		log.info("** fileName is {}", fileName.indexOf("."));
+		
 		//사진을 내려받기 위한 출력스트림 통로 객체 생성
 		OutputStream out = response.getOutputStream();
 		//사진이 저장된 경로를 찾아가기 위해 경로 저장
 		String imgPath = uploadPath + "/member/";
 		//다운로드할 파일의 경로 저장
 		String filePath = imgPath + "/" + id + "/" + fileName;
+		//만약 파일이 존재하지 않을경우, 기본 유저 이미지 적용
+		if (fileName.indexOf(".") < 0) {
+			filePath = uploadPath + "/images/question_user.png";
+		}
 
 		//이미지 파일을 조작할 수 있는 파일객체 생성
 		File image = new File(filePath);
