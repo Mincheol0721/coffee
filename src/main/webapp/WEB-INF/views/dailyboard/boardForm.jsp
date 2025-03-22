@@ -83,9 +83,9 @@
         <h1>게시글 작성</h1>
         <hr style="width: 80%; margin: 1.2em auto;">
         <form id="frm" action="/dailyBoard/insertDailyBoard" method="post" enctype="multipart/form-data">
-        <% MemberVO member = (MemberVO)session.getAttribute("member"); %>
-<%--             <input type="hidden" name="id" value="<%=member.getId()%>"> --%>
-            <input type="hidden" name="id" value="test">
+            <% MemberVO member = (MemberVO)session.getAttribute("member"); %>
+            <input type="hidden" name="id" value="<%=member.getId()%>">
+            <!-- <input type="hidden" name="id" value="test"> -->
             <div id="smarteditor">
                 <table>
                     <tr>

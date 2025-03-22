@@ -1,3 +1,4 @@
+<%@page import="java.text.SimpleDateFormat"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -6,6 +7,7 @@
 
 <c:set var="vo" value="${vo}" />
 <c:set var="member" value="${member}" />
+<c:set var="filesList" value="${filesInfoList}" />
 
 <!DOCTYPE html>
 <html>
@@ -157,6 +159,15 @@
 				<span style="float: right; font-size: small;">조회수 : ${vo.readCount}</span>
 			</div>
 			<hr>
+			<c:if test="${not empty filesList}">
+                <div class="image_list">
+	                <c:forEach var="file" items="${filesList}" varStatus="loop" >
+	                    <c:set var="fileName" value="${file.fileName }" />
+	                        <img alt="" src="/board/getContentFiles?boardType=dailyboard&no=${vo.no}&fileName=${fileName}" height="100px" style="border: 1px solid lightgray; object-fit: contain">
+	                </c:forEach>
+                </div>
+                <hr>
+			</c:if>
 			<div id="content">
 				${vo.content}
 			</div>
